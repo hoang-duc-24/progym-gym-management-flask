@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+
+{% block title %}Ghi nhận thanh toán | ProGym{% endblock %}
+
+{% block page_css %}
+<link 
+    rel="stylesheet" 
+    href="{{ url_for('static', filename='css/modules/payments.css') }}"
+>
+{% endblock %}
+
+{% block content %}
+<div class="page-topline">
+    <h1 class="page-title">Ghi nhận thanh toán</h1>
+
+    <div class="page-actions">
+        <a 
+            href="{{ url_for('members.detail', member_id=payment.ma_hoi_vien) }}" 
+            class="btn-operate btn-gray text-decoration-none"
+        >
+            <i class="bi bi-arrow-left"></i>
+            Quay lại
+        </a>
+    </div>
+</div>
+
+<div class="payment-page">
+    <aside class="payment-summary-card">
+        <div class="payment-card-header">
+            Thông tin đăng ký gói
+        </div>
+
+        <div class="payment-card-body">
+            <div class="payment-info-row">
+                <div class="payment-info-label">Hội viên</div>
+                <div class="payment-info-value">{{ payment.ten_hoi_vien }}</div>
+            </div>
+
+            <div class="payment-info-row">
+                <div class="payment-info-label">Số điện thoại</div>
+                <div class="payment-info-value">{{ payment.so_dien_thoai }}</div>
+            </div>
+
+            <div class="payment-info-row">
+                <div class="payment-info-label">Gói tập</div>
+                <div class="payment-info-value">{{ payment.ten_goi_tap }}</div>
+            </div>
+
+            <div class="payment-info-row">
+                <div class="payment-info-label">Loại gói</div>
+                <div class="payment-info-value">{{ payment.loai_goi }}</div>
+            </div>
+
+            <div class="payment-info-row">
+                <div class="payment-info-label">Ngày bắt đầu</div>
+                <div class="payment-info-value">{{ payment.ngay_bat_dau }}</div>
+            </div>
+
+            <div class="payment-info-row">
+                <div class="payment-info-label">Ngày hết hạn</div>
+                <div class="payment-info-value">{{ payment.ngay_ket_thuc }}</div>
+            </div>
+
+            <div class="payment-info-row">
+                <div class="payment-info-label">Tổng phải trả</div>
+                <div class="payment-info-value">{{ payment.tong_tien_phai_tra }}</div>
+            </div>
+
+            <div class="payment-info-row">
+                <div class="payment-info-label">Đã thanh toán</div>
+                <div class="payment-info-value">{{ payment.da_thanh_toan }}</div>
+            </div>
+
+            <div class="payment-info-row">
+                <div class="payment-info-label">Còn phải trả</div>
+                <div class="payment-info-value">{{ payment.con_phai_thanh_toan }}</div>
+            </div>
+        </div>
+    </aside>
+
+    <section class="payment-form-card">
+        <div class="payment-card-header">
+            Thông tin thanh toán
+        </div>
+
+        <div class="payment-card-body">
+            <div class="payment-warning">
+                Gói tập chỉ được kích hoạt sau khi hội viên thanh toán đủ số tiền phải trả.
+            </div>
+
+            <form method="POST">
+                <div class="payment-form-grid">
+                    <div class="payment-form-group">
+                        <label class="payment-label">Ngày thanh toán</label>
+                        <input 
+                            type="date" 
+                            name="payment_date" 
+                            class="payment-input"
+                            value="{{ payment.ngay_thanh_toan_default }}"
+                        >
+                    </div>
+
+                    <div class="payment-form-group">
+                        <label class="payment-label">Hình thức thanh toán</label>
+                        <select name="payment_method" class="payment-select">
+                            <option value="TIEN_MAT">Tiền mặt</option>
+                            <option value="CHUYEN_KHOAN">Chuyển khoản</option>
+                        </select>
+                    </div>
+
+                    <div class="payment-form-group">
+                        <label class="payment-label">Số tiền thanh toán</label>
+                        <input 
+                            type="number" 
+                            name="amount" 
+                            class="payment-input"
+                            min="1"
+                            value="{{ payment.con_phai_thanh_toan_raw }}"
+                        >
+                    </div>
+
+                    <div class="payment-form-group">
+                        <label class="payment-label">Mã đăng ký</label>
+                        <input 
+                            type="text" 
+                            class="payment-input"
+                            value="DK{{ '%06d'|format(payment.ma_dang_ky) }}"
+                            disabled
+                        >
+                    </div>
+
+                    <div class="payment-form-group full">
+                        <label class="payment-label">Ghi chú</label>
+                        <textarea 
+                            name="note" 
+                            class="payment-textarea"
+                            placeholder="Nhập ghi chú nếu có"
+                        ></textarea>
+                    </div>
+                </div>
+
+                <div class="payment-form-actions">
+                    <a 
+                        href="{{ url_for('members.detail', member_id=payment.ma_hoi_vien) }}" 
+                        class="btn-operate btn-gray text-decoration-none"
+                    >
+                        Hủy
+                    </a>
+
+                    <button type="submit" class="btn-operate btn-green">
+                        <i class="bi bi-save-fill"></i>
+                        Lưu thanh toán
+                    </button>
+                </div>
+            </form>
+        </div>
+    </section>
+</div>
+{% endblock %}

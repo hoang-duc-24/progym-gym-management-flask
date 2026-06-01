@@ -1,0 +1,217 @@
+{% extends "base.html" %}
+
+{% block title %}Thanh toán | ProGym{% endblock %}
+
+{% block page_css %}
+<link 
+    rel="stylesheet" 
+    href="{{ url_for('static', filename='css/modules/payment_reports.css') }}"
+>
+{% endblock %}
+
+{% block content %}
+<div class="page-topline">
+    <h1 class="page-title">Sổ thu</h1>
+</div>
+
+<div class="payment-layout" id="paymentLayout">
+    <aside class="payment-filter" id="paymentFilter">
+        <div class="filter-title">
+            <span>Bộ lọc tìm kiếm</span>
+
+            <button 
+                type="button" 
+                class="filter-toggle-btn" 
+                id="paymentFilterToggle"
+                title="Thu gọn bộ lọc"
+            >
+                <i class="bi bi-chevron-left"></i>
+            </button>
+        </div>
+
+        <form method="GET" action="{{ url_for('payment_reports.index') }}" class="filter-body">
+            <div class="filter-group">
+                <label>Từ ngày</label>
+                <input 
+                    type="date" 
+                    name="date_from" 
+                    class="filter-input"
+                    value="{{ context.filters.date_from }}"
+                >
+            </div>
+
+            <div class="filter-group">
+                <label>Đến ngày</label>
+                <input 
+                    type="date" 
+                    name="date_to" 
+                    class="filter-input"
+                    value="{{ context.filters.date_to }}"
+                >
+            </div>
+
+            <div class="filter-group">
+                <label>Hình thức thanh toán</label>
+                <select name="hinh_thuc_thanh_toan" class="filter-input">
+                    <option value="">Tất cả</option>
+                    {% for method in context.method_options %}
+                    <option 
+                        value="{{ method.value }}"
+                        {% if context.filters.hinh_thuc_thanh_toan == method.value %}selected{% endif %}
+                    >
+                        {{ method.label }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label>Tìm nhanh</label>
+                <input 
+                    type="text" 
+                    name="keyword" 
+                    class="filter-input"
+                    placeholder="Tên HV, SĐT, gói tập..."
+                    value="{{ context.filters.keyword }}"
+                >
+            </div>
+
+            <div class="filter-actions">
+                <button type="submit" class="btn-operate btn-green w-100">
+                    <i class="bi bi-search"></i>
+                    Tìm kiếm
+                </button>
+
+                <a href="{{ url_for('payment_reports.index') }}" class="btn-operate btn-gray text-decoration-none w-100">
+                    Đặt lại
+                </a>
+            </div>
+        </form>
+    </aside>
+
+    <section class="payment-main">
+        <div class="payment-toolbar">
+            <button 
+                type="button" 
+                class="payment-filter-inline-toggle" 
+                id="paymentFilterOpen"
+            >
+                <i class="bi bi-funnel-fill"></i>
+                Bộ lọc
+            </button>
+        </div>
+
+        <div class="payment-summary-grid">
+            <div class="payment-summary-card">
+                <div class="summary-label">Tổng giao dịch</div>
+                <div class="summary-value">{{ context.summary.so_giao_dich }}</div>
+            </div>
+
+            <div class="payment-summary-card">
+                <div class="summary-label">Tổng tiền đã thu</div>
+                <div class="summary-value">{{ context.summary.tong_tien }}</div>
+            </div>
+
+            {% for item in context.method_summary %}
+            <div class="payment-summary-card">
+                <div class="summary-label">{{ item.hinh_thuc_thanh_toan }}</div>
+                <div class="summary-value">{{ item.tong_tien }}</div>
+                <div class="summary-sub">{{ item.so_giao_dich }} giao dịch</div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="data-card">
+            <table class="table-operate payment-table">
+                <thead>
+                    <tr>
+                        <th style="width: 90px;">Mã TT</th>
+                        <th style="width: 145px;">Ngày thanh toán</th>
+                        <th style="width: 150px;">Hội viên</th>
+                        <th style="width: 240px;">Gói tập</th>
+                        <th style="width: 100px;">Số tiền</th>
+                        <th style="width: 100px;">Hình thức</th>
+                        <th style="width: 135px;">Trạng thái gói</th>
+                        <th style="width: 50px;">Xem</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for row in context.transactions %}
+                    <tr>
+                        <td>TT{{ "%06d"|format(row.ma_thanh_toan) }}</td>
+
+                        <td>{{ row.ngay_thanh_toan }}</td>
+
+                        <td>
+                            <a 
+                                href="{{ url_for('members.detail', member_id=row.ma_hoi_vien) }}"
+                                class="link-name"
+                            >
+                                {{ row.ten_hoi_vien }}
+                            </a>
+                            <div class="sub-text">{{ row.so_dien_thoai }}</div>
+                        </td>
+
+                        <td>
+                            <div>{{ row.ten_goi_tap }}</div>
+                            <div class="sub-text">{{ row.loai_goi }}</div>
+                        </td>
+
+                        <td>{{ row.so_tien }}</td>
+
+                        <td>{{ row.hinh_thuc_thanh_toan }}</td>
+
+                        <td>
+                            <span class="badge-status {{ row.service_class }}">
+                                {{ row.service_text }}
+                            </span>
+                        </td>
+
+                        <td>
+                            <div class="payment-row-actions">
+                                <a
+                                    href="{{ url_for('registrations.detail', registration_id=row.ma_dang_ky) }}"
+                                    class="payment-action-btn"
+                                    title="{% if row.ghi_chu %}Ghi chú: {{ row.ghi_chu }}{% else %}Xem đăng ký liên quan{% endif %}"
+                                >
+                                    <i class="bi bi-eye-fill"></i>
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="8" class="text-center text-muted py-4">
+                            Không có giao dịch thanh toán phù hợp.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const layout = document.getElementById("paymentLayout");
+    const closeBtn = document.getElementById("paymentFilterToggle");
+    const openBtn = document.getElementById("paymentFilterOpen");
+
+    if (!layout || !closeBtn || !openBtn) {
+        return;
+    }
+
+    closeBtn.addEventListener("click", function () {
+        layout.classList.add("filter-collapsed");
+        openBtn.classList.add("is-visible");
+    });
+
+    openBtn.addEventListener("click", function () {
+        layout.classList.remove("filter-collapsed");
+        openBtn.classList.remove("is-visible");
+    });
+});
+</script>
+{% endblock %}

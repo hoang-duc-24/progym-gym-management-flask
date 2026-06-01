@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+
+{% block title %}Phân công PT | ProGym{% endblock %}
+
+{% block page_css %}
+<link 
+    rel="stylesheet" 
+    href="{{ url_for('static', filename='css/modules/members.css') }}"
+>
+{% endblock %}
+
+{% block content %}
+<div class="page-topline">
+    <h1 class="page-title">Phân công PT cho hội viên</h1>
+
+    <div class="page-actions">
+        <a 
+            href="{{ url_for('members.detail', member_id=form_context.registration.ma_hoi_vien) }}" 
+            class="btn-operate btn-gray text-decoration-none"
+        >
+            <i class="bi bi-arrow-left"></i>
+            Quay lại
+        </a>
+    </div>
+</div>
+
+<form method="POST" class="member-register-package-layout">
+    <aside class="member-create-card">
+        <div class="member-create-card-header">
+            Thông tin đăng ký PT
+        </div>
+
+        <div class="member-create-card-body">
+            <div class="member-info-line">
+                <span>Hội viên</span>
+                <strong>{{ form_context.registration.ten_hoi_vien }}</strong>
+            </div>
+
+            <div class="member-info-line">
+                <span>Số điện thoại</span>
+                <strong>{{ form_context.registration.so_dien_thoai }}</strong>
+            </div>
+
+            <div class="member-info-line">
+                <span>Gói tập</span>
+                <strong>{{ form_context.registration.ten_goi_tap }}</strong>
+            </div>
+
+            <div class="member-info-line">
+                <span>Thời hạn</span>
+                <strong>
+                    {{ form_context.registration.ngay_bat_dau }} - {{ form_context.registration.ngay_ket_thuc }}
+                </strong>
+            </div>
+
+            <div class="member-info-line">
+                <span>Số buổi PT</span>
+                <strong>
+                    {{ form_context.registration.so_buoi_pt_con_lai }}/{{ form_context.registration.so_buoi_pt_ban_dau }} buổi
+                </strong>
+            </div>
+
+            {% if form_context.current_assignment %}
+            <div class="member-info-line">
+                <span>PT hiện tại</span>
+                <strong>{{ form_context.current_assignment.ten_pt }}</strong>
+            </div>
+            {% endif %}
+        </div>
+    </aside>
+
+    <section class="member-create-card">
+        <div class="member-create-card-header">
+            Thông tin phân công
+        </div>
+
+        <div class="member-create-card-body">
+            <div class="member-form-grid">
+                <div class="member-form-group full">
+                    <label>PT phụ trách <span class="required">*</span></label>
+                    <select name="ma_pt" class="member-input">
+                        <option value="">-- Chọn PT --</option>
+                        {% for pt in form_context.pts %}
+                        <option value="{{ pt.ma_pt }}">
+                            {{ pt.ho_ten }} - {{ pt.chuyen_mon or "Chưa cập nhật chuyên môn" }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="member-form-group">
+                    <label>Ngày phân công <span class="required">*</span></label>
+                    <input 
+                        type="date" 
+                        name="ngay_phan_cong" 
+                        class="member-input"
+                        value="{{ form_context.today }}"
+                    >
+                </div>
+
+                <div class="member-form-group">
+                    <label>Trạng thái</label>
+                    <input 
+                        type="text" 
+                        class="member-input"
+                        value="Đang phụ trách"
+                        disabled
+                    >
+                </div>
+
+                <div class="member-form-group full">
+                    <label>Ghi chú</label>
+                    <textarea 
+                        name="ghi_chu" 
+                        class="member-textarea"
+                        placeholder="Nhập ghi chú nếu có"
+                    ></textarea>
+                </div>
+            </div>
+
+            <div class="member-form-actions">
+                <a 
+                    href="{{ url_for('members.detail', member_id=form_context.registration.ma_hoi_vien) }}" 
+                    class="btn-operate btn-gray text-decoration-none"
+                >
+                    Hủy
+                </a>
+
+                <button type="submit" class="btn-operate btn-green">
+                    <i class="bi bi-save-fill"></i>
+                    Lưu phân công
+                </button>
+            </div>
+        </div>
+    </section>
+</form>
+{% endblock %}

@@ -1,0 +1,332 @@
+{% extends "base.html" %}
+
+{% block title %}Huấn luyện viên | ProGym{% endblock %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/modules/pts.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="page-topline">
+    <h1 class="page-title">Quản lý huấn luyện viên</h1>
+
+    <div class="page-actions">
+        {% if session.get("role") == "ADMIN" %}
+        <button 
+            type="button"
+            class="btn-operate btn-green"
+            data-bs-toggle="modal"
+            data-bs-target="#createPtModal"
+        >
+            <i class="bi bi-plus-circle-fill"></i>
+            Thêm PT
+        </button>
+        {% endif %}
+    </div>
+</div>
+
+<section class="pts-filter-bar">
+    <form method="GET" action="{{ url_for('pts.index') }}" class="pts-filter-form">
+        <div class="pts-filter-search">
+            <input 
+                type="text" 
+                name="keyword" 
+                class="filter-input"
+                placeholder="Tên PT, SĐT, chuyên môn..."
+                value="{{ context.filters.keyword }}"
+            >
+        </div>
+
+        <div class="pts-filter-status">
+            <select name="trang_thai_lam_viec" class="filter-input">
+                <option value="">Tất cả trạng thái</option>
+                {% for status in context.status_options %}
+                <option 
+                    value="{{ status.value }}"
+                    {% if context.filters.trang_thai_lam_viec == status.value %}selected{% endif %}
+                >
+                    {{ status.label }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <button type="submit" class="btn-operate btn-green">
+            <i class="bi bi-search"></i>
+            Tìm kiếm
+        </button>
+
+        <a href="{{ url_for('pts.index') }}" class="btn-operate btn-gray text-decoration-none">
+            <i class="bi bi-arrow-clockwise"></i>
+            Đặt lại
+        </a>
+
+        <div class="pts-count-pill">
+            <i class="bi bi-person-badge-fill"></i>
+            <span>Tổng số PT:</span>
+            <strong>{{ context.total }}</strong>
+        </div>
+    </form>
+</section>
+
+<section class="pts-table-section">
+    <div class="data-card pts-table-card">
+        <div class="pts-table-wrap">
+            <table class="table-operate pts-table">
+                <thead>
+                    <tr>
+                        <th style="width: 100px;">Mã PT</th>
+                        <th style="width: 190px;">Huấn luyện viên</th>
+                        <th style="width: 195px;">Liên lạc</th>
+                        <th style="width: 210px;">Chuyên môn</th>
+                        <th style="width: 110px;">Kinh nghiệm</th>
+                        <th style="width: 120px;">Phụ trách</th>
+                        <th style="width: 95px;">Lịch tập</th>
+                        <th style="width: 135px;">Trạng thái</th>
+                        <th style="width: 90px;">Thao tác</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for row in context.pts %}
+                    <tr>
+                        <td>{{ row.ma_nhan_su }}</td>
+
+                        <td>
+                            <a href="{{ url_for('pts.detail', pt_id=row.ma_pt) }}" class="link-name">
+                                {{ row.ho_ten }}
+                            </a>
+                        </td>
+
+                        <td>
+                            <div class="pt-contact-cell">
+                                <div>{{ row.so_dien_thoai or "-" }}</div>
+                                <div class="pt-contact-email">{{ row.email or "-" }}</div>
+                            </div>
+                        </td>
+                        <td>{{ row.chuyen_mon }}</td>
+                        <td>{{ row.kinh_nghiem }}</td>
+                        <td>{{ row.so_phan_cong_dang_phu_trach }}</td>
+                        <td>{{ row.so_lich_tap }}</td>
+
+                        <td>
+                            <span class="badge-status {{ row.status_class }}">
+                                {{ row.status_text }}
+                            </span>
+                        </td>
+
+                        <td>
+                            <div class="table-actions">
+                                <a 
+                                    href="{{ url_for('pts.detail', pt_id=row.ma_pt) }}" 
+                                    class="btn btn-sm btn-outline-primary"
+                                    title="Xem chi tiết"
+                                >
+                                    <i class="bi bi-eye-fill"></i>
+                                </a>
+
+                                {% if session.get("role") == "ADMIN" %}
+                                <button 
+                                    type="button"
+                                    class="btn btn-sm btn-outline-secondary"
+                                    title="Sửa thông tin"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#editPtModal{{ row.ma_pt }}"
+                                >
+                                    <i class="bi bi-pencil-square"></i>
+                                </button>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="9" class="text-center text-muted py-4">
+                            Không có huấn luyện viên phù hợp.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+{% if session.get("role") == "ADMIN" %}
+<div class="modal fade" id="createPtModal" tabindex="-1" aria-labelledby="createPtModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content pt-modal-content">
+            <form method="POST" action="{{ url_for('pts.create') }}">
+                <div class="modal-header pt-modal-header">
+                    <h5 class="modal-title" id="createPtModalLabel">Thêm huấn luyện viên</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                </div>
+
+                <div class="modal-body pt-modal-body">
+                    <div class="pt-form-grid">
+                        <div class="pt-form-group">
+                            <label>Họ tên <span class="required">*</span></label>
+                            <input 
+                                type="text" 
+                                name="ho_ten" 
+                                class="pt-input" 
+                                required
+                                placeholder="Nhập họ tên PT"
+                            >
+                        </div>
+
+                        <div class="pt-form-group">
+                            <label>Số điện thoại <span class="required">*</span></label>
+                            <input 
+                                type="text" 
+                                name="so_dien_thoai" 
+                                class="pt-input" 
+                                required
+                                placeholder="Nhập số điện thoại"
+                            >
+                        </div>
+
+                        <div class="pt-form-group">
+                            <label>Email</label>
+                            <input 
+                                type="email" 
+                                name="email" 
+                                class="pt-input"
+                                placeholder="email@example.com"
+                            >
+                        </div>
+
+                        <div class="pt-form-group">
+                            <label>Trạng thái làm việc</label>
+                            <input type="hidden" name="trang_thai_lam_viec" value="DANG_LAM_VIEC">
+                            <input type="text" class="pt-input" value="Đang làm việc" disabled>
+                        </div>
+
+                        <div class="pt-form-group">
+                            <label>Chuyên môn</label>
+                            <input 
+                                type="text" 
+                                name="chuyen_mon" 
+                                class="pt-input" 
+                                placeholder="Ví dụ: Tăng cơ - giảm mỡ"
+                            >
+                        </div>
+
+                        <div class="pt-form-group">
+                            <label>Kinh nghiệm</label>
+                            <input 
+                                type="text" 
+                                name="kinh_nghiem" 
+                                class="pt-input" 
+                                placeholder="Ví dụ: 3 năm"
+                            >
+                        </div>
+
+                        <div class="pt-form-group full">
+                            <label>Ghi chú</label>
+                            <textarea 
+                                name="ghi_chu" 
+                                class="pt-textarea"
+                                placeholder="Ghi chú thêm nếu có"
+                            ></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer pt-modal-footer">
+                    <button type="button" class="btn-operate btn-gray" data-bs-dismiss="modal">
+                        Hủy
+                    </button>
+
+                    <button type="submit" class="btn-operate btn-green">
+                        <i class="bi bi-save-fill"></i>
+                        Lưu PT
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% if session.get("role") == "ADMIN" %}
+{% for row in context.pts %}
+<div class="modal fade" id="editPtModal{{ row.ma_pt }}" tabindex="-1" aria-labelledby="editPtModalLabel{{ row.ma_pt }}" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content pt-modal-content">
+            <form method="POST" action="{{ url_for('pts.edit', pt_id=row.ma_pt) }}">
+                <input type="hidden" name="next" value="{{ request.full_path }}">
+
+                <div class="modal-header pt-modal-header">
+                    <h5 class="modal-title" id="editPtModalLabel{{ row.ma_pt }}">
+                        Cập nhật huấn luyện viên
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                </div>
+
+                <div class="modal-body pt-modal-body">
+                    <div class="pt-form-grid">
+                        <div class="pt-form-group">
+                            <label>Họ tên <span class="required">*</span></label>
+                            <input type="text" name="ho_ten" class="pt-input" value="{{ row.ho_ten }}" required>
+                        </div>
+
+                        <div class="pt-form-group">
+                            <label>Số điện thoại <span class="required">*</span></label>
+                            <input type="text" name="so_dien_thoai" class="pt-input" value="{{ row.so_dien_thoai }}" required>
+                        </div>
+
+                        <div class="pt-form-group">
+                            <label>Email</label>
+                            <input type="email" name="email" class="pt-input" value="{{ row.email if row.email != '-' else '' }}">
+                        </div>
+
+                        <div class="pt-form-group">
+                            <label>Trạng thái làm việc</label>
+                            <select name="trang_thai_lam_viec" class="pt-input">
+                                {% for status in context.status_options %}
+                                <option 
+                                    value="{{ status.value }}"
+                                    {% if row.trang_thai_lam_viec == status.value %}selected{% endif %}
+                                >
+                                    {{ status.label }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="pt-form-group">
+                            <label>Chuyên môn</label>
+                            <input type="text" name="chuyen_mon" class="pt-input" value="{{ row.chuyen_mon if row.chuyen_mon != '-' else '' }}">
+                        </div>
+
+                        <div class="pt-form-group">
+                            <label>Kinh nghiệm</label>
+                            <input type="text" name="kinh_nghiem" class="pt-input" value="{{ row.kinh_nghiem if row.kinh_nghiem != '-' else '' }}">
+                        </div>
+
+                        <div class="pt-form-group full">
+                            <label>Ghi chú</label>
+                            <textarea name="ghi_chu" class="pt-textarea">{{ row.ghi_chu }}</textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer pt-modal-footer">
+                    <button type="button" class="btn-operate btn-gray" data-bs-dismiss="modal">
+                        Hủy
+                    </button>
+
+                    <button type="submit" class="btn-operate btn-green">
+                        <i class="bi bi-save-fill"></i>
+                        Lưu thay đổi
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% endif %}
+
+{% endblock %}

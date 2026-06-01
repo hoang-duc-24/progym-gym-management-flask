@@ -1,0 +1,623 @@
+{% extends "base.html" %}
+
+{% block title %}Quản lý hội viên | ProGym{% endblock %}
+
+{% block page_css %}
+<link 
+    rel="stylesheet" 
+    href="{{ url_for('static', filename='css/modules/members.css') }}"
+>
+{% endblock %}
+
+{% block content %}
+<div class="members-index-page">
+<div class="page-topline">
+    <h1 class="page-title">Quản lý thông tin hội viên</h1>
+
+    <div class="page-actions">
+        <a href="{{ url_for('members.create') }}" class="btn-operate btn-green text-decoration-none">
+            <i class="bi bi-plus-circle-fill"></i>
+            Tạo mới và đăng ký
+        </a>
+    </div>
+</div>
+
+<form method="get" action="{{ url_for('members.index') }}" class="operation-layout" id="operationLayout">
+    <aside class="filter-panel" id="filterPanel">
+        <div class="filter-heading">
+            <span>Bộ lọc tìm kiếm</span>
+
+            <button class="filter-collapse-btn" id="collapseFilterBtn" type="button" title="Thu gọn bộ lọc">
+                <i class="bi bi-chevron-left"></i>
+            </button>
+        </div>
+
+        <div class="filter-body">
+            <div class="filter-block">
+                <label class="filter-title">Tìm kiếm</label>
+
+                <div class="filter-search-row">
+                    <input 
+                        type="text" 
+                        name="keyword"
+                        class="filter-input" 
+                        placeholder="Tên, số điện thoại..."
+                        value="{{ filters.keyword }}"
+                    >
+
+                    <button type="submit" class="filter-search-btn" title="Tìm kiếm">
+                        <i class="bi bi-search"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="filter-block">
+                <label class="filter-title">Thanh toán</label>
+
+                <div class="filter-tabs">
+                    <button type="submit" name="payment_status" value=""
+                            class="filter-tab {% if not filters.payment_status %}active{% endif %}">
+                        Tất cả
+                    </button>
+
+                    <button type="submit" name="payment_status" value="DA_THANH_TOAN"
+                            class="filter-tab {% if filters.payment_status == 'DA_THANH_TOAN' %}active{% endif %}">
+                        Đã thu
+                    </button>
+
+                    <button type="submit" name="payment_status" value="CON_NO"
+                            class="filter-tab {% if filters.payment_status == 'CON_NO' %}active{% endif %}">
+                        Còn nợ
+                    </button>
+                </div>
+            </div>
+
+            <div class="filter-block">
+                <label class="filter-title">Trạng thái hội viên</label>
+
+                <div class="filter-tabs">
+                    <button type="submit" name="member_status" value=""
+                            class="filter-tab {% if not filters.member_status %}active{% endif %}">
+                        Tất cả
+                    </button>
+
+                    <button type="submit" name="member_status" value="HOAT_DONG"
+                            class="filter-tab {% if filters.member_status == 'HOAT_DONG' %}active{% endif %}">
+                        Hoạt động
+                    </button>
+
+                    <button type="submit" name="member_status" value="NGUNG_HOAT_DONG"
+                            class="filter-tab {% if filters.member_status == 'NGUNG_HOAT_DONG' %}active{% endif %}">
+                        Ngừng HĐ
+                    </button>
+                </div>
+            </div>
+
+            <div class="filter-block">
+                <label class="filter-title">Loại gói</label>
+
+                <div class="filter-tabs">
+                    <button type="submit" name="package_type" value=""
+                            class="filter-tab {% if not filters.package_type %}active{% endif %}">
+                        Tất cả
+                    </button>
+
+                    <button type="submit" name="package_type" value="CO_PT"
+                            class="filter-tab {% if filters.package_type == 'CO_PT' %}active{% endif %}">
+                        Có PT
+                    </button>
+
+                    <button type="submit" name="package_type" value="KHONG_PT"
+                            class="filter-tab {% if filters.package_type == 'KHONG_PT' %}active{% endif %}">
+                        Không PT
+                    </button>
+                </div>
+            </div>
+
+            <div class="filter-block">
+                <label class="filter-title">Trạng thái dịch vụ</label>
+
+                <div class="member-filter-radio-list">
+                    <label class="member-filter-radio">
+                        <input type="radio" name="service_status" value="" 
+                            {% if not filters.service_status %}checked{% endif %}
+                            onchange="this.form.submit()">
+                        <span>Tất cả</span>
+                    </label>
+
+                    <label class="member-filter-radio">
+                        <input type="radio" name="service_status" value="DANG_HIEU_LUC"
+                            {% if filters.service_status == 'DANG_HIEU_LUC' %}checked{% endif %}
+                            onchange="this.form.submit()">
+                        <span>Đang hiệu lực</span>
+                    </label>
+
+                    <label class="member-filter-radio">
+                        <input type="radio" name="service_status" value="HET_HAN"
+                            {% if filters.service_status == 'HET_HAN' %}checked{% endif %}
+                            onchange="this.form.submit()">
+                        <span>Hết hạn</span>
+                    </label>
+
+                    <label class="member-filter-radio">
+                        <input type="radio" name="service_status" value="SAP_HET_HAN"
+                            {% if filters.service_status == 'SAP_HET_HAN' %}checked{% endif %}
+                            onchange="this.form.submit()">
+                        <span>Sắp hết hạn</span>
+                    </label>
+
+                    
+                </div>
+            </div>
+
+            <div class="filter-actions">
+                <button type="submit" class="filter-apply-btn">
+                    <i class="bi bi-search"></i>
+                    Tìm kiếm
+                </button>
+
+                <a href="{{ url_for('members.index') }}" class="filter-reset-btn">
+                    <i class="bi bi-arrow-clockwise"></i>
+                    Đặt lại
+                </a>
+            </div>
+        </div>
+    </aside>
+
+    <button class="filter-open-btn d-none" id="openFilterBtn" type="button" title="Mở bộ lọc">
+        <i class="bi bi-funnel-fill"></i>
+    </button>
+
+    <section class="content-panel">
+        <div class="data-card member-data-card">
+            <div class="member-table-scroll">
+                <table class="table-operate member-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 86px;">Hành động</th>
+                            <th>Hội viên</th>
+                            <th>Điện thoại</th>
+                            <th>Gói đang dùng</th>
+                            <th>Còn lại</th>
+                            <th>Bắt đầu</th>
+                            <th>Hết hạn</th>
+                            <th>Thanh toán</th>
+                            <th>Trạng thái dịch vụ</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for member in members %}
+                        <tr>
+                            <td>
+                                <div class="action-icons">
+                                    <a 
+                                        href="{{ url_for('members.detail', member_id=member.ma_hoi_vien) }}" 
+                                        class="icon-action" 
+                                        title="Xem chi tiết"
+                                    >
+                                        <i class="bi bi-eye-fill"></i>
+                                    </a>
+
+                                    <a 
+                                        href="{{ url_for('members.register_package', member_id=member.ma_hoi_vien) }}" 
+                                        class="icon-action orange" 
+                                        title="Đăng ký gói"
+                                    >
+                                        <i class="bi bi-grid-fill"></i>
+                                    </a>
+
+                                    <button 
+                                        type="button"
+                                        class="icon-action edit member-edit-trigger"
+                                        title="Sửa thông tin"
+                                        data-member-id="{{ member.ma_hoi_vien }}"
+                                    >
+                                        <i class="bi bi-pencil-square"></i>
+                                    </button>
+                                </div>
+                            </td>
+
+                            <td>
+                                <a href="{{ url_for('members.detail', member_id=member.ma_hoi_vien) }}" class="link-name">
+                                    {{ member.ho_ten }}
+                                </a><br>
+                                <span class="member-table-code">{{ member.ma_khach_hang }}</span>
+                            </td>
+
+                            <td>{{ member.so_dien_thoai }}</td>
+                            <td>{{ member.ten_goi_tap }}</td>
+                            <td>{{ member.con_lai }}</td>
+                            <td>{{ member.ngay_bat_dau }}</td>
+                            <td>{{ member.ngay_ket_thuc }}</td>
+
+                            <td>
+                                <span class="badge-status {{ member.payment_class }}">
+                                    {{ member.payment_text }}
+                                </span>
+                            </td>
+
+                            <td class="member-service-status">
+                                <span class="badge-status {{ member.service_class }}">
+                                    {{ member.service_text }}
+                                </span>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="9" class="text-center text-muted py-4">
+                                Chưa có hội viên nào trong hệ thống.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="member-table-footer">
+                <div class="member-record-info">
+                    Tổng số bản ghi: <strong>{{ pagination.total_records }}</strong>
+                    {% if pagination.total_records > 0 %}
+                        <span>
+                            | Hiển thị {{ pagination.start_record }} - {{ pagination.end_record }}
+                        </span>
+                    {% endif %}
+                </div>
+
+                <div class="member-pagination">
+                    {% if pagination.page > 1 %}
+                        <a 
+                            class="page-btn"
+                            href="{{ url_for(
+                                'members.index',
+                                page=pagination.page - 1,
+                                per_page=pagination.per_page,
+                                keyword=filters.keyword,
+                                payment_status=filters.payment_status,
+                                member_status=filters.member_status,
+                                package_type=filters.package_type,
+                                service_status=filters.service_status,
+                                expire_days=filters.expire_days
+                            ) }}"
+                        >
+                            ‹
+                        </a>
+                    {% endif %}
+
+                    {% for p in range(1, pagination.total_pages + 1) %}
+                        {% if p == pagination.page %}
+                            <span class="page-btn active">{{ p }}</span>
+                        {% else %}
+                            <a 
+                                class="page-btn"
+                                href="{{ url_for(
+                                    'members.index',
+                                    page=p,
+                                    per_page=pagination.per_page,
+                                    keyword=filters.keyword,
+                                    payment_status=filters.payment_status,
+                                    member_status=filters.member_status,
+                                    package_type=filters.package_type,
+                                    service_status=filters.service_status,
+                                    expire_days=filters.expire_days
+                                ) }}"
+                            >
+                                {{ p }}
+                            </a>
+                        {% endif %}
+                    {% endfor %}
+
+                    {% if pagination.page < pagination.total_pages %}
+                        <a 
+                            class="page-btn"
+                            href="{{ url_for(
+                                'members.index',
+                                page=pagination.page + 1,
+                                per_page=pagination.per_page,
+                                keyword=filters.keyword,
+                                payment_status=filters.payment_status,
+                                member_status=filters.member_status,
+                                package_type=filters.package_type,
+                                service_status=filters.service_status,
+                                expire_days=filters.expire_days
+                            ) }}"
+                        >
+                            ›
+                        </a>
+                    {% endif %}
+                </div>
+
+                <div class="member-page-size">
+                    <span>Số bản ghi:</span>
+
+                    <select onchange="window.location.href=this.value">
+                        <option 
+                            value="{{ url_for(
+                                'members.index',
+                                page=1,
+                                per_page=10,
+                                keyword=filters.keyword,
+                                payment_status=filters.payment_status,
+                                member_status=filters.member_status,
+                                package_type=filters.package_type,
+                                service_status=filters.service_status,
+                                expire_days=filters.expire_days
+                            ) }}"
+                            {% if pagination.per_page == 10 %}selected{% endif %}
+                        >
+                            10
+                        </option>
+
+                        <option 
+                            value="{{ url_for(
+                                'members.index',
+                                page=1,
+                                per_page=50,
+                                keyword=filters.keyword,
+                                payment_status=filters.payment_status,
+                                member_status=filters.member_status,
+                                package_type=filters.package_type,
+                                service_status=filters.service_status,
+                                expire_days=filters.expire_days
+                            ) }}"
+                            {% if pagination.per_page == 50 %}selected{% endif %}
+                        >
+                            50
+                        </option>
+
+                        <option 
+                            value="{{ url_for(
+                                'members.index',
+                                page=1,
+                                per_page=100,
+                                keyword=filters.keyword,
+                                payment_status=filters.payment_status,
+                                member_status=filters.member_status,
+                                package_type=filters.package_type,
+                                service_status=filters.service_status,
+                                expire_days=filters.expire_days
+                            ) }}"
+                            {% if pagination.per_page == 100 %}selected{% endif %}
+                        >
+                            100
+                        </option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    </section>
+</form>
+
+<div class="member-edit-modal" id="memberEditModal" aria-hidden="true">
+    <div class="member-edit-modal-backdrop" data-close-edit-modal></div>
+
+    <div class="member-edit-modal-dialog">
+        <div class="member-edit-modal-header">
+            <div>
+                <h2>Sửa thông tin hội viên</h2>
+                <p id="memberEditSubtitle">Đang tải thông tin...</p>
+            </div>
+
+            <button type="button" class="member-edit-modal-close" data-close-edit-modal>
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+
+        <form method="post" id="memberEditForm" class="member-edit-modal-body">
+            <input type="hidden" name="next" id="memberEditNext">
+
+            <div class="member-edit-form-grid">
+                <div class="member-form-group">
+                    <label>Họ tên <span class="required">*</span></label>
+                    <input 
+                        type="text" 
+                        name="ho_ten" 
+                        id="edit_ho_ten"
+                        class="member-input"
+                        required
+                    >
+                </div>
+
+                <div class="member-form-group">
+                    <label>Số điện thoại <span class="required">*</span></label>
+                    <input 
+                        type="text" 
+                        name="so_dien_thoai" 
+                        id="edit_so_dien_thoai"
+                        class="member-input"
+                        required
+                    >
+                </div>
+
+                <div class="member-form-group">
+                    <label>Giới tính</label>
+                    <select name="gioi_tinh" id="edit_gioi_tinh" class="member-input">
+                        <option value="NAM">Nam</option>
+                        <option value="NU">Nữ</option>
+                        <option value="KHAC">Khác</option>
+                    </select>
+                </div>
+
+                <div class="member-form-group">
+                    <label>Ngày sinh</label>
+                    <input 
+                        type="date" 
+                        name="ngay_sinh" 
+                        id="edit_ngay_sinh"
+                        class="member-input"
+                    >
+                </div>
+
+                <div class="member-form-group">
+                    <label>Email</label>
+                    <input 
+                        type="email" 
+                        name="email" 
+                        id="edit_email"
+                        class="member-input"
+                    >
+                </div>
+
+                <div class="member-form-group">
+                    <label>Địa chỉ</label>
+                    <input 
+                        type="text" 
+                        name="dia_chi" 
+                        id="edit_dia_chi"
+                        class="member-input"
+                    >
+                </div>
+
+                <div class="member-form-group">
+                    <label>Trạng thái hội viên</label>
+                    <select name="trang_thai" id="edit_trang_thai" class="member-input">
+                        <option value="HOAT_DONG">Hoạt động</option>
+                        <option value="NGUNG_HOAT_DONG">Ngừng hoạt động</option>
+                    </select>
+                </div>
+
+                <div class="member-form-group">
+                    <label>Ngày tham gia</label>
+                    <input 
+                        type="text" 
+                        id="edit_ngay_tham_gia"
+                        class="member-input"
+                        disabled
+                    >
+                </div>
+
+                <div class="member-form-group full">
+                    <label>Ghi chú</label>
+                    <textarea 
+                        name="ghi_chu" 
+                        id="edit_ghi_chu"
+                        class="member-textarea"
+                    ></textarea>
+                </div>
+            </div>
+
+            <div class="member-edit-modal-actions">
+                <button type="button" class="btn-operate btn-gray" data-close-edit-modal>
+                    Hủy
+                </button>
+
+                <button type="submit" class="btn-operate btn-green">
+                    <i class="bi bi-check-circle"></i>
+                    Lưu thay đổi
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const modal = document.getElementById("memberEditModal");
+    const form = document.getElementById("memberEditForm");
+    const subtitle = document.getElementById("memberEditSubtitle");
+    const nextInput = document.getElementById("memberEditNext");
+
+    const editDataUrlTemplate = "{{ url_for('members.edit_data', member_id=0) }}";
+    const editPostUrlTemplate = "{{ url_for('members.edit', member_id=0) }}";
+
+    const fields = {
+        hoTen: document.getElementById("edit_ho_ten"),
+        soDienThoai: document.getElementById("edit_so_dien_thoai"),
+        gioiTinh: document.getElementById("edit_gioi_tinh"),
+        ngaySinh: document.getElementById("edit_ngay_sinh"),
+        email: document.getElementById("edit_email"),
+        diaChi: document.getElementById("edit_dia_chi"),
+        trangThai: document.getElementById("edit_trang_thai"),
+        ngayThamGia: document.getElementById("edit_ngay_tham_gia"),
+        ghiChu: document.getElementById("edit_ghi_chu")
+    };
+
+    function buildUrl(template, memberId, suffix) {
+        return template.replace("/0/" + suffix, "/" + memberId + "/" + suffix);
+    }
+
+    function openModal() {
+        modal.classList.add("show");
+        modal.setAttribute("aria-hidden", "false");
+    }
+
+    function closeModal() {
+        modal.classList.remove("show");
+        modal.setAttribute("aria-hidden", "true");
+    }
+
+    function setLoadingState() {
+        subtitle.textContent = "Đang tải thông tin...";
+        fields.hoTen.value = "";
+        fields.soDienThoai.value = "";
+        fields.gioiTinh.value = "NAM";
+        fields.ngaySinh.value = "";
+        fields.email.value = "";
+        fields.diaChi.value = "";
+        fields.trangThai.value = "HOAT_DONG";
+        fields.ngayThamGia.value = "";
+        fields.ghiChu.value = "";
+    }
+
+    function fillForm(member) {
+        subtitle.textContent = member.ma_khach_hang + " - " + member.ho_ten;
+
+        fields.hoTen.value = member.ho_ten || "";
+        fields.soDienThoai.value = member.so_dien_thoai || "";
+        fields.gioiTinh.value = member.gioi_tinh || "NAM";
+        fields.ngaySinh.value = member.ngay_sinh || "";
+        fields.email.value = member.email || "";
+        fields.diaChi.value = member.dia_chi || "";
+        fields.trangThai.value = member.trang_thai || "HOAT_DONG";
+        fields.ngayThamGia.value = member.ngay_tham_gia || "";
+        fields.ghiChu.value = member.ghi_chu || "";
+    }
+
+    document.querySelectorAll(".member-edit-trigger").forEach(function (button) {
+        button.addEventListener("click", async function () {
+            const memberId = button.dataset.memberId;
+
+            setLoadingState();
+            openModal();
+
+            const editDataUrl = buildUrl(editDataUrlTemplate, memberId, "edit-data");
+            const editPostUrl = buildUrl(editPostUrlTemplate, memberId, "edit");
+
+            form.action = editPostUrl;
+            nextInput.value = window.location.pathname + window.location.search;
+
+            try {
+                const response = await fetch(editDataUrl, {
+                    headers: {
+                        "X-Requested-With": "XMLHttpRequest"
+                    }
+                });
+
+                const data = await response.json();
+
+                if (!response.ok || !data.success) {
+                    subtitle.textContent = data.message || "Không thể tải thông tin hội viên.";
+                    return;
+                }
+
+                fillForm(data.member);
+            } catch (error) {
+                subtitle.textContent = "Có lỗi khi tải thông tin hội viên.";
+            }
+        });
+    });
+
+    document.querySelectorAll("[data-close-edit-modal]").forEach(function (element) {
+        element.addEventListener("click", closeModal);
+    });
+
+    document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape" && modal.classList.contains("show")) {
+            closeModal();
+        }
+    });
+});
+</script>
+
+</div>
+{% endblock %}

@@ -1,0 +1,274 @@
+{% extends "base.html" %}
+
+{% block title %}Chi tiết đăng ký gói | ProGym{% endblock %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/modules/registrations.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="page-topline">
+    <h1 class="page-title">Chi tiết đăng ký gói</h1>
+
+    <div class="page-actions">
+        <a href="{{ url_for('registrations.index') }}" class="btn-operate btn-gray text-decoration-none">
+            <i class="bi bi-arrow-left"></i>
+            Quay lại
+        </a>
+
+        {% if context.registration.trang_thai_thanh_toan != 'DA_THANH_TOAN' %}
+        <a href="{{ url_for('payments.create', registration_id=context.registration.ma_dang_ky) }}" class="btn-operate btn-green text-decoration-none">
+            <i class="bi bi-cash-coin"></i>
+            Ghi nhận thanh toán
+        </a>
+        {% endif %}
+
+        <a href="{{ url_for('members.detail', member_id=context.registration.ma_hoi_vien) }}" class="btn-operate btn-green text-decoration-none">
+            <i class="bi bi-person-lines-fill"></i>
+            Xem hội viên
+        </a>
+    </div>
+</div>
+
+<section class="registration-detail-header">
+    <div class="registration-code-box">
+        <div class="registration-code-label">Mã đăng ký</div>
+        <div class="registration-code-value">{{ context.registration.ma_hien_thi }}</div>
+
+        <div class="registration-status-stack">
+            <span class="badge-status {{ context.registration.payment_class }}">
+                {{ context.registration.payment_text }}
+            </span>
+
+            <span class="badge-status {{ context.registration.service_class }}">
+                {{ context.registration.service_text }}
+            </span>
+        </div>
+    </div>
+
+    <div class="registration-profile-grid">
+        <div class="profile-item">
+            <div class="profile-label">Hội viên</div>
+            <div class="profile-value">{{ context.registration.ten_hoi_vien }}</div>
+        </div>
+
+        <div class="profile-item">
+            <div class="profile-label">Số điện thoại</div>
+            <div class="profile-value">{{ context.registration.so_dien_thoai }}</div>
+        </div>
+
+        <div class="profile-item">
+            <div class="profile-label">Email</div>
+            <div class="profile-value">{{ context.registration.email }}</div>
+        </div>
+
+        <div class="profile-item">
+            <div class="profile-label">Gói tập</div>
+            <div class="profile-value">{{ context.registration.ten_goi_tap }}</div>
+        </div>
+
+        <div class="profile-item">
+            <div class="profile-label">Loại gói</div>
+            <div class="profile-value">{{ context.registration.loai_goi }}</div>
+        </div>
+
+        <div class="profile-item">
+            <div class="profile-label">Thời gian sử dụng</div>
+            <div class="profile-value">
+                {{ context.registration.ngay_bat_dau }} - {{ context.registration.ngay_ket_thuc }}
+            </div>
+        </div>
+
+        <div class="profile-item">
+            <div class="profile-label">Số buổi PT</div>
+            <div class="profile-value">
+                {% if context.registration.loai_goi_raw == 'CO_PT' %}
+                    {{ context.registration.so_buoi_pt_con_lai }}/{{ context.registration.so_buoi_pt_ban_dau }} buổi
+                {% else %}
+                    Không áp dụng
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="profile-item">
+            <div class="profile-label">Phải trả</div>
+            <div class="profile-value">{{ context.registration.tong_tien }}</div>
+        </div>
+
+        <div class="profile-item">
+            <div class="profile-label">Đã thanh toán</div>
+            <div class="profile-value">{{ context.registration.da_thanh_toan }}</div>
+        </div>
+
+        <div class="profile-item">
+            <div class="profile-label">Còn phải thanh toán</div>
+            <div class="profile-value">{{ context.registration.con_phai_thanh_toan }}</div>
+        </div>
+
+        <div class="profile-item">
+            <div class="profile-label">Ngày đăng ký</div>
+            <div class="profile-value">{{ context.registration.ngay_dang_ky }}</div>
+        </div>
+
+        <div class="profile-item profile-wide">
+            <div class="profile-label">Ghi chú</div>
+            <div class="profile-value">{{ context.registration.ghi_chu }}</div>
+        </div>
+    </div>
+</section>
+
+<div class="registration-tabs">
+    <button class="registration-tab active" data-tab="payments">Thanh toán</button>
+
+    {% if context.registration.loai_goi_raw == 'CO_PT' %}
+    <button class="registration-tab" data-tab="assignments">Phân công PT</button>
+    <button class="registration-tab" data-tab="schedules">Lịch tập PT</button>
+    {% endif %}
+
+</div>
+
+<section class="registration-tab-panel active" id="tab-payments">
+    <div class="data-card">
+        <table class="table-operate">
+            <thead>
+                <tr>
+                    <th>Mã TT</th>
+                    <th>Thời gian</th>
+                    <th>Số tiền</th>
+                    <th>Hình thức</th>
+                    <th>Trạng thái</th>
+                    <th>Ghi chú</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for row in context.payments %}
+                <tr>
+                    <td>{{ row.ma_hien_thi }}</td>
+                    <td>{{ row.ngay_thanh_toan }}</td>
+                    <td>{{ row.so_tien }}</td>
+                    <td>{{ row.hinh_thuc }}</td>
+                    <td>
+                        <span class="badge-status {{ row.payment_class }}">
+                            {{ row.payment_text }}
+                        </span>
+                    </td>
+                    <td>{{ row.ghi_chu }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="6" class="text-center text-muted py-4">
+                        Chưa có giao dịch thanh toán.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+
+
+{% if context.registration.loai_goi_raw == 'CO_PT' %}
+<section class="registration-tab-panel" id="tab-assignments">
+    <div class="data-card">
+        <table class="table-operate">
+            <thead>
+                <tr>
+                    <th>Mã PC</th>
+                    <th>PT phụ trách</th>
+                    <th>SĐT PT</th>
+                    <th>Ngày phân công</th>
+                    <th>Ngày kết thúc</th>
+                    <th>Trạng thái</th>
+                    <th>Ghi chú</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for row in context.assignments %}
+                <tr>
+                    <td>{{ row.ma_hien_thi }}</td>
+                    <td>{{ row.ten_pt }}</td>
+                    <td>{{ row.sdt_pt }}</td>
+                    <td>{{ row.ngay_phan_cong }}</td>
+                    <td>{{ row.ngay_ket_thuc }}</td>
+                    <td>
+                        <span class="badge-status {{ row.status_class }}">
+                            {{ row.status_text }}
+                        </span>
+                    </td>
+                    <td>{{ row.ghi_chu }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="7" class="text-center text-muted py-4">
+                        Chưa có phân công PT cho đăng ký này.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endif %}
+
+
+{% if context.registration.loai_goi_raw == 'CO_PT' %}
+<section class="registration-tab-panel" id="tab-schedules">
+    <div class="data-card">
+        <table class="table-operate">
+            <thead>
+                <tr>
+                    <th>Mã lịch</th>
+                    <th>Ngày tập</th>
+                    <th>Thời gian</th>
+                    <th>PT phụ trách</th>
+                    <th>Trạng thái</th>
+                    <th>Ghi chú</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for row in context.schedules %}
+                <tr>
+                    <td>{{ row.ma_hien_thi }}</td>
+                    <td>{{ row.ngay_tap }}</td>
+                    <td>{{ row.thoi_gian }}</td>
+                    <td>{{ row.ten_pt }}</td>
+                    <td>
+                        <span class="badge-status {{ row.status_class }}">
+                            {{ row.status_text }}
+                        </span>
+                    </td>
+                    <td>{{ row.ghi_chu }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="6" class="text-center text-muted py-4">
+                        Chưa có lịch tập PT cho đăng ký này.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endif %}
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const tabs = document.querySelectorAll(".registration-tab");
+    const panels = document.querySelectorAll(".registration-tab-panel");
+
+    tabs.forEach(function (tab) {
+        tab.addEventListener("click", function () {
+            tabs.forEach(t => t.classList.remove("active"));
+            panels.forEach(p => p.classList.remove("active"));
+
+            tab.classList.add("active");
+            document.getElementById("tab-" + tab.dataset.tab).classList.add("active");
+        });
+    });
+});
+</script>
+{% endblock %}

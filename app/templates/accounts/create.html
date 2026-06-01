@@ -1,0 +1,179 @@
+{% extends "base.html" %}
+
+{% block title %}Tạo tài khoản | ProGym{% endblock %}
+
+{% block page_css %}
+<link 
+    rel="stylesheet" 
+    href="{{ url_for('static', filename='css/modules/accounts.css') }}"
+>
+{% endblock %}
+
+{% block content %}
+<div class="page-topline">
+    <h1 class="page-title">Tạo tài khoản</h1>
+
+    <div class="page-actions">
+        <a href="{{ url_for('accounts.index') }}" class="btn-operate btn-gray text-decoration-none">
+            <i class="bi bi-arrow-left"></i>
+            Quay lại
+        </a>
+    </div>
+</div>
+
+<form method="POST" class="account-form-layout">
+    <section class="account-form-card">
+        <div class="account-card-header">Thông tin đăng nhập</div>
+
+        <div class="account-card-body">
+            <div class="account-form-grid">
+                <div class="account-form-group">
+                    <label>Tên đăng nhập <span class="required">*</span></label>
+                    <input 
+                        type="text" 
+                        name="ten_dang_nhap" 
+                        class="account-input"
+                        placeholder="Ví dụ: letan02"
+                    >
+                </div>
+
+                <div class="account-form-group">
+                    <label>Vai trò <span class="required">*</span></label>
+                    <select name="ma_vai_tro" class="account-input" id="roleSelect">
+                        <option value="">-- Chọn vai trò --</option>
+                        {% for role in form_context.roles %}
+                        <option 
+                            value="{{ role.ma_vai_tro }}"
+                            data-role-name="{{ role.ten_vai_tro }}"
+                        >
+                            {% if role.ten_vai_tro == "ADMIN" %}
+                                Admin
+                            {% elif role.ten_vai_tro == "LE_TAN" %}
+                                Lễ tân
+                            {% elif role.ten_vai_tro == "PT" %}
+                                PT
+                            {% else %}
+                                {{ role.ten_vai_tro }}
+                            {% endif %}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="account-form-group">
+                    <label>Mật khẩu <span class="required">*</span></label>
+                    <input 
+                        type="password" 
+                        name="mat_khau" 
+                        class="account-input"
+                        placeholder="Tối thiểu 6 ký tự"
+                    >
+                </div>
+
+                <div class="account-form-group">
+                    <label>Xác nhận mật khẩu <span class="required">*</span></label>
+                    <input 
+                        type="password" 
+                        name="xac_nhan_mat_khau" 
+                        class="account-input"
+                        placeholder="Nhập lại mật khẩu"
+                    >
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="account-form-card">
+        <div class="account-card-header">Thông tin người dùng</div>
+
+        <div class="account-card-body">
+            <div class="account-form-grid">
+                <div class="account-form-group">
+                    <label>Họ tên <span class="required">*</span></label>
+                    <input 
+                        type="text" 
+                        name="ho_ten" 
+                        class="account-input"
+                        placeholder="Nhập họ tên"
+                    >
+                </div>
+
+                <div class="account-form-group">
+                    <label>Số điện thoại</label>
+                    <input 
+                        type="text" 
+                        name="so_dien_thoai" 
+                        class="account-input"
+                        placeholder="Nhập số điện thoại"
+                    >
+                </div>
+
+                <div class="account-form-group full">
+                    <label>Email</label>
+                    <input 
+                        type="email" 
+                        name="email" 
+                        class="account-input"
+                        placeholder="email@example.com"
+                    >
+                </div>
+
+                <div class="account-form-group full" id="ptLinkGroup" style="display: none;">
+                    <label>Gắn với hồ sơ PT <span class="required">*</span></label>
+                    <select name="ma_pt" class="account-input">
+                        <option value="">-- Chọn PT đang làm việc chưa có tài khoản --</option>
+                        {% for pt in form_context.available_pts %}
+                        <option value="{{ pt.ma_pt }}">
+                            {{ pt.ho_ten }}{% if pt.so_dien_thoai %} - {{ pt.so_dien_thoai }}{% endif %}
+                        </option>
+                        {% endfor %}
+                    </select>
+
+                    <div class="account-note">
+                        Tài khoản vai trò PT phải được gắn với một hồ sơ PT đang làm việc để hệ thống lọc lịch tập đúng theo PT đăng nhập.
+                    </div>
+                </div>
+            </div>
+
+            <div class="account-form-actions">
+                <a href="{{ url_for('accounts.index') }}" class="btn-operate btn-gray text-decoration-none">
+                    Hủy
+                </a>
+
+                <button type="submit" class="btn-operate btn-green">
+                    <i class="bi bi-save-fill"></i>
+                    Tạo tài khoản
+                </button>
+            </div>
+        </div>
+    </section>
+</form>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const roleSelect = document.getElementById("roleSelect");
+    const ptLinkGroup = document.getElementById("ptLinkGroup");
+
+    function syncPtLink() {
+        if (!roleSelect || !ptLinkGroup) {
+            return;
+        }
+
+        const selectedOption = roleSelect.options[roleSelect.selectedIndex];
+        const roleName = selectedOption ? selectedOption.getAttribute("data-role-name") : "";
+
+        if (roleName === "PT") {
+            ptLinkGroup.style.display = "block";
+        } else {
+            ptLinkGroup.style.display = "none";
+        }
+    }
+
+    if (roleSelect) {
+        roleSelect.addEventListener("change", syncPtLink);
+    }
+
+    syncPtLink();
+});
+</script>
+{% endblock %}

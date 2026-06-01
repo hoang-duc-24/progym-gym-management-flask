@@ -1,0 +1,118 @@
+{% extends "base.html" %}
+
+{% block title %}Đăng nhập | ProGym{% endblock %}
+
+{% block content %}
+<div class="login-shell">
+    <div class="login-panel">
+        <section class="login-visual">
+            <div class="login-visual-overlay"></div>
+
+            <div class="login-visual-content">
+                <div class="login-visual-brand">
+                    <img 
+                        src="{{ url_for('static', filename='img/progym-logo.png') }}" 
+                        alt="ProGym Logo"
+                        class="login-brand-image"
+                    >
+                    <div>
+                        <div class="login-visual-name">ProGym</div>
+                        <div class="login-visual-sub">Gym Management System</div>
+                    </div>
+                </div>
+
+                <div class="login-visual-slogan">
+                    <h2>Hệ thống quản lý<br>trung tâm thể hình</h2>
+                    
+                </div>
+            </div>
+        </section>
+
+        <section class="login-form-side">
+            <div class="login-form-inner">
+                <div class="login-logo-row">
+                    <img 
+                        src="{{ url_for('static', filename='img/progym-logo.png') }}" 
+                        alt="ProGym Logo"
+                        class="login-main-logo"
+                    >
+                    <div class="login-logo-text">
+                        <span>Pro</span>Gym
+                    </div>
+                </div>
+
+                <div class="login-divider"></div>
+
+                <h1 class="login-heading">THÔNG TIN ĐĂNG NHẬP</h1>
+
+                <form method="POST" action="{{ url_for('auth.login') }}" class="login-form">
+                    <div class="login-field-row">
+                        <label for="username">Tên tài khoản:</label>
+                        <input 
+                            id="username"
+                            type="text" 
+                            name="username" 
+                            class="login-input" 
+                            placeholder="Tên đăng nhập"
+                            autocomplete="username"
+                            required
+                        >
+                    </div>
+
+                    <div class="login-field-row">
+                        <label for="password">Mật khẩu:</label>
+                        <div class="login-password-wrap">
+                            <input 
+                                id="password"
+                                type="password" 
+                                name="password" 
+                                class="login-input" 
+                                placeholder="Mật khẩu"
+                                autocomplete="current-password"
+                                required
+                            >
+                            <button type="button" class="login-password-toggle" id="togglePassword" title="Hiện/ẩn mật khẩu">
+                                <i class="bi bi-eye-fill"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="login-meta-row">
+                        <label class="login-remember">
+                            <input type="checkbox" name="remember">
+                            <span>Nhớ tài khoản</span>
+                        </label>
+
+                        <a href="#" class="login-forgot">Quên mật khẩu?</a>
+                    </div>
+
+                    <button type="submit" class="login-submit">
+                        Đăng nhập
+                    </button>
+                </form>
+            </div>
+        </section>
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const toggleButton = document.getElementById("togglePassword");
+    const passwordInput = document.getElementById("password");
+
+    if (!toggleButton || !passwordInput) {
+        return;
+    }
+
+    toggleButton.addEventListener("click", function () {
+        const isPassword = passwordInput.getAttribute("type") === "password";
+        passwordInput.setAttribute("type", isPassword ? "text" : "password");
+
+        const icon = toggleButton.querySelector("i");
+        if (icon) {
+            icon.className = isPassword ? "bi bi-eye-slash-fill" : "bi bi-eye-fill";
+        }
+    });
+});
+</script>
+{% endblock %}

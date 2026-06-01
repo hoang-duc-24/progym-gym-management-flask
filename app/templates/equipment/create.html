@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block title %}Thêm thiết bị | ProGym{% endblock %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/modules/equipment.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="page-topline">
+    <h1 class="page-title">Thêm thiết bị</h1>
+
+    <div class="page-actions">
+        <a href="{{ url_for('equipment.index') }}" class="btn-operate btn-gray text-decoration-none">
+            <i class="bi bi-arrow-left"></i>
+            Quay lại
+        </a>
+    </div>
+</div>
+
+<form method="POST" enctype="multipart/form-data" class="equipment-form-card equipment-create-card">
+    <div class="equipment-form-header">Thông tin thiết bị</div>
+
+    <div class="equipment-form-body">
+        <div class="equipment-form-grid equipment-create-form-grid">
+            <div class="equipment-form-group">
+                <label>Tên thiết bị <span class="required">*</span></label>
+                <input
+                    type="text"
+                    name="ten_thiet_bi"
+                    class="equipment-input"
+                    placeholder="Ví dụ: Máy chạy bộ 02"
+                    required
+                >
+            </div>
+
+            <div class="equipment-form-group">
+                <label>Loại thiết bị <span class="required">*</span></label>
+                <input
+                    type="text"
+                    name="loai_thiet_bi"
+                    class="equipment-input"
+                    placeholder="Ví dụ: Cardio, Strength, Tạ Dumbbell"
+                    required
+                >
+            </div>
+
+            <div class="equipment-form-group">
+                <label>Vị trí</label>
+                <input
+                    type="text"
+                    name="vi_tri"
+                    class="equipment-input"
+                    placeholder="Ví dụ: Khu cardio tầng 1"
+                >
+            </div>
+
+            <div class="equipment-form-group">
+                <label>Ngày mua</label>
+                <input
+                    type="date"
+                    name="ngay_mua"
+                    class="equipment-input"
+                >
+            </div>
+
+            <div class="equipment-form-group">
+                <label>Tình trạng</label>
+                <select name="tinh_trang" class="equipment-input">
+                    {% for status in context.status_options %}
+                    <option value="{{ status.value }}">{{ status.label }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="equipment-form-group">
+                <label>Ảnh thiết bị</label>
+                <input
+                    type="file"
+                    name="hinh_anh"
+                    class="equipment-input file-input"
+                    accept=".jpg,.jpeg,.png,.webp"
+                >
+            </div>
+
+            <div class="equipment-form-group full">
+                <label>Ghi chú</label>
+                <textarea
+                    name="ghi_chu"
+                    class="equipment-textarea equipment-note-textarea"
+                    placeholder="Ví dụ: Hoạt động bình thường, đặt tại khu tập ngực..."
+                ></textarea>
+            </div>
+        </div>
+    </div>
+
+    <div class="equipment-create-actions">
+        <a href="{{ url_for('equipment.index') }}" class="btn-operate btn-gray text-decoration-none">
+            Hủy
+        </a>
+
+        <button type="submit" class="btn-operate btn-green">
+            <i class="bi bi-save-fill"></i>
+            Lưu thiết bị
+        </button>
+    </div>
+</form>
+{% endblock %}

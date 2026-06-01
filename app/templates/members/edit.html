@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+
+{% block title %}Sửa thông tin hội viên | ProGym{% endblock %}
+
+{% block page_css %}
+<link 
+    rel="stylesheet" 
+    href="{{ url_for('static', filename='css/modules/members.css') }}"
+>
+{% endblock %}
+
+{% block content %}
+<div class="page-topline">
+    <div>
+        <h1 class="page-title">Sửa thông tin hội viên</h1>
+        <div class="page-subtitle">
+            {{ form_context.ma_khach_hang }} - {{ form_context.ho_ten }}
+        </div>
+    </div>
+
+    <div class="page-actions">
+        <a href="{{ url_for('members.detail', member_id=form_context.ma_hoi_vien) }}" class="btn-operate btn-gray text-decoration-none">
+            <i class="bi bi-arrow-left"></i>
+            Quay lại
+        </a>
+    </div>
+</div>
+
+<form 
+    method="post" 
+    action="{{ url_for('members.edit', member_id=form_context.ma_hoi_vien) }}"
+    class="member-edit-layout"
+>
+    <div class="member-create-card">
+        <div class="member-create-card-header">
+            Thông tin cá nhân
+        </div>
+
+        <div class="member-create-card-body">
+            <div class="member-form-grid">
+                <div class="member-form-group">
+                    <label>Họ tên <span class="required">*</span></label>
+                    <input 
+                        type="text" 
+                        name="ho_ten" 
+                        class="member-input"
+                        value="{{ form_context.ho_ten }}"
+                        required
+                    >
+                </div>
+
+                <div class="member-form-group">
+                    <label>Số điện thoại <span class="required">*</span></label>
+                    <input 
+                        type="text" 
+                        name="so_dien_thoai" 
+                        class="member-input"
+                        value="{{ form_context.so_dien_thoai }}"
+                        required
+                    >
+                </div>
+
+                <div class="member-form-group">
+                    <label>Giới tính</label>
+                    <select name="gioi_tinh" class="member-input">
+                        <option value="NAM" {% if form_context.gioi_tinh == "NAM" %}selected{% endif %}>Nam</option>
+                        <option value="NU" {% if form_context.gioi_tinh == "NU" %}selected{% endif %}>Nữ</option>
+                        <option value="KHAC" {% if form_context.gioi_tinh == "KHAC" %}selected{% endif %}>Khác</option>
+                    </select>
+                </div>
+
+                <div class="member-form-group">
+                    <label>Ngày sinh</label>
+                    <input 
+                        type="date" 
+                        name="ngay_sinh" 
+                        class="member-input"
+                        value="{{ form_context.ngay_sinh }}"
+                    >
+                </div>
+
+                <div class="member-form-group">
+                    <label>Email</label>
+                    <input 
+                        type="email" 
+                        name="email" 
+                        class="member-input"
+                        value="{{ form_context.email }}"
+                    >
+                </div>
+
+                <div class="member-form-group">
+                    <label>Địa chỉ</label>
+                    <input 
+                        type="text" 
+                        name="dia_chi" 
+                        class="member-input"
+                        value="{{ form_context.dia_chi }}"
+                    >
+                </div>
+
+                <div class="member-form-group">
+                    <label>Trạng thái hội viên</label>
+                    <select name="trang_thai" class="member-input">
+                        <option value="HOAT_DONG" {% if form_context.trang_thai == "HOAT_DONG" %}selected{% endif %}>
+                            Hoạt động
+                        </option>
+
+                        <option value="NGUNG_HOAT_DONG" {% if form_context.trang_thai == "NGUNG_HOAT_DONG" %}selected{% endif %}>
+                            Ngừng hoạt động
+                        </option>
+                    </select>
+                </div>
+
+                <div class="member-form-group">
+                    <label>Ngày tham gia</label>
+                    <input 
+                        type="text" 
+                        class="member-input"
+                        value="{{ form_context.ngay_tham_gia }}"
+                        disabled
+                    >
+                </div>
+
+                <div class="member-form-group full">
+                    <label>Ghi chú</label>
+                    <textarea 
+                        name="ghi_chu" 
+                        class="member-textarea"
+                    >{{ form_context.ghi_chu }}</textarea>
+                </div>
+            </div>
+
+            <div class="member-form-actions">
+                <a href="{{ url_for('members.detail', member_id=form_context.ma_hoi_vien) }}" class="btn-operate btn-gray text-decoration-none">
+                    Hủy
+                </a>
+
+                <button type="submit" class="btn-operate btn-green">
+                    <i class="bi bi-check-circle"></i>
+                    Lưu thay đổi
+                </button>
+            </div>
+        </div>
+    </div>
+
+</div>
+</form>
+{% endblock %}

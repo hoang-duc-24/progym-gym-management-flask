@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+
+{% block title %}
+{% if mode == "create" %}Tạo gói tập{% else %}Sửa gói tập{% endif %} | ProGym
+{% endblock %}
+
+{% block page_css %}
+<link 
+    rel="stylesheet" 
+    href="{{ url_for('static', filename='css/modules/packages.css') }}"
+>
+{% endblock %}
+
+{% block content %}
+{% set package = form_context.package %}
+{% set has_registrations = form_context.has_registrations %}
+
+<div class="page-topline">
+    <h1 class="page-title">
+        {% if mode == "create" %}
+            Tạo gói tập
+        {% else %}
+            Cập nhật gói tập
+        {% endif %}
+    </h1>
+
+    <div class="page-actions">
+        <a href="{{ url_for('packages.index') }}" class="btn-operate btn-gray text-decoration-none">
+            <i class="bi bi-arrow-left"></i>
+            Quay lại
+        </a>
+    </div>
+</div>
+
+<form method="POST" class="package-form-layout">
+    <section class="package-form-card">
+        <div class="package-form-card-header">
+            Thông tin gói tập
+        </div>
+
+        <div class="package-form-card-body">
+            {% if mode == "edit" and has_registrations %}
+            <div class="package-note mb-3">
+                Gói này đã có {{ form_context.registration_count }} lượt đăng ký. 
+                Chỉ được cập nhật tên gói và mô tả; loại gói, giá, thời hạn và số buổi PT đã được khóa.
+            </div>
+            {% endif %}
+
+            <div class="package-form-grid">
+                <div class="package-form-group full">
+                    <label>Tên gói tập <span class="required">*</span></label>
+                    <input 
+                        type="text" 
+                        name="ten_goi_tap" 
+                        class="package-input"
+                        value="{{ package.ten_goi_tap if package else '' }}"
+                        placeholder="Ví dụ: Gói tập tự do 6 tháng"
+                        maxlength="80"
+                        required
+                    >
+                </div>
+
+                <div class="package-form-group">
+                    <label>Loại gói <span class="required">*</span></label>
+                    <select 
+                        name="loai_goi" 
+                        class="package-input" 
+                        id="packageTypeSelect"
+                        {% if mode == "edit" and has_registrations %}disabled{% endif %}
+                    >
+                        {% for option in form_context.type_options %}
+                        <option 
+                            value="{{ option.value }}"
+                            {% if package and package.loai_goi == option.value %}selected{% endif %}
+                        >
+                            {{ option.label }}
+                        </option>
+                        {% endfor %}
+                    </select>
+
+                    {% if mode == "edit" and has_registrations %}
+                    <input type="hidden" name="loai_goi" value="{{ package.loai_goi }}">
+                    {% endif %}
+                </div>
+
+                <div class="package-form-group">
+                    <label>Giá gói <span class="required">*</span></label>
+                    <input 
+                        type="number" 
+                        name="gia_goi" 
+                        class="package-input"
+                        min="0"
+                        step="1000"
+                        value="{{ package.gia_goi|int if package else '' }}"
+                        placeholder="Ví dụ: 1500000"
+                        {% if mode == "edit" and has_registrations %}readonly{% endif %}
+                    >
+                </div>
+
+                <div class="package-form-group">
+                    <label>Thời hạn <span class="required">*</span></label>
+                    <input 
+                        type="number" 
+                        name="thoi_han_ngay" 
+                        class="package-input"
+                        min="1"
+                        value="{{ package.thoi_han_ngay if package else '' }}"
+                        placeholder="Số ngày"
+                        {% if mode == "edit" and has_registrations %}readonly{% endif %}
+                    >
+                </div>
+
+                <div class="package-form-group">
+                    <label>Số buổi PT</label>
+                    <input 
+                        type="number" 
+                        name="so_buoi_pt" 
+                        class="package-input"
+                        min="0"
+                        value="{{ package.so_buoi_pt if package else 0 }}"
+                        id="ptSessionInput"
+                        {% if mode == "edit" and has_registrations %}readonly{% endif %}
+                    >
+                </div>
+
+                {% if not (mode == "edit" and has_registrations) %}
+                <div class="package-form-group full">
+                    <div class="package-note" id="packageTypeNote">
+                        Gói không PT sẽ không sử dụng số buổi PT.
+                    </div>
+                </div>
+                {% endif %}
+
+                <div class="package-form-group full">
+                    <label>Mô tả</label>
+                    <textarea 
+                        name="mo_ta" 
+                        class="package-textarea"
+                        placeholder="Mô tả ngắn về phạm vi sử dụng gói"
+                        maxlength="255"
+                    >{{ package.mo_ta if package else '' }}</textarea>
+                </div>
+            </div>
+
+            <div class="package-form-actions">
+                <a href="{{ url_for('packages.index') }}" class="btn-operate btn-gray text-decoration-none">
+                    Hủy
+                </a>
+
+                <button type="submit" class="btn-operate btn-green">
+                    <i class="bi bi-save-fill"></i>
+                    {% if mode == "create" %}
+                        Lưu gói tập
+                    {% else %}
+                        Lưu cập nhật
+                    {% endif %}
+                </button>
+            </div>
+        </div>
+    </section>
+</form>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const packageTypeSelect = document.getElementById("packageTypeSelect");
+    const ptSessionInput = document.getElementById("ptSessionInput");
+    const note = document.getElementById("packageTypeNote");
+    const isLocked = "{{ 'true' if mode == 'edit' and has_registrations else 'false' }}" === "true";
+
+    function syncPackageType() {
+        if (isLocked) {
+            return;
+        }
+
+        if (!packageTypeSelect || !ptSessionInput) {
+            return;
+        }
+
+        if (packageTypeSelect.value === "KHONG_PT") {
+            ptSessionInput.value = 0;
+            ptSessionInput.setAttribute("readonly", "readonly");
+
+            if (note) {
+                note.textContent = "Gói không PT chỉ dùng khu vực tập tự do, số buổi PT sẽ tự động bằng 0.";
+            }
+        } else {
+            ptSessionInput.removeAttribute("readonly");
+
+            if (parseInt(ptSessionInput.value || "0") <= 0) {
+                ptSessionInput.value = "";
+            }
+
+            if (note) {
+                note.textContent = "Gói có PT phải nhập số buổi PT lớn hơn 0.";
+            }
+        }
+    }
+
+    if (packageTypeSelect) {
+        packageTypeSelect.addEventListener("change", syncPackageType);
+    }
+
+    syncPackageType();
+});
+</script>
+{% endblock %}

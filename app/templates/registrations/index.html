@@ -1,0 +1,257 @@
+{% extends "base.html" %}
+
+{% block title %}Đăng ký gói | ProGym{% endblock %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/modules/registrations.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="page-topline">
+    <h1 class="page-title">Quản lý đăng ký gói</h1>
+
+    <div class="page-actions">
+        <a href="{{ url_for('registrations.create') }}" class="btn-operate btn-green text-decoration-none">
+            <i class="bi bi-card-checklist"></i>
+            Đăng ký thêm gói cho hội viên
+        </a>
+    </div>
+</div>
+
+<section class="registration-kpi-grid">
+    <div class="registration-kpi-card">
+        <div class="kpi-label">Tổng đăng ký</div>
+        <div class="kpi-value">{{ context.kpis.tong_dang_ky }}</div>
+    </div>
+
+    <div class="registration-kpi-card">
+        <div class="kpi-label">Đang hiệu lực</div>
+        <div class="kpi-value">{{ context.kpis.dang_hieu_luc }}</div>
+    </div>
+
+    <div class="registration-kpi-card">
+        <div class="kpi-label">Chưa kích hoạt</div>
+        <div class="kpi-value">{{ context.kpis.chua_kich_hoat }}</div>
+    </div>
+
+    <div class="registration-kpi-card">
+        <div class="kpi-label">Hết hạn</div>
+        <div class="kpi-value">{{ context.kpis.het_han }}</div>
+    </div>
+
+    <div class="registration-kpi-card">
+        <div class="kpi-label">Đã thanh toán</div>
+        <div class="kpi-value">{{ context.kpis.da_thanh_toan }}</div>
+    </div>
+
+    <div class="registration-kpi-card">
+        <div class="kpi-label">Chưa thanh toán đủ</div>
+        <div class="kpi-value">{{ context.kpis.chua_thanh_toan_du }}</div>
+    </div>
+</section>
+
+<div class="registrations-layout" id="registrationsLayout">
+    <aside class="registrations-filter" id="registrationsFilter">
+        <div class="filter-title">
+            <span>Bộ lọc tìm kiếm</span>
+
+            <button type="button" class="filter-toggle-btn" id="registrationsFilterToggle">
+                <i class="bi bi-chevron-left"></i>
+            </button>
+        </div>
+
+        <form method="GET" action="{{ url_for('registrations.index') }}" class="filter-body">
+
+            <div class="filter-group">
+                <label>Loại gói</label>
+                <select name="loai_goi" class="filter-input">
+                    <option value="">Tất cả loại gói</option>
+                    {% for item in context.package_type_options %}
+                    <option
+                        value="{{ item.value }}"
+                        {% if context.filters.loai_goi == item.value %}selected{% endif %}
+                    >
+                        {{ item.label }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label>Trạng thái thanh toán</label>
+                <select name="trang_thai_thanh_toan" class="filter-input">
+                    <option value="">Tất cả trạng thái</option>
+                    {% for item in context.payment_status_options %}
+                    <option
+                        value="{{ item.value }}"
+                        {% if context.filters.trang_thai_thanh_toan == item.value %}selected{% endif %}
+                    >
+                        {{ item.label }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="filter-group">
+                <label>Trạng thái dịch vụ</label>
+                <select name="trang_thai_hieu_luc" class="filter-input">
+                    <option value="">Tất cả trạng thái</option>
+                    {% for item in context.service_status_options %}
+                    <option
+                        value="{{ item.value }}"
+                        {% if context.filters.trang_thai_hieu_luc == item.value %}selected{% endif %}
+                    >
+                        {{ item.label }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            
+
+            <div class="filter-group">
+                <label>Tìm nhanh</label>
+                <input
+                    type="text"
+                    name="keyword"
+                    class="filter-input"
+                    placeholder="Tên hội viên, SĐT, mã ĐK, gói..."
+                    value="{{ context.filters.keyword }}"
+                >
+            </div>
+
+            <div class="filter-actions">
+                <button type="submit" class="btn-operate btn-green w-100">
+                    <i class="bi bi-search"></i>
+                    Tìm kiếm
+                </button>
+
+                <a href="{{ url_for('registrations.index') }}" class="btn-operate btn-gray text-decoration-none w-100">
+                    Đặt lại
+                </a>
+            </div>
+        </form>
+    </aside>
+
+    <section class="registrations-main">
+        <div class="registrations-toolbar">
+            <button type="button" class="registrations-filter-inline-toggle" id="registrationsFilterOpen">
+                <i class="bi bi-funnel-fill"></i>
+                Bộ lọc
+            </button>
+
+            <div class="data-summary-line">
+                Tổng số kết quả: <strong>{{ context.total }}</strong>
+            </div>
+        </div>
+
+        <div class="data-card">
+            <div class="registration-table-wrap">
+                <table class="table-operate registrations-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 90px;">Mã ĐK</th>
+                            <th style="width: 170px;">Hội viên</th>
+                            <th style="width: 220px;">Gói tập</th>
+                            <th style="width: 105px;">Bắt đầu</th>
+                            <th style="width: 105px;">Hết hạn</th>
+                            <th style="width: 105px;">Còn lại</th>
+                            <th style="width: 145px;">Thanh toán</th>
+                            <th style="width: 130px;">Dịch vụ</th>
+                            <th style="width: 120px;">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in context.registrations %}
+                        <tr>
+                            <td>{{ row.ma_hien_thi }}</td>
+
+                            <td>
+                                <a href="{{ url_for('members.detail', member_id=row.ma_hoi_vien) }}" class="link-name">
+                                    {{ row.ten_hoi_vien }}
+                                </a>
+                                <div class="sub-text">{{ row.so_dien_thoai }}</div>
+                            </td>
+
+                            <td>
+                                <div class="strong-text">{{ row.ten_goi_tap }}</div>
+                                <div class="sub-text">{{ row.loai_goi }}</div>
+                            </td>
+
+                            <td>{{ row.ngay_bat_dau }}</td>
+
+                            <td>{{ row.ngay_ket_thuc }}</td>
+
+                            <td class="registration-remaining-cell">
+                                {{ row.con_lai }}
+                            </td>
+
+                            <td>
+                                <span class="badge-status {{ row.payment_class }}">
+                                    {{ row.payment_text }}
+                                </span>
+                            </td>
+
+                            <td>
+                                <span class="badge-status {{ row.service_class }}">
+                                    {{ row.service_text }}
+                                </span>
+                            </td>
+
+                            <td>
+                                <div class="registration-actions">
+                                    <a 
+                                        href="{{ url_for('registrations.detail', registration_id=row.ma_dang_ky) }}" 
+                                        class="registration-action-btn view"
+                                        title="Xem chi tiết"
+                                    >
+                                        <i class="bi bi-eye-fill"></i>
+                                    </a>
+
+                                    {% if row.trang_thai_thanh_toan != 'DA_THANH_TOAN' %}
+                                    <a 
+                                        href="{{ url_for('payments.create', registration_id=row.ma_dang_ky) }}" 
+                                        class="registration-action-btn pay"
+                                        title="Ghi nhận thanh toán"
+                                    >
+                                        <i class="bi bi-cash-coin"></i>
+                                    </a>
+                                    {% endif %}
+                                </div>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="9" class="text-center text-muted py-4">
+                                Không có đăng ký gói phù hợp.
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    
+                </table>
+            </div>
+        </div>
+    </section>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const layout = document.getElementById("registrationsLayout");
+    const closeBtn = document.getElementById("registrationsFilterToggle");
+    const openBtn = document.getElementById("registrationsFilterOpen");
+
+    if (!layout || !closeBtn || !openBtn) return;
+
+    closeBtn.addEventListener("click", function () {
+        layout.classList.add("filter-collapsed");
+        openBtn.classList.add("is-visible");
+    });
+
+    openBtn.addEventListener("click", function () {
+        layout.classList.remove("filter-collapsed");
+        openBtn.classList.remove("is-visible");
+    });
+});
+</script>
+{% endblock %}

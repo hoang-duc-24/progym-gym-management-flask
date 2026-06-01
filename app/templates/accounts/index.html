@@ -1,0 +1,585 @@
+{% extends "base.html" %}
+
+{% block title %}Quản lý tài khoản | ProGym{% endblock %}
+
+{% block page_css %}
+<link 
+    rel="stylesheet" 
+    href="{{ url_for('static', filename='css/modules/accounts.css') }}"
+>
+{% endblock %}
+
+{% block content %}
+<div class="page-topline">
+    <h1 class="page-title">Quản lý tài khoản</h1>
+
+    <div class="page-actions">
+        <button 
+            type="button" 
+            class="btn-operate btn-green"
+            data-bs-toggle="modal"
+            data-bs-target="#createAccountModal"
+        >
+            <i class="bi bi-plus-circle-fill"></i>
+            Tạo tài khoản
+        </button>
+    </div>
+</div>
+
+<section class="accounts-filter-bar">
+    <form method="GET" class="accounts-filter-form">
+        <div class="accounts-filter-keyword">
+            <input 
+                type="text" 
+                name="keyword" 
+                class="filter-input"
+                value="{{ page_data.filters.keyword }}"
+                placeholder="Tên đăng nhập, họ tên, SĐT..."
+            >
+        </div>
+
+        <div class="accounts-filter-role">
+            <select name="role" class="filter-input">
+                <option value="">Tất cả vai trò</option>
+                {% for role in page_data.role_options %}
+                <option 
+                    value="{{ role.value }}"
+                    {% if page_data.filters.role == role.value %}selected{% endif %}
+                >
+                    {{ role.label }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="accounts-filter-status">
+            <select name="status" class="filter-input">
+                <option value="">Tất cả trạng thái</option>
+                {% for status in page_data.status_options %}
+                <option 
+                    value="{{ status.value }}"
+                    {% if page_data.filters.status == status.value %}selected{% endif %}
+                >
+                    {{ status.label }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <button type="submit" class="btn-operate btn-green">
+            <i class="bi bi-search"></i>
+            Tìm kiếm
+        </button>
+
+        <a href="{{ url_for('accounts.index') }}" class="btn-operate btn-gray text-decoration-none">
+            <i class="bi bi-arrow-clockwise"></i>
+            Đặt lại
+        </a>
+
+        <div class="accounts-count-pill">
+            <i class="bi bi-person-gear"></i>
+            Tổng tài khoản:
+            <strong>{{ page_data.total }}</strong>
+        </div>
+    </form>
+</section>
+
+<section class="accounts-main">
+    <div class="accounts-table-wrap">
+        <table class="accounts-table">
+            <thead>
+                <tr>
+                    <th style="width: 95px;">Mã TK</th>
+                    <th style="width: 220px;">Tài khoản</th>
+                    <th style="width: 210px;">Liên hệ</th>
+                    <th style="width: 110px;">Vai trò</th>
+                    <th style="width: 170px;">Liên kết PT</th>
+                    <th style="width: 120px;">Trạng thái</th>
+                    <th style="width: 155px;">Đăng nhập gần nhất</th>
+                    <th style="width: 100px;">Thao tác</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% if page_data.accounts %}
+                    {% for account in page_data.accounts %}
+                    <tr>
+                        <td>TK{{ "%06d"|format(account.ma_tai_khoan) }}</td>
+
+                        <td>
+                            <div class="account-name">{{ account.ho_ten }}</div>
+                            <div class="account-sub">{{ account.ten_dang_nhap }}</div>
+                        </td>
+
+                        <td>
+                            <div>{{ account.so_dien_thoai }}</div>
+                            <div class="account-sub">{{ account.email }}</div>
+                        </td>
+
+                        <td>
+                            <span class="soft-badge {{ account.role_class }}">
+                                {{ account.role_text }}
+                            </span>
+                        </td>
+
+                        <td>
+                            {% if account.ma_pt %}
+                                <div class="account-name">{{ account.ten_pt }}</div>
+                                <div class="account-sub">PT{{ "%06d"|format(account.ma_pt) }}</div>
+                            {% else %}
+                                <span class="account-sub">-</span>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            <span class="soft-badge {{ account.status_class }}">
+                                {{ account.status_text }}
+                            </span>
+                        </td>
+
+                        <td>
+                            {% if account.lan_dang_nhap_cuoi %}
+                                {{ account.lan_dang_nhap_cuoi }}
+                            {% else %}
+                                <span class="account-sub">Chưa đăng nhập</span>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            <div class="table-actions icon-actions">
+                                <button
+                                    type="button"
+                                    class="btn-icon-action btn-outline-primary"
+                                    title="Sửa tài khoản"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#editAccountModal{{ account.ma_tai_khoan }}"
+                                >
+                                    <i class="bi bi-pencil-square"></i>
+                                </button>
+
+                                <button
+                                    type="button"
+                                    class="btn-icon-action btn-outline-secondary"
+                                    title="Đặt lại mật khẩu"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#resetPasswordModal{{ account.ma_tai_khoan }}"
+                                >
+                                    <i class="bi bi-key"></i>
+                                </button>
+                                {% if account.can_lock %}
+                                <form 
+                                    method="POST" 
+                                    action="{{ url_for('accounts.lock', account_id=account.ma_tai_khoan) }}"
+                                    onsubmit="return confirm('Bạn chắc chắn muốn khóa tài khoản này?');"
+                                >
+                                    <button type="submit" class="btn-icon-action btn-outline-danger" title="Khóa tài khoản">
+                                        <i class="bi bi-lock"></i>
+                                    </button>
+                                </form>
+                                {% endif %}
+
+                                {% if account.can_unlock %}
+                                <form 
+                                    method="POST" 
+                                    action="{{ url_for('accounts.unlock', account_id=account.ma_tai_khoan) }}"
+                                    onsubmit="return confirm('Bạn chắc chắn muốn mở khóa tài khoản này?');"
+                                >
+                                    <button type="submit" class="btn-icon-action btn-outline-success" title="Mở khóa tài khoản">
+                                        <i class="bi bi-unlock"></i>
+                                    </button>
+                                </form>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="8" class="empty-row">Không có tài khoản phù hợp.</td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</section>
+<div class="modal fade" id="createAccountModal" tabindex="-1" aria-labelledby="createAccountModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content account-modal-content">
+            <form method="POST" action="{{ url_for('accounts.create') }}">
+                <div class="modal-header account-modal-header">
+                    <h5 class="modal-title" id="createAccountModalLabel">Tạo tài khoản</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                </div>
+
+                <div class="modal-body account-modal-body">
+                    <div class="account-modal-section-title">Thông tin đăng nhập</div>
+
+                    <div class="account-form-grid">
+                        <div class="account-form-group">
+                            <label>Tên đăng nhập <span class="required">*</span></label>
+                            <input 
+                                type="text" 
+                                name="ten_dang_nhap" 
+                                class="account-input"
+                                placeholder="Ví dụ: letan02"
+                            >
+                        </div>
+
+                        <div class="account-form-group">
+                            <label>Vai trò <span class="required">*</span></label>
+                            <select name="ma_vai_tro" class="account-input" id="createRoleSelect">
+                                <option value="">-- Chọn vai trò --</option>
+                                {% for role in form_context.roles %}
+                                <option 
+                                    value="{{ role.ma_vai_tro }}"
+                                    data-role-name="{{ role.ten_vai_tro }}"
+                                >
+                                    {% if role.ten_vai_tro == "ADMIN" %}
+                                        Admin
+                                    {% elif role.ten_vai_tro == "LE_TAN" %}
+                                        Lễ tân
+                                    {% elif role.ten_vai_tro == "PT" %}
+                                        PT
+                                    {% else %}
+                                        {{ role.ten_vai_tro }}
+                                    {% endif %}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="account-form-group">
+                            <label>Mật khẩu <span class="required">*</span></label>
+                            <input 
+                                type="password" 
+                                name="mat_khau" 
+                                class="account-input"
+                                placeholder="Tối thiểu 6 ký tự"
+                            >
+                        </div>
+
+                        <div class="account-form-group">
+                            <label>Xác nhận mật khẩu <span class="required">*</span></label>
+                            <input 
+                                type="password" 
+                                name="xac_nhan_mat_khau" 
+                                class="account-input"
+                                placeholder="Nhập lại mật khẩu"
+                            >
+                        </div>
+                    </div>
+
+                    <div class="account-modal-section-title mt-3">Thông tin người dùng</div>
+
+                    <div class="account-form-grid">
+                        <div class="account-form-group">
+                            <label>Họ tên <span class="required">*</span></label>
+                            <input 
+                                type="text" 
+                                name="ho_ten" 
+                                class="account-input"
+                                placeholder="Nhập họ tên"
+                            >
+                        </div>
+
+                        <div class="account-form-group">
+                            <label>Số điện thoại</label>
+                            <input 
+                                type="text" 
+                                name="so_dien_thoai" 
+                                class="account-input"
+                                placeholder="Nhập số điện thoại"
+                            >
+                        </div>
+
+                        <div class="account-form-group full">
+                            <label>Email</label>
+                            <input 
+                                type="email" 
+                                name="email" 
+                                class="account-input"
+                                placeholder="email@example.com"
+                            >
+                        </div>
+
+                        <div class="account-form-group full" id="createPtLinkGroup" style="display: none;">
+                            <label>Gắn với hồ sơ PT <span class="required">*</span></label>
+                            <select name="ma_pt" class="account-input">
+                                <option value="">-- Chọn PT đang làm việc chưa có tài khoản --</option>
+                                {% for pt in form_context.available_pts %}
+                                <option value="{{ pt.ma_pt }}">
+                                    {{ pt.ho_ten }}{% if pt.so_dien_thoai %} - {{ pt.so_dien_thoai }}{% endif %}
+                                </option>
+                                {% endfor %}
+                            </select>
+
+                            <div class="account-note">
+                                Tài khoản vai trò PT phải được gắn với hồ sơ PT để hệ thống lọc lịch tập đúng theo PT đăng nhập.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer account-modal-footer">
+                    <button type="button" class="btn-operate btn-gray" data-bs-dismiss="modal">
+                        Hủy
+                    </button>
+
+                    <button type="submit" class="btn-operate btn-green">
+                        <i class="bi bi-save-fill"></i>
+                        Tạo tài khoản
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% for account in page_data.accounts %}
+<div class="modal fade" id="editAccountModal{{ account.ma_tai_khoan }}" tabindex="-1" aria-labelledby="editAccountModalLabel{{ account.ma_tai_khoan }}" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content account-modal-content">
+            <form method="POST" action="{{ url_for('accounts.edit', account_id=account.ma_tai_khoan) }}">
+                <div class="modal-header account-modal-header">
+                    <h5 class="modal-title" id="editAccountModalLabel{{ account.ma_tai_khoan }}">
+                        Cập nhật tài khoản
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                </div>
+
+                <div class="modal-body account-modal-body">
+                    <div class="account-readonly-row account-modal-readonly-row">
+                        <div>
+                            <span class="account-readonly-label">Tên đăng nhập</span>
+                            <strong>{{ account.ten_dang_nhap }}</strong>
+                        </div>
+
+                        <div>
+                            <span class="account-readonly-label">Trạng thái</span>
+                            <strong>{{ account.status_text }}</strong>
+                        </div>
+                    </div>
+
+                    <div class="account-form-grid">
+                        <div class="account-form-group">
+                            <label>Họ tên <span class="required">*</span></label>
+                            <input 
+                                type="text" 
+                                name="ho_ten" 
+                                class="account-input"
+                                value="{{ account.ho_ten }}"
+                            >
+                        </div>
+
+                        <div class="account-form-group">
+                            <label>Vai trò <span class="required">*</span></label>
+                            <select 
+                                name="ma_vai_tro" 
+                                class="account-input edit-role-select"
+                                data-target="#editPtLinkGroup{{ account.ma_tai_khoan }}"
+                            >
+                                <option value="">-- Chọn vai trò --</option>
+                                {% for role in form_context.roles %}
+                                <option 
+                                    value="{{ role.ma_vai_tro }}"
+                                    data-role-name="{{ role.ten_vai_tro }}"
+                                    {% if account.ten_vai_tro == role.ten_vai_tro %}selected{% endif %}
+                                >
+                                    {% if role.ten_vai_tro == "ADMIN" %}
+                                        Admin
+                                    {% elif role.ten_vai_tro == "LE_TAN" %}
+                                        Lễ tân
+                                    {% elif role.ten_vai_tro == "PT" %}
+                                        PT
+                                    {% else %}
+                                        {{ role.ten_vai_tro }}
+                                    {% endif %}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="account-form-group">
+                            <label>Số điện thoại</label>
+                            <input 
+                                type="text" 
+                                name="so_dien_thoai" 
+                                class="account-input"
+                                value="{{ account.so_dien_thoai if account.so_dien_thoai != '-' else '' }}"
+                            >
+                        </div>
+
+                        <div class="account-form-group">
+                            <label>Email</label>
+                            <input 
+                                type="email" 
+                                name="email" 
+                                class="account-input"
+                                value="{{ account.email if account.email != '-' else '' }}"
+                            >
+                        </div>
+
+                        <div class="account-form-group full" id="editPtLinkGroup{{ account.ma_tai_khoan }}" style="display: none;">
+                            <label>Gắn với hồ sơ PT <span class="required">*</span></label>
+                            <select name="ma_pt" class="account-input">
+                                <option value="">-- Chọn PT đang làm việc --</option>
+
+                                {% if account.ma_pt %}
+                                <option value="{{ account.ma_pt }}" selected>
+                                    {{ account.ten_pt }} - PT{{ "%06d"|format(account.ma_pt) }}
+                                </option>
+                                {% endif %}
+
+                                {% for pt in form_context.available_pts %}
+                                    {% if not account.ma_pt or pt.ma_pt != account.ma_pt %}
+                                    <option value="{{ pt.ma_pt }}">
+                                        {{ pt.ho_ten }}{% if pt.so_dien_thoai %} - {{ pt.so_dien_thoai }}{% endif %}
+                                    </option>
+                                    {% endif %}
+                                {% endfor %}
+                            </select>
+
+                            <div class="account-note">
+                                Tài khoản vai trò PT phải được gắn với hồ sơ PT tương ứng.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer account-modal-footer">
+                    <button type="button" class="btn-operate btn-gray" data-bs-dismiss="modal">
+                        Hủy
+                    </button>
+
+                    <button type="submit" class="btn-operate btn-green">
+                        <i class="bi bi-save-fill"></i>
+                        Lưu cập nhật
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+{% for account in page_data.accounts %}
+<div class="modal fade" id="resetPasswordModal{{ account.ma_tai_khoan }}" tabindex="-1" aria-labelledby="resetPasswordModalLabel{{ account.ma_tai_khoan }}" aria-hidden="true">
+    <div class="modal-dialog modal-md modal-dialog-centered">
+        <div class="modal-content account-modal-content">
+            <form method="POST" action="{{ url_for('accounts.reset_password_view', account_id=account.ma_tai_khoan) }}">
+                <div class="modal-header account-modal-header">
+                    <h5 class="modal-title" id="resetPasswordModalLabel{{ account.ma_tai_khoan }}">
+                        Đặt lại mật khẩu
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                </div>
+
+                <div class="modal-body account-modal-body">
+                    <div class="account-password-info">
+                        <div>
+                            <span class="account-readonly-label">Tên đăng nhập</span>
+                            <strong>{{ account.ten_dang_nhap }}</strong>
+                        </div>
+
+                        <div>
+                            <span class="account-readonly-label">Họ tên</span>
+                            <strong>{{ account.ho_ten }}</strong>
+                        </div>
+
+                        <div>
+                            <span class="account-readonly-label">Vai trò</span>
+                            <strong>{{ account.role_text }}</strong>
+                        </div>
+                    </div>
+
+                    <div class="account-form-grid single">
+                        <div class="account-form-group">
+                            <label>Mật khẩu mới <span class="required">*</span></label>
+                            <input 
+                                type="password" 
+                                name="mat_khau_moi" 
+                                class="account-input"
+                                placeholder="Tối thiểu 6 ký tự"
+                            >
+                        </div>
+
+                        <div class="account-form-group">
+                            <label>Xác nhận mật khẩu <span class="required">*</span></label>
+                            <input 
+                                type="password" 
+                                name="xac_nhan_mat_khau" 
+                                class="account-input"
+                                placeholder="Nhập lại mật khẩu mới"
+                            >
+                        </div>
+                    </div>
+
+                    <div class="account-note">
+                        Sau khi đặt lại mật khẩu, cần đăng nhập bằng mật khẩu mới.
+                    </div>
+                </div>
+
+                <div class="modal-footer account-modal-footer">
+                    <button type="button" class="btn-operate btn-gray" data-bs-dismiss="modal">
+                        Hủy
+                    </button>
+
+                    <button type="submit" class="btn-operate btn-green">
+                        <i class="bi bi-key-fill"></i>
+                        Đặt lại mật khẩu
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const createRoleSelect = document.getElementById("createRoleSelect");
+    const createPtLinkGroup = document.getElementById("createPtLinkGroup");
+
+    function syncCreatePtLink() {
+        if (!createRoleSelect || !createPtLinkGroup) return;
+
+        const selectedOption = createRoleSelect.options[createRoleSelect.selectedIndex];
+        const roleName = selectedOption ? selectedOption.getAttribute("data-role-name") : "";
+
+        createPtLinkGroup.style.display = roleName === "PT" ? "block" : "none";
+    }
+
+    if (createRoleSelect) {
+        createRoleSelect.addEventListener("change", syncCreatePtLink);
+        syncCreatePtLink();
+    }
+});
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const editRoleSelects = document.querySelectorAll(".edit-role-select");
+
+    function syncEditPtLink(select) {
+        const targetSelector = select.getAttribute("data-target");
+        const ptGroup = document.querySelector(targetSelector);
+
+        if (!ptGroup) return;
+
+        const selectedOption = select.options[select.selectedIndex];
+        const roleName = selectedOption ? selectedOption.getAttribute("data-role-name") : "";
+
+        ptGroup.style.display = roleName === "PT" ? "block" : "none";
+    }
+
+    editRoleSelects.forEach(function (select) {
+        select.addEventListener("change", function () {
+            syncEditPtLink(select);
+        });
+
+        syncEditPtLink(select);
+    });
+});
+</script>
+
+{% endblock %}

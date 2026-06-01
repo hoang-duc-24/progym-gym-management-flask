@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block title %}Đăng ký gói cho hội viên | ProGym{% endblock %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/modules/registrations.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="page-topline">
+    <h1 class="page-title">Đăng ký gói cho hội viên</h1>
+
+    <div class="page-actions">
+        <a href="{{ url_for('registrations.index') }}" class="btn-operate btn-gray text-decoration-none">
+            <i class="bi bi-arrow-left"></i>
+            Quay lại
+        </a>
+
+        <a href="{{ url_for('members.create') }}" class="btn-operate btn-green text-decoration-none">
+            <i class="bi bi-person-plus-fill"></i>
+            Tạo hội viên mới và đăng ký
+        </a>
+    </div>
+</div>
+
+<section class="member-select-page">
+    <form method="GET" action="{{ url_for('registrations.create') }}" class="member-select-searchbar">
+        <div class="member-select-search-field">
+            <input
+                type="text"
+                name="keyword"
+                class="member-select-input"
+                placeholder="Tên, số điện thoại, email..."
+                value="{{ context.keyword }}"
+                autofocus
+            >
+        </div>
+
+        <div class="member-select-search-actions">
+            <button type="submit" class="btn-operate btn-green">
+                <i class="bi bi-search"></i>
+                Tìm kiếm
+            </button>
+
+            <a href="{{ url_for('registrations.create') }}" class="btn-operate btn-gray text-decoration-none">
+                <i class="bi bi-arrow-clockwise"></i>
+                Đặt lại
+            </a>
+
+            <div class="member-select-count">
+                <i class="bi bi-people-fill"></i>
+                <span>Tổng số hội viên:</span>
+                <strong>{{ context.total }}</strong>
+            </div>
+        </div>
+    </form>
+
+    <div class="data-card member-select-card">
+        <div class="registration-table-wrap member-select-table-wrap">
+            <table class="table-operate member-select-table">
+                <thead>
+                    <tr>
+                        <th style="width: 100px;">Mã HV</th>
+                        <th style="width: 210px;">Hội viên</th>
+                        <th style="width: 210px;">Liên hệ</th>
+                        <th style="width: 240px;">Gói hiện tại</th>
+                        <th style="width: 100px;">Còn lại</th>
+                        <th style="width: 135px;">Dịch vụ</th>
+                        <th style="width: 120px;">Hội viên</th>
+                        <th style="width: 70px;">Chọn</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for row in context.members %}
+                    <tr>
+                        <td>{{ row.ma_hien_thi }}</td>
+
+                        <td>
+                            <a href="{{ url_for('members.detail', member_id=row.ma_hoi_vien) }}" class="link-name">
+                                {{ row.ho_ten }}
+                            </a>
+                            <div class="sub-text">Tham gia: {{ row.ngay_tham_gia }}</div>
+                        </td>
+
+                        <td>
+                            <div>{{ row.so_dien_thoai }}</div>
+                            <div class="sub-text">{{ row.email }}</div>
+                        </td>
+
+                        <td>{{ row.current_package }}</td>
+                        <td class="registration-remaining-cell">{{ row.remaining_text }}</td>
+
+                        <td>
+                            <span class="badge-status {{ row.service_class }}">
+                                {{ row.service_text }}
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="badge-status {{ row.member_status_class }}">
+                                {{ row.member_status_text }}
+                            </span>
+                        </td>
+
+                        <td>
+                            {% if row.trang_thai_hoi_vien == 'HOAT_DONG' %}
+                            <a
+                                href="{{ url_for('members.register_package', member_id=row.ma_hoi_vien) }}"
+                                class="btn btn-sm btn-outline-success"
+                            >
+                                Chọn
+                            </a>
+                            {% else %}
+                            <span class="text-muted">-</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="8" class="text-center text-muted py-4">
+                            Không tìm thấy hội viên phù hợp.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,1211 @@
+/* =========================
+   MEMBERS MODULE
+   Màn Quản lý thông tin hội viên
+========================= */
+
+.member-filter-radio-list {
+    display: flex;
+    flex-direction: column;
+    gap: 9px;
+}
+
+.member-filter-radio {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-main);
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.member-filter-radio input {
+    width: 15px;
+    height: 15px;
+    margin: 0;
+    accent-color: var(--blue-main);
+}
+
+.member-service-days {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.member-service-days input {
+    width: 42px;
+    height: 26px;
+    border: 1px solid var(--gray-line);
+    border-radius: 2px;
+    text-align: center;
+    font-size: 13px;
+}
+
+.member-toolbar-dropdown {
+    position: relative;
+}
+
+.member-toolbar-dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 36px;
+    right: 0;
+    min-width: 190px;
+    background: #fff;
+    border: 1px solid var(--gray-line);
+    box-shadow: 0 2px 7px rgba(0, 0, 0, 0.16);
+    z-index: 50;
+}
+
+.member-toolbar-dropdown:hover .member-toolbar-dropdown-menu {
+    display: block;
+}
+
+.member-toolbar-dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 12px;
+    color: var(--text-main);
+    text-decoration: none;
+    font-size: 13px;
+    border-bottom: 1px solid #edf0f2;
+    white-space: nowrap;
+}
+
+.member-toolbar-dropdown-item:hover {
+    background: #eef7fc;
+    color: var(--blue-dark);
+}
+
+.member-table-code {
+    color: var(--text-muted);
+    font-size: 12.5px;
+}
+
+.member-service-status {
+    min-width: 116px;
+}
+
+/* =========================
+   MEMBER DETAIL
+========================= */
+
+.member-detail-header {
+    display: grid;
+    grid-template-columns: 150px minmax(0, 1fr);
+    gap: 18px;
+    background: #fff;
+    border: 1px solid var(--gray-line);
+    padding: 18px;
+    margin-bottom: 12px;
+}
+
+.member-avatar-large {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: #e8f2f8;
+    color: var(--blue-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 58px;
+    border: 1px solid #cfe3ef;
+    margin: 4px auto 0;
+}
+
+.member-avatar-large i {
+    line-height: 1;
+}
+
+.member-profile-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px 22px;
+}
+
+.profile-item {
+    min-width: 0;
+}
+
+.profile-wide {
+    grid-column: span 2;
+}
+
+.profile-label {
+    color: var(--text-muted);
+    font-size: 12.5px;
+    margin-bottom: 4px;
+}
+
+.profile-value {
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--text-main);
+    word-break: break-word;
+}
+
+.member-detail-tabs {
+    display: flex;
+    gap: 0;
+    background: #fff;
+    border: 1px solid var(--gray-line);
+    border-bottom: none;
+    margin-top: 12px;
+}
+
+.member-tab {
+    height: 38px;
+    padding: 0 18px;
+    border: none;
+    border-right: 1px solid var(--gray-line);
+    background: #fff;
+    color: var(--text-main);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.member-tab.active {
+    color: var(--blue-dark);
+    border-bottom: 2px solid var(--blue-main);
+    background: #f9fbfc;
+}
+
+.member-tab-panel {
+    display: none;
+}
+
+.member-tab-panel.active {
+    display: block;
+}
+
+@media (max-width: 1200px) {
+    .member-profile-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .member-detail-header {
+        grid-template-columns: 1fr;
+    }
+
+    .member-profile-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-wide {
+        grid-column: span 1;
+    }
+
+    .member-detail-tabs {
+        overflow-x: auto;
+    }
+
+    .member-tab {
+        white-space: nowrap;
+    }
+}
+
+/* =========================
+   MEMBER CREATE
+========================= */
+
+.member-create-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 430px;
+    gap: 14px;
+    align-items: start;
+}
+
+.member-create-card {
+    background: #fff;
+    border: 1px solid var(--gray-line);
+}
+
+.member-create-card-header {
+    height: 38px;
+    padding: 9px 12px;
+    font-weight: 700;
+    background: #f8f9fa;
+    border-bottom: 1px solid var(--gray-line);
+}
+
+.member-create-card-body {
+    padding: 14px;
+}
+
+.member-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px 16px;
+}
+
+.member-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.member-form-group.full {
+    grid-column: span 2;
+}
+
+.member-form-group label {
+    font-weight: 700;
+    color: var(--text-main);
+}
+
+.required {
+    color: #dc3545;
+}
+
+.member-input,
+.member-textarea {
+    border: 1px solid var(--gray-line);
+    border-radius: 2px;
+    height: 34px;
+    padding: 6px 9px;
+    font-size: 13px;
+    background: #fff;
+}
+
+.member-textarea {
+    height: 50px;
+    resize: vertical;
+}
+
+.member-input:focus,
+.member-textarea:focus {
+    outline: none;
+    border-color: var(--blue-main);
+}
+
+.member-payment-note {
+    background: #fff8e8;
+    border: 1px solid #f5d79b;
+    padding: 10px 12px;
+    color: #8a5a00;
+    font-size: 13px;
+}
+
+.member-form-actions {
+    margin-top: 16px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+@media (max-width: 1100px) {
+    .member-create-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .member-form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .member-form-group.full {
+        grid-column: span 1;
+    }
+}
+
+/* =========================
+   REGISTER PACKAGE FOR EXISTING MEMBER
+========================= */
+
+.member-register-package-layout {
+    display: grid;
+    grid-template-columns: 360px minmax(0, 1fr);
+    gap: 14px;
+    align-items: start;
+}
+
+.member-info-line {
+    display: grid;
+    grid-template-columns: 120px minmax(0, 1fr);
+    gap: 10px;
+    padding: 9px 0;
+    border-bottom: 1px solid #edf0f2;
+}
+
+.member-info-line:last-child {
+    border-bottom: none;
+}
+
+.member-info-line span {
+    color: var(--text-muted);
+}
+
+.member-info-line strong {
+    color: var(--text-main);
+    font-weight: 700;
+    word-break: break-word;
+}
+
+@media (max-width: 992px) {
+    .member-register-package-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+.detail-action-stack {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.page-subtitle {
+    margin-top: 4px;
+    color: #6b7580;
+    font-size: 14px;
+}
+
+.schedule-result-form .card {
+    border: 1px solid #d9dee5;
+    border-radius: 4px;
+    box-shadow: none;
+}
+
+.schedule-result-form .card-header {
+    background: #f8f9fb;
+    border-bottom: 1px solid #d9dee5;
+    padding: 12px 16px;
+}
+
+.schedule-result-form .card-title {
+    font-size: 22px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.schedule-result-form .card-body {
+    padding: 16px;
+}
+
+.info-list .info-item {
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 12px 0;
+    border-bottom: 1px solid #eef1f4;
+}
+
+.info-list .info-label {
+    min-width: 130px;
+    color: #6c757d;
+    font-weight: 500;
+}
+
+.info-list .info-value {
+    flex: 1;
+    text-align: right;
+    font-weight: 600;
+    color: #212529;
+}
+
+.badge-soft {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 12px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.badge-soft-success {
+    background: #dff3e3;
+    color: #198754;
+}
+
+.badge-soft-warning {
+    background: #fce8c3;
+    color: #9a6700;
+}
+
+.badge-soft-danger {
+    background: #f8d7da;
+    color: #dc3545;
+}
+
+.badge-soft-dark {
+    background: #e9ecef;
+    color: #495057;
+}
+
+.badge-soft-info {
+    background: #dbeafe;
+    color: #0d6efd;
+}
+
+.workout-detail-table th {
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+.workout-detail-table td {
+    vertical-align: middle;
+}
+
+.workout-detail-table input {
+    min-width: 100%;
+}
+
+/* =========================================================
+   Workout Result Page - Ghi kết quả buổi tập
+   ========================================================= */
+
+.schedule-result-form {
+    width: 100%;
+}
+
+.schedule-result-grid {
+    display: grid;
+    grid-template-columns: 360px 1fr;
+    gap: 16px;
+    align-items: start;
+}
+
+.workout-card {
+    background: #ffffff;
+    border: 1px solid #dfe3e8;
+    box-shadow: none;
+    min-width: 0;
+}
+
+.workout-info-card {
+    grid-column: 1;
+}
+
+.workout-summary-card {
+    grid-column: 2;
+}
+
+.workout-exercises-card {
+    grid-column: 1 / -1;
+}
+
+.workout-card-header {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 0 16px;
+    border-bottom: 1px solid #e8ebef;
+    background: #f7f9fb;
+}
+
+.workout-card-title {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #26323f;
+}
+
+.workout-card-body {
+    padding: 16px;
+}
+
+.info-list {
+    width: 100%;
+}
+
+.info-item {
+    display: grid;
+    grid-template-columns: 135px 1fr;
+    gap: 12px;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #edf0f3;
+}
+
+.info-item:last-child {
+    border-bottom: none;
+}
+
+.info-label {
+    color: #6b7580;
+    font-weight: 500;
+}
+
+.info-value {
+    color: #26323f;
+    font-weight: 600;
+    word-break: break-word;
+}
+
+.workout-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px 20px;
+}
+
+.workout-form-group {
+    min-width: 0;
+}
+
+.workout-form-group.full {
+    grid-column: 1 / -1;
+}
+
+.workout-form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: #2f3a45;
+}
+
+.workout-form-group .member-input,
+.workout-form-group .member-textarea {
+    width: 100%;
+}
+
+.workout-form-group .member-textarea {
+    min-height: 92px;
+    resize: vertical;
+}
+
+.workout-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+    border: 1px solid #e5e9ef;
+    background: #ffffff;
+}
+
+.workout-detail-table {
+    width: 100%;
+    min-width: 1180px;
+    border-collapse: collapse;
+}
+
+.workout-detail-table th,
+.workout-detail-table td {
+    border-bottom: 1px solid #e8ebef;
+    border-right: 1px solid #edf0f3;
+    padding: 10px;
+    vertical-align: middle;
+}
+
+.workout-detail-table th {
+    background: #f7f9fb;
+    font-weight: 600;
+    color: #2f3a45;
+    white-space: nowrap;
+}
+
+.workout-detail-table tr:last-child td {
+    border-bottom: none;
+}
+
+.workout-detail-table th:last-child,
+.workout-detail-table td:last-child {
+    border-right: none;
+}
+
+.workout-detail-table .member-input {
+    width: 100%;
+    min-height: 36px;
+}
+
+.workout-detail-table th:nth-child(1),
+.workout-detail-table td:nth-child(1) {
+    min-width: 220px;
+}
+
+.workout-detail-table th:nth-child(2),
+.workout-detail-table td:nth-child(2),
+.workout-detail-table th:nth-child(3),
+.workout-detail-table td:nth-child(3) {
+    width: 90px;
+}
+
+.workout-detail-table th:nth-child(4),
+.workout-detail-table td:nth-child(4),
+.workout-detail-table th:nth-child(5),
+.workout-detail-table td:nth-child(5),
+.workout-detail-table th:nth-child(6),
+.workout-detail-table td:nth-child(6) {
+    width: 120px;
+}
+
+.workout-detail-table th:nth-child(7),
+.workout-detail-table td:nth-child(7) {
+    min-width: 220px;
+}
+
+.workout-detail-table th:nth-child(8),
+.workout-detail-table td:nth-child(8) {
+    width: 90px;
+}
+
+.btn-table-remove {
+    min-height: 34px;
+    padding: 4px 10px;
+    border: 1px solid #dc3545;
+    background: #ffffff;
+    color: #dc3545;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.btn-table-remove:hover {
+    background: #dc3545;
+    color: #ffffff;
+}
+
+.page-subtitle {
+    margin-top: 4px;
+    color: #6b7580;
+    font-size: 14px;
+}
+
+.mb-3 {
+    margin-bottom: 16px;
+}
+
+/* Responsive */
+@media (max-width: 1100px) {
+    .schedule-result-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .workout-info-card,
+    .workout-summary-card,
+    .workout-exercises-card {
+        grid-column: 1 / -1;
+    }
+
+    .workout-summary-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.filter-search-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 38px;
+    gap: 6px;
+    align-items: center;
+}
+
+.filter-search-row .filter-input {
+    width: 100%;
+}
+
+.filter-search-btn {
+    height: 34px;
+    border: 1px solid var(--blue-main);
+    background: var(--blue-main);
+    color: #fff;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+.filter-search-btn:hover {
+    background: var(--blue-dark);
+    border-color: var(--blue-dark);
+}
+
+.filter-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid var(--gray-line);
+}
+
+.filter-apply-btn,
+.filter-reset-btn {
+    height: 34px;
+    border: 1px solid var(--gray-line);
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.filter-apply-btn {
+    background: var(--green-main);
+    border-color: var(--green-main);
+    color: #fff;
+}
+
+.filter-apply-btn:hover {
+    background: #218838;
+    border-color: #218838;
+}
+
+.filter-reset-btn {
+    background: #fff;
+    color: var(--text-main);
+}
+
+.filter-reset-btn:hover {
+    background: #f1f3f5;
+    color: var(--text-main);
+}
+
+.member-data-card {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.member-table-scroll {
+    flex: 1 1 auto;
+    min-height: 0;
+    max-height: none;
+    overflow: auto;
+    border-bottom: 1px solid var(--gray-line);
+}
+
+.member-table {
+    min-width: 1040px;
+}
+
+.member-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    background: #f8f9fa;
+}
+
+.member-table-footer {
+    min-height: 42px;
+    padding: 7px 10px;
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    align-items: center;
+    gap: 14px;
+    background: #fff;
+}
+
+.member-record-info {
+    font-size: 12.5px;
+    color: var(--text-main);
+    white-space: nowrap;
+}
+
+.member-pagination {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.page-btn {
+    min-width: 26px;
+    height: 26px;
+    padding: 0 8px;
+    border: 1px solid var(--gray-line);
+    background: #fff;
+    color: var(--text-main);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12.5px;
+}
+
+.page-btn:hover {
+    background: #eef7fc;
+    color: var(--blue-dark);
+}
+
+.page-btn.active {
+    background: var(--blue-main);
+    border-color: var(--blue-main);
+    color: #fff;
+    font-weight: 700;
+}
+
+.member-page-size {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12.5px;
+    white-space: nowrap;
+}
+
+.member-page-size select {
+    height: 28px;
+    border: 1px solid var(--gray-line);
+    background: #fff;
+    padding: 0 6px;
+    font-size: 12.5px;
+}
+
+/* Làm scrollbar gọn hơn cho vùng bảng */
+.member-table-scroll::-webkit-scrollbar {
+    height: 5px;
+    width: 5px;
+}
+
+.member-table-scroll::-webkit-scrollbar-thumb {
+    background: #b8c1ca;
+}
+
+.member-table-scroll::-webkit-scrollbar-track {
+    background: #eef1f4;
+}
+
+/* ===== Members page: scroll behavior only ===== */
+
+/* Chỉ áp dụng trong trang hội viên vì members.css chỉ được load ở màn này */
+/* ===== Members index page: scroll behavior only ===== */
+
+.members-index-page {
+    height: calc(100vh - 68px);
+    max-height: calc(100vh - 68px);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+}
+
+.members-index-page .page-topline {
+    flex: 0 0 auto;
+    margin-bottom: 10px;
+}
+
+.members-index-page .operation-layout {
+    flex: 1 1 auto;
+    min-height: 0;
+    height: auto;
+    overflow: hidden;
+    align-items: stretch;
+}
+
+/* Chỉ áp dụng cho filter trong trang danh sách hội viên */
+.members-index-page .filter-panel {
+    height: 100%;
+    max-height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.members-index-page .filter-heading {
+    flex: 0 0 auto;
+}
+
+.members-index-page .filter-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-bottom: 14px;
+}
+
+/* Chỉ áp dụng cho bảng trong trang danh sách hội viên */
+.members-index-page .content-panel {
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.members-index-page .member-data-card {
+    height: 100%;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.members-index-page .member-table-scroll {
+    flex: 1 1 auto;
+    min-height: 0;
+    max-height: none;
+    overflow: auto;
+    border-bottom: 1px solid var(--gray-line);
+}
+
+.members-index-page .member-table-footer {
+    flex: 0 0 52px;
+    min-height: 52px;
+    padding: 8px 10px 10px;
+    box-sizing: border-box;
+}
+
+/* Scrollbar mảnh cho bảng hội viên */
+.members-index-page .member-table-scroll::-webkit-scrollbar {
+    height: 5px;
+    width: 5px;
+}
+
+.members-index-page .member-table-scroll::-webkit-scrollbar-thumb {
+    background: #aeb8c2;
+    border-radius: 999px;
+}
+
+.members-index-page .member-table-scroll::-webkit-scrollbar-track {
+    background: #f1f3f5;
+}
+
+/* Scrollbar mảnh cho bộ lọc bên trái */
+.members-index-page .filter-body::-webkit-scrollbar {
+    width: 5px;
+}
+
+.members-index-page .filter-body::-webkit-scrollbar-thumb {
+    background: #aeb8c2;
+    border-radius: 999px;
+}
+
+.members-index-page .filter-body::-webkit-scrollbar-track {
+    background: #f1f3f5;
+}
+.filter-panel {
+    height: 100%;
+    max-height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.filter-heading {
+    flex: 0 0 auto;
+}
+
+.filter-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-bottom: 14px;
+}
+
+.content-panel {
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.member-data-card {
+    height: 100%;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.member-table-scroll {
+    flex: 1 1 auto;
+    min-height: 0;
+    max-height: none;
+    overflow: auto;
+    border-bottom: 1px solid var(--gray-line);
+}
+
+.member-table-footer {
+    flex: 0 0 52px;
+    min-height: 52px;
+    padding: 8px 10px 10px;
+    box-sizing: border-box;
+}
+
+/* Scrollbar gọn cho bộ lọc bên trái */
+.filter-body::-webkit-scrollbar {
+    width: 5px;
+}
+
+.filter-body::-webkit-scrollbar-thumb {
+    background: #b8c1ca;
+}
+
+.filter-body::-webkit-scrollbar-track {
+    background: #eef1f4;
+}
+
+/* Ẩn thanh cuộn tổng của trình duyệt chỉ ở trang danh sách hội viên */
+html:has(.members-index-page),
+body:has(.members-index-page) {
+    overflow: hidden;
+}
+
+/* Ẩn luôn hình dạng scrollbar tổng nếu trình duyệt vẫn render */
+html:has(.members-index-page)::-webkit-scrollbar,
+body:has(.members-index-page)::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+}
+
+/* =========================
+   MEMBER EDIT
+========================= */
+
+.member-edit-layout {
+    max-width: 1080px;
+    margin: 0 auto;
+}
+
+.member-edit-layout .member-create-card {
+    width: 100%;
+}
+
+.member-edit-layout .member-create-card-body {
+    padding: 18px;
+}
+
+.member-edit-layout .member-form-actions {
+    border-top: 1px solid #edf0f2;
+    padding-top: 14px;
+}
+
+/* =========================
+   MEMBER EDIT MODAL
+========================= */
+
+.icon-action.edit {
+    border: none;
+    background: transparent;
+    color: #6c757d;
+    padding: 0;
+    cursor: pointer;
+}
+
+.icon-action.edit:hover {
+    color: var(--blue-main);
+}
+
+.member-edit-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 2000;
+}
+
+.member-edit-modal.show {
+    display: block;
+}
+
+.member-edit-modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.35);
+}
+
+.member-edit-modal-dialog {
+    position: absolute;
+    top: 56px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: min(920px, calc(100vw - 36px));
+    max-height: calc(100vh - 90px);
+    background: #fff;
+    border: 1px solid var(--gray-line);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.22);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.member-edit-modal-header {
+    min-height: 58px;
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--gray-line);
+    background: #f8f9fa;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+}
+
+.member-edit-modal-header h2 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-main);
+}
+
+.member-edit-modal-header p {
+    margin: 4px 0 0;
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+.member-edit-modal-close {
+    width: 32px;
+    height: 32px;
+    border: 1px solid var(--gray-line);
+    background: #fff;
+    color: var(--text-main);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.member-edit-modal-close:hover {
+    background: #eef7fc;
+    color: var(--blue-dark);
+}
+
+.member-edit-modal-body {
+    padding: 16px;
+    overflow-y: auto;
+}
+
+.member-edit-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px 18px;
+}
+
+.member-edit-form-grid .full {
+    grid-column: span 2;
+}
+
+.member-edit-modal-actions {
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid #edf0f2;
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+.member-edit-modal-body::-webkit-scrollbar {
+    width: 5px;
+}
+
+.member-edit-modal-body::-webkit-scrollbar-thumb {
+    background: #aeb8c2;
+    border-radius: 999px;
+}
+
+.member-edit-modal-body::-webkit-scrollbar-track {
+    background: #f1f3f5;
+}
+
+@media (max-width: 768px) {
+    .member-edit-form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .member-edit-form-grid .full {
+        grid-column: span 1;
+    }
+
+    .member-edit-modal-dialog {
+        top: 28px;
+        width: calc(100vw - 20px);
+        max-height: calc(100vh - 56px);
+    }
+}
+
+.member-note-ellipsis {
+    max-width: 260px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

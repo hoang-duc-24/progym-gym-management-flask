@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+{% block title %}Sửa thiết bị | ProGym{% endblock %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/modules/equipment.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="page-topline">
+    <h1 class="page-title">Cập nhật thiết bị</h1>
+
+    <div class="page-actions">
+        <a href="{{ url_for('equipment.detail', equipment_id=context.equipment.ma_thiet_bi) }}" class="btn-operate btn-gray text-decoration-none">
+            <i class="bi bi-arrow-left"></i>
+            Quay lại
+        </a>
+    </div>
+</div>
+
+<form method="POST" enctype="multipart/form-data" class="equipment-form-card equipment-edit-card">
+    <div class="equipment-form-header">Thông tin thiết bị</div>
+
+    <div class="equipment-form-body">
+        <div class="equipment-edit-layout">
+            <aside class="equipment-current-image-box">
+                {% if context.equipment.hinh_anh %}
+                <img
+                    src="{{ url_for('static', filename=context.equipment.hinh_anh) }}"
+                    alt="{{ context.equipment.ten_thiet_bi }}"
+                    class="equipment-current-image"
+                >
+                {% else %}
+                <div class="equipment-current-image-placeholder">
+                    <i class="bi bi-image"></i>
+                    <span>Chưa có ảnh</span>
+                </div>
+                {% endif %}
+            </aside>
+
+            <div class="equipment-form-grid equipment-edit-form-grid">
+                <div class="equipment-form-group">
+                    <label>Tên thiết bị <span class="required">*</span></label>
+                    <input
+                        type="text"
+                        name="ten_thiet_bi"
+                        class="equipment-input"
+                        value="{{ context.equipment.ten_thiet_bi }}"
+                        required
+                    >
+                </div>
+
+                <div class="equipment-form-group">
+                    <label>Loại thiết bị <span class="required">*</span></label>
+                    <input
+                        type="text"
+                        name="loai_thiet_bi"
+                        class="equipment-input"
+                        value="{{ context.equipment.loai_thiet_bi }}"
+                        required
+                    >
+                </div>
+
+                <div class="equipment-form-group">
+                    <label>Vị trí</label>
+                    <input
+                        type="text"
+                        name="vi_tri"
+                        class="equipment-input"
+                        value="{{ context.equipment.vi_tri or '' }}"
+                        placeholder="Ví dụ: Khu cardio tầng 1"
+                    >
+                </div>
+
+                <div class="equipment-form-group">
+                    <label>Ngày mua</label>
+                    <input
+                        type="date"
+                        name="ngay_mua"
+                        class="equipment-input"
+                        value="{{ context.equipment.ngay_mua or '' }}"
+                    >
+                </div>
+
+                <div class="equipment-form-group">
+                    <label>Tình trạng</label>
+                    <select name="tinh_trang" class="equipment-input">
+                        {% for status in context.status_options %}
+                        <option
+                            value="{{ status.value }}"
+                            {% if context.equipment.tinh_trang == status.value %}selected{% endif %}
+                        >
+                            {{ status.label }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="equipment-form-group">
+                    <label>Thay ảnh thiết bị</label>
+                    <input
+                        type="file"
+                        name="hinh_anh"
+                        class="equipment-input file-input"
+                        accept=".jpg,.jpeg,.png,.webp"
+                    >
+                </div>
+
+                <div class="equipment-form-group full">
+                    <label>Ghi chú</label>
+                    <textarea
+                        name="ghi_chu"
+                        class="equipment-textarea equipment-note-textarea"
+                        placeholder="Nhập ghi chú nếu có"
+                    >{{ context.equipment.ghi_chu or '' }}</textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="equipment-edit-actions">
+        <a href="{{ url_for('equipment.detail', equipment_id=context.equipment.ma_thiet_bi) }}" class="btn-operate btn-gray text-decoration-none">
+            Hủy
+        </a>
+
+        <button type="submit" class="btn-operate btn-green">
+            <i class="bi bi-save-fill"></i>
+            Lưu thay đổi
+        </button>
+    </div>
+</form>
+{% endblock %}

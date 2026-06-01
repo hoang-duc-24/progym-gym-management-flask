@@ -1,0 +1,207 @@
+{% extends "base.html" %}
+
+{% block title %}
+{% if context.is_pt_view %}Lịch tập của tôi{% else %}Lịch tập PT{% endif %} | ProGym
+{% endblock %}
+
+{% block page_css %}
+<link 
+    rel="stylesheet" 
+    href="{{ url_for('static', filename='css/modules/schedules.css') }}"
+>
+{% endblock %}
+
+{% block content %}
+<div class="page-topline">
+    <div>
+        <h1 class="page-title">
+            {% if context.is_pt_view %}
+                Lịch tập của tôi
+            {% else %}
+                Quản lý lịch tập PT
+            {% endif %}
+        </h1>
+
+        {% if context.is_pt_view %}
+        <div class="page-subtitle">
+            <!-- Theo dõi lịch tập được phân công và cập nhật kết quả buổi tập. -->
+        </div>
+        {% endif %}
+    </div>
+
+    {% if session.get("role") in ["ADMIN", "LE_TAN"] %}
+    <a href="{{ url_for('schedules.create') }}" class="btn-operate btn-green text-decoration-none">
+        <i class="bi bi-plus-circle-fill"></i>
+        Tạo lịch từ phân công PT
+    </a>
+    {% endif %}
+</div>
+
+<section class="schedules-filter-bar">
+    <form 
+        method="GET" 
+        action="{{ url_for('schedules.index') }}" 
+        class="schedules-filter-form {% if context.is_pt_view %}pt-filter-form{% endif %}"
+    >
+        <div class="schedules-filter-date">
+            <input 
+                type="date" 
+                name="ngay_tap" 
+                class="filter-input"
+                value="{{ context.filters.ngay_tap }}"
+            >
+        </div>
+
+        {% if not context.is_pt_view %}
+        <div class="schedules-filter-pt">
+            <select name="ma_pt" class="filter-input">
+                <option value="">Tất cả PT</option>
+                {% for pt in context.pt_options %}
+                <option 
+                    value="{{ pt.ma_pt }}"
+                    {% if context.filters.ma_pt|string == pt.ma_pt|string %}selected{% endif %}
+                >
+                    {{ pt.ho_ten }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        {% endif %}
+
+        <div class="schedules-filter-status">
+            <select name="trang_thai_buoi_tap" class="filter-input">
+                <option value="">Tất cả trạng thái</option>
+                {% for status in context.status_options %}
+                <option 
+                    value="{{ status.value }}"
+                    {% if context.filters.trang_thai_buoi_tap == status.value %}selected{% endif %}
+                >
+                    {{ status.label }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="schedules-filter-keyword">
+            <input 
+                type="text" 
+                name="keyword" 
+                class="filter-input"
+                placeholder="{% if context.is_pt_view %}Tên hội viên, SĐT...{% else %}Tên HV, SĐT, tên PT...{% endif %}"
+                value="{{ context.filters.keyword }}"
+            >
+        </div>
+
+        <button type="submit" class="btn-operate btn-green">
+            <i class="bi bi-search"></i>
+            Tìm kiếm
+        </button>
+
+        <a href="{{ url_for('schedules.index') }}" class="btn-operate btn-gray text-decoration-none">
+            <i class="bi bi-arrow-clockwise"></i>
+            Đặt lại
+        </a>
+
+        <div class="schedules-count-pill">
+            <i class="bi bi-calendar-check-fill"></i>
+            <span>
+                {% if context.is_pt_view %}
+                    Lịch của tôi:
+                {% else %}
+                    Tổng số lịch:
+                {% endif %}
+            </span>
+            <strong>{{ context.total }}</strong>
+        </div>
+    </form>
+</section>
+
+<section class="schedules-table-section">
+    <div class="data-card schedules-table-card">
+        <div class="schedules-table-wrap">
+            <table class="table-operate schedules-table">
+                <thead>
+                    <tr>
+                        <th style="width: 100px;">Mã lịch</th>
+                        <th style="width: 105px;">Ngày tập</th>
+                        <th style="width: 120px;">Thời gian</th>
+                        <th style="width: 200px;">Hội viên</th>
+                        {% if not context.is_pt_view %}
+                        <th style="width: 170px;">PT phụ trách</th>
+                        {% endif %}
+                        <th style="width: 210px;">Gói tập</th>
+                        <th style="width: 110px;">Còn lại</th>
+                        <th style="width: 130px;">Trạng thái</th>
+                        <th style="width: 95px;">Thao tác</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for row in context.schedules %}
+                    <tr>
+                        <td>LT{{ "%06d"|format(row.ma_lich_tap) }}</td>
+
+                        <td>{{ row.ngay_tap }}</td>
+
+                        <td>{{ row.gio_bat_dau }} - {{ row.gio_ket_thuc }}</td>
+
+                        <td>
+                            {% if session.get("role") in ["ADMIN", "LE_TAN"] %}
+                            <a 
+                                href="{{ url_for('members.detail', member_id=row.ma_hoi_vien) }}"
+                                class="link-name"
+                            >
+                                {{ row.ten_hoi_vien }}
+                            </a>
+                            {% else %}
+                            <span class="link-name">{{ row.ten_hoi_vien }}</span>
+                            {% endif %}
+                            <div class="sub-text">{{ row.sdt_hoi_vien }}</div>
+                        </td>
+
+                        {% if not context.is_pt_view %}
+                        <td>{{ row.ten_pt }}</td>
+                        {% endif %}
+
+                        <td>
+                            <div>{{ row.ten_goi_tap }}</div>
+                            <div class="sub-text">{{ row.loai_goi }}</div>
+                        </td>
+
+                        <td>
+                            {% if row.so_buoi_pt_ban_dau > 0 %}
+                                {{ row.so_buoi_pt_con_lai }}/{{ row.so_buoi_pt_ban_dau }} buổi
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            <span class="badge-status {{ row.schedule_class }}">
+                                {{ row.schedule_text }}
+                            </span>
+                        </td>
+
+                        <td>
+                            <a 
+                                href="{{ url_for('schedules.update_status', schedule_id=row.ma_lich_tap, next=request.full_path) }}"
+                                class="btn btn-sm btn-outline-primary"
+                                title="Cập nhật kết quả buổi tập"
+                            >
+                                <i class="bi bi-pencil-square"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="{% if context.is_pt_view %}8{% else %}9{% endif %}" class="text-center text-muted py-4">
+                            Không có lịch tập phù hợp.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+{% endblock %}

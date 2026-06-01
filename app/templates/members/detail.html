@@ -1,0 +1,397 @@
+{% extends "base.html" %}
+
+{% block title %}Chi tiết hội viên | ProGym{% endblock %}
+
+{% block page_css %}
+<link 
+    rel="stylesheet" 
+    href="{{ url_for('static', filename='css/modules/members.css') }}"
+>
+{% endblock %}
+
+{% block content %}
+<div class="page-topline">
+    <h1 class="page-title">Thông tin hội viên và dịch vụ</h1>
+
+    <div class="page-actions">
+        <a href="{{ url_for('members.index') }}" class="btn-operate btn-gray text-decoration-none">
+            <i class="bi bi-arrow-left"></i>
+            Quay lại
+        </a>
+
+        <a 
+            href="{{ url_for('members.register_package', member_id=detail.member.ma_hoi_vien) }}" 
+            class="btn-operate btn-green text-decoration-none"
+        >
+            <i class="bi bi-plus-circle-fill"></i>
+            Đăng ký gói
+        </a>
+
+    </div>
+</div>
+
+<section class="member-detail-header">
+    <div class="member-avatar-large">
+        <i class="bi bi-person-fill"></i>
+    </div>
+
+    <div class="member-profile-grid">
+        <div class="profile-item">
+            <div class="profile-label">Mã hội viên</div>
+            <div class="profile-value">{{ detail.member.ma_khach_hang }}</div>
+        </div>
+
+        <div class="profile-item">
+            <div class="profile-label">Tên hội viên</div>
+            <div class="profile-value">{{ detail.member.ho_ten }}</div>
+        </div>
+
+        <div class="profile-item">
+            <div class="profile-label">Số điện thoại</div>
+            <div class="profile-value">{{ detail.member.so_dien_thoai }}</div>
+        </div>
+
+        <div class="profile-item">
+            <div class="profile-label">Giới tính</div>
+            <div class="profile-value">{{ detail.member.gioi_tinh }}</div>
+        </div>
+
+        <div class="profile-item">
+            <div class="profile-label">Ngày sinh</div>
+            <div class="profile-value">{{ detail.member.ngay_sinh or "-" }}</div>
+        </div>
+
+        <div class="profile-item">
+            <div class="profile-label">Email</div>
+            <div class="profile-value">{{ detail.member.email or "-" }}</div>
+        </div>
+
+        <div class="profile-item">
+            <div class="profile-label">Ngày tham gia</div>
+            <div class="profile-value">{{ detail.member.ngay_tham_gia }}</div>
+        </div>
+
+        <div class="profile-item">
+            <div class="profile-label">Trạng thái hội viên</div>
+            <div class="profile-value">
+                <span class="badge-status {{ detail.member.trang_thai_class }}">
+                    {{ detail.member.trang_thai_text }}
+                </span>
+            </div>
+        </div>
+
+        <div class="profile-item profile-wide">
+            <div class="profile-label">Địa chỉ</div>
+            <div class="profile-value">{{ detail.member.dia_chi or "-" }}</div>
+        </div>
+    </div>
+</section>
+
+<div class="member-detail-tabs">
+    <button class="member-tab active" data-tab="registrations">
+        Dịch vụ đã đăng ký
+    </button>
+
+    <button class="member-tab" data-tab="payments">
+        Thanh toán
+    </button>
+
+    <button class="member-tab" data-tab="checkins">
+        Lịch sử check-in
+    </button>
+
+    <button class="member-tab" data-tab="assignments">
+        Phân công PT
+    </button>
+
+    <button class="member-tab" data-tab="schedules">
+        Lịch tập PT
+    </button>
+</div>
+
+<section class="member-tab-panel active" id="tab-registrations">
+    <div class="data-card">
+        <table class="table-operate">
+            <thead>
+                <tr>
+                    <th>Mã ĐK</th>
+                    <th>Gói tập</th>
+                    <th>Loại gói</th>
+                    <th>Ngày đăng ký</th>
+                    <th>Bắt đầu</th>
+                    <th>Hết hạn</th>
+                    <th>Còn lại</th>
+                    <th>Phải trả</th>
+                    <th>Thanh toán</th>
+                    <th>Trạng thái dịch vụ</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for row in detail.registrations %}
+                <tr>
+                    <td>DK{{ "%06d"|format(row.ma_dang_ky) }}</td>
+                    <td>{{ row.ten_goi_tap }}</td>
+                    <td>{{ row.loai_goi }}</td>
+                    <td>{{ row.ngay_dang_ky }}</td>
+                    <td>{{ row.ngay_bat_dau }}</td>
+                    <td>{{ row.ngay_ket_thuc }}</td>
+                    <td>{{ row.con_lai }}</td>
+                    <td>{{ row.tong_tien_phai_tra }}</td>
+                    <td>
+                        <span class="badge-status {{ row.payment_class }}">
+                            {{ row.payment_text }}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="badge-status {{ row.service_class }}">
+                            {{ row.service_text }}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="detail-action-stack">
+                            {% if row.can_pay %}
+                            <a 
+                                href="{{ url_for('payments.create', registration_id=row.ma_dang_ky) }}"
+                                class="btn btn-sm btn-outline-success"
+                            >
+                                Ghi nhận thanh toán
+                            </a>
+                            {% endif %}
+
+                            {% if row.can_assign_pt %}
+                            <a 
+                                href="{{ url_for('members.assign_pt', registration_id=row.ma_dang_ky) }}"
+                                class="btn btn-sm btn-outline-primary"
+                            >
+                                Phân công PT
+                            </a>
+                            {% endif %}
+
+                            {% if not row.can_pay and not row.can_assign_pt %}
+                            <span class="text-muted">-</span>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="11" class="text-center text-muted py-4">
+                        Hội viên chưa có đăng ký gói tập.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<section class="member-tab-panel" id="tab-payments">
+    <div class="data-card">
+        <table class="table-operate">
+            <thead>
+                <tr>
+                    <th>Mã thanh toán</th>
+                    <th>Gói tập</th>
+                    <th>Ngày thanh toán</th>
+                    <th>Số tiền</th>
+                    <th>Hình thức</th>
+                    <th>Người ghi nhận</th>
+                    <th>Trạng thái</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for row in detail.payments %}
+                <tr>
+                    <td>TT{{ "%06d"|format(row.ma_thanh_toan) }}</td>
+                    <td>{{ row.ten_goi_tap }}</td>
+                    <td>{{ row.ngay_thanh_toan }}</td>
+                    <td>{{ row.so_tien }}</td>
+                    <td>{{ row.hinh_thuc_thanh_toan }}</td>
+                    <td>{{ row.nguoi_ghi_nhan }}</td>
+                    <td>
+                        <span class="badge-status {{ row.trang_thai_class }}">
+                            {{ row.trang_thai_text }}
+                        </span>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="7" class="text-center text-muted py-4">
+                        Chưa có giao dịch thanh toán.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<section class="member-tab-panel" id="tab-checkins">
+    <div class="data-card">
+        <table class="table-operate">
+            <thead>
+                <tr>
+                    <th>Mã check-in</th>
+                    <th>Gói sử dụng</th>
+                    <th>Giờ vào</th>
+                    <th>Giờ ra</th>
+                    <th>Loại check-in</th>
+                    <th>Trạng thái</th>
+                    <th>Ghi chú</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for row in detail.checkins %}
+                <tr>
+                    <td>CI{{ "%06d"|format(row.ma_check) }}</td>
+                    <td>{{ row.ten_goi_tap }}</td>
+                    <td>{{ row.thoi_gian_check_in }}</td>
+                    <td>{{ row.thoi_gian_check_out or "-" }}</td>
+                    <td>{{ row.loai_checkin }}</td>
+                    <td>
+                        <span class="badge-status {{ row.trang_thai_class }}">
+                            {{ row.trang_thai }}
+                        </span>
+                    </td>
+                    <td>{{ row.ghi_chu or "-" }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="7" class="text-center text-muted py-4">
+                        Chưa có lịch sử check-in.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<section class="member-tab-panel" id="tab-assignments">
+    <div class="data-card">
+        <table class="table-operate">
+            <thead>
+                <tr>
+                    <th>Mã phân công</th>
+                    <th>Gói PT</th>
+                    <th>PT phụ trách</th>
+                    <th>SĐT PT</th>
+                    <th>Ngày phân công</th>
+                    <th>Ngày kết thúc</th>
+                    <th>Trạng thái</th>
+                    <th>Ghi chú</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for row in detail.assignments %}
+                <tr>
+                    <td>PC{{ "%06d"|format(row.ma_phan_cong) }}</td>
+                    <td>{{ row.ten_goi_tap }}</td>
+                    <td>{{ row.ten_pt }}</td>
+                    <td>{{ row.so_dien_thoai_pt }}</td>
+                    <td>{{ row.ngay_phan_cong }}</td>
+                    <td>{{ row.ngay_ket_thuc or "-" }}</td>
+                    <td>
+                        <span class="badge-status {{ row.status_class }}">
+                            {{ row.status_text }}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="member-note-ellipsis" title="{{ row.ghi_chu or '-' }}">
+                            {{ row.ghi_chu or "-" }}
+                        </div>
+                    </td>
+                    <td>
+                        {% if row.status_text == "Đang phụ trách" %}
+                        <a 
+                            href="{{ url_for(
+                                'schedules.create_from_assignment',
+                                assignment_id=row.ma_phan_cong,
+                                next=url_for('members.detail', member_id=detail.member.ma_hoi_vien) ~ '#tab-assignments'
+                            ) }}"
+                            class="btn btn-sm btn-outline-primary"
+                        >
+                            Tạo lịch tập
+                        </a>
+                        {% else %}
+                        <span class="text-muted">-</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="9" class="text-center text-muted py-4">
+                        Chưa có phân công PT.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<section class="member-tab-panel" id="tab-schedules">
+    <div class="data-card">
+        <table class="table-operate">
+            <thead>
+                <tr>
+                    <th>Mã lịch</th>
+                    <th>Ngày tập</th>
+                    <th>Thời gian</th>
+                    <th>PT phụ trách</th>
+                    <th>Gói tập</th>
+                    <th>Trạng thái buổi tập</th>
+                    <th>Ghi chú</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for row in detail.schedules %}
+                <tr>
+                    <td>LT{{ "%06d"|format(row.ma_lich_tap) }}</td>
+                    <td>{{ row.ngay_tap }}</td>
+                    <td>{{ row.gio_bat_dau }} - {{ row.gio_ket_thuc }}</td>
+                    <td>{{ row.ten_pt }}</td>
+                    <td>{{ row.ten_goi_tap }}</td>
+                    <td>
+                        <span class="badge-status {{ row.status_class }}">
+                            {{ row.status_text }}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="member-note-ellipsis" title="{{ row.ghi_chu or '-' }}">
+                            {{ row.ghi_chu or "-" }}
+                        </div>
+                    </td>
+                    <td>
+                        <a 
+                            href="{{ url_for(
+                                'schedules.update_status',
+                                schedule_id=row.ma_lich_tap,
+                                next=url_for('members.detail', member_id=detail.member.ma_hoi_vien) ~ '#tab-schedules'
+                            ) }}"
+                            class="btn btn-sm btn-outline-primary"
+                        >
+                            Cập nhật
+                        </a>
+                    </td>
+                                    </tr>
+                {% else %}
+                <tr>
+                    <td colspan="8" class="text-center text-muted py-4">
+                        Chưa có lịch tập PT.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,173 @@
+{% extends "base.html" %}
+
+{% block title %}Chi tiết thiết bị | ProGym{% endblock %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/modules/equipment.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="page-topline">
+    <h1 class="page-title">Thông tin thiết bị</h1>
+
+    <div class="page-actions">
+        <a href="{{ url_for('equipment.index') }}" class="btn-operate btn-gray text-decoration-none">
+            <i class="bi bi-arrow-left"></i>
+            Quay lại
+        </a>
+
+        {% if context.open_maintenance %}
+        <a 
+            href="{{ url_for('equipment.resolve_maintenance_view', equipment_id=context.equipment.ma_thiet_bi, maintenance_id=context.open_maintenance.ma_bao_tri) }}" 
+            class="btn-operate btn-green text-decoration-none"
+        >
+            <i class="bi bi-tools"></i>
+            Xử lý bảo trì
+        </a>
+        {% else %}
+        <a 
+            href="{{ url_for('equipment.create_maintenance', equipment_id=context.equipment.ma_thiet_bi) }}" 
+            class="btn-operate btn-green text-decoration-none"
+        >
+            <i class="bi bi-tools"></i>
+            Bảo trì
+        </a>
+        {% endif %}
+
+        {% if session.get("role") == "ADMIN" %}
+        <a href="{{ url_for('equipment.edit', equipment_id=context.equipment.ma_thiet_bi) }}" class="btn-operate btn-gray text-decoration-none">
+            <i class="bi bi-pencil-square"></i>
+            Cập nhật
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+<section class="equipment-detail-header">
+    <div class="equipment-detail-image-box">
+        {% if context.equipment.hinh_anh %}
+        <img
+            src="{{ url_for('static', filename=context.equipment.hinh_anh) }}"
+            alt="{{ context.equipment.ten_thiet_bi }}"
+            class="equipment-detail-image"
+        >
+        {% else %}
+        <div class="equipment-detail-image-placeholder">
+            <i class="bi bi-image"></i>
+            <span>Chưa có ảnh thiết bị</span>
+        </div>
+        {% endif %}
+    </div>
+
+    <div class="equipment-profile-grid">
+        <div class="profile-item">
+            <div class="profile-label">Mã thiết bị</div>
+            <div class="profile-value">{{ context.equipment.ma_hien_thi }}</div>
+        </div>
+
+        <div class="profile-item">
+            <div class="profile-label">Tên thiết bị</div>
+            <div class="profile-value">{{ context.equipment.ten_thiet_bi }}</div>
+        </div>
+
+        <div class="profile-item">
+            <div class="profile-label">Loại thiết bị</div>
+            <div class="profile-value">{{ context.equipment.loai_thiet_bi }}</div>
+        </div>
+
+        <div class="profile-item">
+            <div class="profile-label">Vị trí</div>
+            <div class="profile-value">{{ context.equipment.vi_tri }}</div>
+        </div>
+
+        <div class="profile-item">
+            <div class="profile-label">Ngày mua</div>
+            <div class="profile-value">{{ context.equipment.ngay_mua }}</div>
+        </div>
+
+        <div class="profile-item">
+            <div class="profile-label">Tình trạng</div>
+            <div class="profile-value">
+                <span class="badge-status {{ context.equipment.status_class }}">
+                    {{ context.equipment.status_text }}
+                </span>
+            </div>
+        </div>
+
+        <div class="profile-item profile-wide">
+            <div class="profile-label">Ghi chú</div>
+            <div class="profile-value">{{ context.equipment.ghi_chu }}</div>
+        </div>
+    </div>
+</section>
+
+<div class="equipment-section-title">
+    Lịch sử bảo trì
+    <span class="section-count">{{ context.total_maintenance }}</span>
+</div>
+
+<div class="data-card equipment-maintenance-card">
+    <div class="equipment-maintenance-table-wrap">
+        <table class="table-operate equipment-maintenance-table">
+            <thead>
+                <tr>
+                    <th style="width: 120px;">Mã bảo trì</th>
+                    <th style="width: 135px;">Ngày ghi nhận</th>
+                    <th>Nội dung bảo trì</th>
+                    <th style="width: 145px;">Trạng thái</th>
+                    <th style="width: 145px;">Hoàn thành</th>
+                    <th style="width: 90px;">Thao tác</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for row in context.maintenance %}
+                <tr>
+                    <td>{{ row.ma_hien_thi }}</td>
+                    <td>{{ row.ngay_ghi_nhan }}</td>
+
+                    <td>
+                        <div class="maintenance-main-text">
+                            {{ row.noi_dung }}
+                        </div>
+
+                        {% if row.ghi_chu and row.ghi_chu != '-' %}
+                        <div class="sub-text">
+                            Ghi chú: {{ row.ghi_chu }}
+                        </div>
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        <span class="badge-status {{ row.status_class }}">
+                            {{ row.status_text }}
+                        </span>
+                    </td>
+
+                    <td>{{ row.ngay_hoan_thanh }}</td>
+                    <td>
+                        {% if row.status_text == "Chờ xử lý" %}
+                        <a
+                            href="{{ url_for('equipment.resolve_maintenance_view', equipment_id=context.equipment.ma_thiet_bi, maintenance_id=row.ma_bao_tri) }}"
+                            class="btn btn-sm btn-outline-primary"
+                            title="Xử lý bảo trì"
+                        >
+                            <i class="bi bi-check2-square"></i>
+                        </a>
+                        {% else %}
+                        <span class="text-muted">-</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="6" class="text-center text-muted py-4">
+                        Chưa có lịch sử bảo trì.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

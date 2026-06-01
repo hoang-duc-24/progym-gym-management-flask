@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}ProGym{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link 
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" 
+        rel="stylesheet"
+    >
+
+    <link 
+        rel="stylesheet" 
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+    >
+
+    <link 
+        rel="stylesheet" 
+        href="{{ url_for('static', filename='css/app.css') }}"
+    >
+    {% block page_css %}{% endblock %}
+</head>
+
+<body>
+
+{% if session.get("user_id") %}
+{% set role = session.get("role") %}
+<header class="app-topbar">
+    <div class="topbar-inner">
+        <div class="topbar-left">
+            <a href="{{ url_for('members.index') }}" class="brand-box">
+                <span class="brand-logo">
+                    <img 
+                        src="{{ url_for('static', filename='img/progym-logo.png') }}" 
+                        alt="ProGym logo"
+                        class="brand-logo-img"
+                    >
+                </span>
+                <span class="brand-name">ProGym</span>
+            </a>
+
+            <nav class="main-nav">
+                {% if role in ["ADMIN", "LE_TAN"] %}
+                <a 
+                    href="{{ url_for('members.index') }}" 
+                    class="top-nav-link {% if request.endpoint and request.endpoint.startswith('members.') %}active{% endif %}"
+                >
+                    <i class="bi bi-people-fill"></i>
+                    Hội viên
+                </a>
+                {% endif %}
+
+                {% if role in ["ADMIN", "LE_TAN"] %}
+                <a 
+                    href="{{ url_for('packages.index') }}" 
+                    class="top-nav-link {% if request.endpoint and request.endpoint.startswith('packages.') %}active{% endif %}"
+                >
+                    <i class="bi bi-box-seam"></i>
+                    Gói tập
+                </a>
+                {% endif %}
+
+                {% if role in ["ADMIN", "LE_TAN"] %}
+                <a 
+                    href="{{ url_for('registrations.index') }}"
+                    class="top-nav-link {% if request.endpoint and request.endpoint.startswith('registrations.') %}active{% endif %}"
+                >
+                    <i class="bi bi-card-checklist"></i>
+                    Đăng ký gói
+                </a>
+                {% endif %}
+
+                {% if role in ["ADMIN", "LE_TAN"] %}
+                <a 
+                    href="{{ url_for('payment_reports.index') }}" 
+                    class="top-nav-link {% if request.endpoint and request.endpoint.startswith('payment_reports.') %}active{% endif %}"
+                >
+                    <i class="bi bi-cash-coin"></i>
+                    Thanh toán
+                </a>
+                {% endif %}
+
+                {% if role in ["ADMIN", "LE_TAN"] %}
+                <a 
+                    href="{{ url_for('checkin.index') }}" 
+                    class="top-nav-link {% if request.endpoint and request.endpoint.startswith('checkin.') %}active{% endif %}"
+                >
+                    <i class="bi bi-check-square"></i>
+                    Check-in
+                </a>
+                {% endif %}
+
+                {% if role in ["ADMIN", "LE_TAN"] %}
+                <a 
+                    href="{{ url_for('pts.index') }}" 
+                    class="top-nav-link {% if request.endpoint and request.endpoint.startswith('pts.') %}active{% endif %}"
+                >
+                    <i class="bi bi-person-badge"></i>
+                    PT
+                </a>
+                {% endif %}
+
+                {% if role in ["ADMIN", "LE_TAN", "PT"] %}
+                <a 
+                    href="{{ url_for('schedules.index') }}" 
+                    class="top-nav-link {% if request.endpoint and request.endpoint.startswith('schedules.') %}active{% endif %}"
+                >
+                    <i class="bi bi-calendar3"></i>
+                    Lịch tập
+                </a>
+                {% endif %}
+
+                {% if role in ["ADMIN", "LE_TAN"] %}
+                <a 
+                    href="{{ url_for('equipment.index') }}" 
+                    class="top-nav-link {% if request.endpoint and request.endpoint.startswith('equipment.') %}active{% endif %}"
+                >
+                    <i class="bi bi-tools"></i>
+                    Thiết bị
+                </a>
+                {% endif %}
+
+                {% if role in ["ADMIN", "LE_TAN"] %}
+                <a 
+                    href="{{ url_for('reports.index') }}" 
+                    class="top-nav-link {% if request.endpoint and request.endpoint.startswith('reports.') %}active{% endif %}"
+                >
+                    <i class="bi bi-bar-chart-fill"></i>
+                    Báo cáo
+                </a>
+                {% endif %}
+
+                {% if role == "ADMIN" %}
+                <a 
+                    href="{{ url_for('accounts.index') }}" 
+                    class="top-nav-link {% if request.endpoint and request.endpoint.startswith('accounts.') %}active{% endif %}"
+                >
+                    <i class="bi bi-person-gear"></i>
+                    Tài khoản
+                </a>
+                {% endif %}
+                
+            </nav>
+        </div>
+
+        <div class="topbar-right">
+            <div class="user-dropdown">
+                <button class="user-dropdown-toggle" type="button">
+                    <div class="user-avatar user-avatar-icon">
+                        <i class="bi bi-person-fill"></i>
+                    </div>
+
+                    <span class="topbar-user-name">
+                        {{ session.get("full_name") }}
+                    </span>
+
+                    <i class="bi bi-caret-down-fill user-caret"></i>
+                </button>
+
+                <div class="user-dropdown-menu">
+                    <div class="user-dropdown-header compact">
+                        <div class="user-dropdown-role">
+                            {% if session.get("role") == "ADMIN" %}
+                                Admin
+                            {% elif session.get("role") == "LE_TAN" %}
+                                Lễ tân
+                            {% elif session.get("role") == "PT" %}
+                                PT
+                            {% else %}
+                                {{ session.get("role") }}
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <button type="button" class="user-dropdown-item user-dropdown-button" data-bs-toggle="modal" data-bs-target="#changePasswordModal">
+                        <i class="bi bi-key"></i>
+                        Đổi mật khẩu
+                    </button>
+
+                    <a href="{{ url_for('auth.logout') }}" class="user-dropdown-item text-danger">
+                        <i class="bi bi-box-arrow-right"></i>
+                        Đăng xuất
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+{% endif %}
+
+{% if session.get("user_id") %}
+<div class="modal fade" id="changePasswordModal" tabindex="-1" aria-labelledby="changePasswordModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-md modal-dialog-centered">
+        <div class="modal-content account-security-modal">
+            <form method="POST" action="{{ url_for('auth.change_password') }}">
+                <div class="modal-header account-security-header">
+                    <h5 class="modal-title" id="changePasswordModalLabel">Đổi mật khẩu</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+                </div>
+
+                <div class="modal-body account-security-body">
+                    <div class="security-user-box">
+                        <div class="security-user-name">{{ session.get("full_name") }}</div>
+                        <div class="security-user-role">
+                            {% if session.get("role") == "ADMIN" %}
+                                Admin
+                            {% elif session.get("role") == "LE_TAN" %}
+                                Lễ tân
+                            {% elif session.get("role") == "PT" %}
+                                PT
+                            {% else %}
+                                {{ session.get("role") }}
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="security-form-group">
+                        <label>Mật khẩu hiện tại <span class="required">*</span></label>
+                        <input
+                            type="password"
+                            name="current_password"
+                            class="security-input"
+                            autocomplete="current-password"
+                            required
+                        >
+                    </div>
+
+                    <div class="security-form-group">
+                        <label>Mật khẩu mới <span class="required">*</span></label>
+                        <input
+                            type="password"
+                            name="new_password"
+                            class="security-input"
+                            autocomplete="new-password"
+                            placeholder="Tối thiểu 6 ký tự"
+                            required
+                        >
+                    </div>
+
+                    <div class="security-form-group">
+                        <label>Xác nhận mật khẩu mới <span class="required">*</span></label>
+                        <input
+                            type="password"
+                            name="confirm_password"
+                            class="security-input"
+                            autocomplete="new-password"
+                            required
+                        >
+                    </div>
+                </div>
+
+                <div class="modal-footer account-security-footer">
+                    <button type="button" class="btn-operate btn-gray" data-bs-dismiss="modal">
+                        Hủy
+                    </button>
+                    <button type="submit" class="btn-operate btn-green">
+                        <i class="bi bi-save-fill"></i>
+                        Lưu mật khẩu
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<main class="{% if session.get('user_id') %}app-main{% else %}login-main{% endif %}">
+    {% block content %}{% endblock %}
+</main>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div class="toast-container" id="toastContainer">
+            {% for category, message in messages %}
+                <div class="app-toast app-toast-{{ category }}">
+                    <div class="app-toast-icon">
+                        {% if category == "success" %}
+                            <i class="bi bi-check-circle-fill"></i>
+                        {% elif category == "error" or category == "danger" %}
+                            <i class="bi bi-exclamation-circle-fill"></i>
+                        {% elif category == "warning" %}
+                            <i class="bi bi-exclamation-triangle-fill"></i>
+                        {% else %}
+                            <i class="bi bi-info-circle-fill"></i>
+                        {% endif %}
+                    </div>
+
+                    <div class="app-toast-message">
+                        {{ message }}
+                    </div>
+
+                    <button type="button" class="app-toast-close" title="Đóng thông báo">
+                        <i class="bi bi-x"></i>
+                    </button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endwith %}
+
+<script 
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
+
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const toasts = document.querySelectorAll(".app-toast");
+
+    function closeToast(toast) {
+        if (!toast) {
+            return;
+        }
+
+        toast.classList.add("hide");
+
+        setTimeout(function () {
+            toast.remove();
+        }, 220);
+    }
+
+    toasts.forEach(function (toast) {
+        const closeBtn = toast.querySelector(".app-toast-close");
+
+        if (closeBtn) {
+            closeBtn.addEventListener("click", function () {
+                closeToast(toast);
+            });
+        }
+
+        setTimeout(function () {
+            closeToast(toast);
+        }, 3500);
+    });
+});
+</script>
+
+</body>
+</html>

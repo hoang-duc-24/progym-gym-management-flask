@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+
+{% block title %}Sửa PT | ProGym{% endblock %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/modules/pts.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="page-topline">
+    <h1 class="page-title">Cập nhật huấn luyện viên</h1>
+
+    <div class="page-actions">
+        <a href="{{ url_for('pts.detail', pt_id=context.pt.ma_pt) }}" class="btn-operate btn-gray text-decoration-none">
+            <i class="bi bi-arrow-left"></i>
+            Quay lại
+        </a>
+    </div>
+</div>
+
+<form method="POST" class="pt-form-card">
+    <div class="pt-form-header">Thông tin huấn luyện viên</div>
+
+    <div class="pt-form-body">
+        <div class="pt-form-grid">
+            <div class="pt-form-group">
+                <label>Họ tên <span class="required">*</span></label>
+                <input 
+                    type="text" 
+                    name="ho_ten" 
+                    class="pt-input" 
+                    value="{{ context.pt.ho_ten }}" 
+                    required
+                >
+            </div>
+
+            <div class="pt-form-group">
+                <label>Số điện thoại <span class="required">*</span></label>
+                <input 
+                    type="text" 
+                    name="so_dien_thoai" 
+                    class="pt-input" 
+                    value="{{ context.pt.so_dien_thoai }}" 
+                    required
+                >
+            </div>
+
+            <div class="pt-form-group">
+                <label>Email</label>
+                <input 
+                    type="email" 
+                    name="email" 
+                    class="pt-input" 
+                    value="{{ context.pt.email or '' }}"
+                >
+            </div>
+
+            <div class="pt-form-group">
+                <label>Trạng thái làm việc</label>
+                <select name="trang_thai_lam_viec" class="pt-input">
+                    {% for status in context.status_options %}
+                    <option 
+                        value="{{ status.value }}"
+                        {% if context.pt.trang_thai_lam_viec == status.value %}selected{% endif %}
+                    >
+                        {{ status.label }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="pt-form-group">
+                <label>Chuyên môn</label>
+                <input 
+                    type="text" 
+                    name="chuyen_mon" 
+                    class="pt-input" 
+                    value="{{ context.pt.chuyen_mon or '' }}"
+                >
+            </div>
+
+            <div class="pt-form-group">
+                <label>Kinh nghiệm</label>
+                <input 
+                    type="text" 
+                    name="kinh_nghiem" 
+                    class="pt-input" 
+                    value="{{ context.pt.kinh_nghiem or '' }}"
+                >
+            </div>
+
+            <div class="pt-form-group full">
+                <label>Ghi chú</label>
+                <textarea name="ghi_chu" class="pt-textarea">{{ context.pt.ghi_chu or '' }}</textarea>
+            </div>
+        </div>
+
+        <div class="pt-form-actions">
+            <a href="{{ url_for('pts.detail', pt_id=context.pt.ma_pt) }}" class="btn-operate btn-gray text-decoration-none">
+                Hủy
+            </a>
+
+            <button type="submit" class="btn-operate btn-green">
+                <i class="bi bi-save-fill"></i>
+                Lưu thay đổi
+            </button>
+        </div>
+    </div>
+</form>
+{% endblock %}

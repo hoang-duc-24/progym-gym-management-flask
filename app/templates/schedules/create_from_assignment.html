@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+
+{% block title %}Tạo lịch từ phân công PT | ProGym{% endblock %}
+
+{% block page_css %}
+<link 
+    rel="stylesheet" 
+    href="{{ url_for('static', filename='css/modules/schedules.css') }}"
+>
+{% endblock %}
+
+{% block content %}
+<div class="page-topline">
+    <h1 class="page-title">Tạo lịch từ phân công PT</h1>
+
+    <div class="page-actions">
+        <a href="{{ url_for('schedules.index') }}" class="btn-operate btn-gray text-decoration-none">
+            <i class="bi bi-arrow-left"></i>
+            Quay lại lịch tập
+        </a>
+    </div>
+</div>
+
+<section class="schedule-create-filter-bar">
+    <form method="GET" action="{{ url_for('schedules.create') }}" class="schedule-create-filter-form">
+        <div class="schedule-create-filter-pt">
+            <select name="ma_pt" class="filter-input">
+                <option value="">Tất cả PT</option>
+                {% for pt in context.pt_options %}
+                <option 
+                    value="{{ pt.ma_pt }}"
+                    {% if context.filters.ma_pt|string == pt.ma_pt|string %}selected{% endif %}
+                >
+                    {{ pt.ho_ten }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="schedule-create-filter-status">
+            <select name="trang_thai_hieu_luc" class="filter-input">
+                <option value="">Tất cả trạng thái</option>
+                {% for status in context.service_status_options %}
+                <option 
+                    value="{{ status.value }}"
+                    {% if context.filters.trang_thai_hieu_luc == status.value %}selected{% endif %}
+                >
+                    {{ status.label }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="schedule-create-filter-keyword">
+            <input 
+                type="text" 
+                name="keyword" 
+                class="filter-input"
+                placeholder="Tên HV, SĐT, tên PT, gói tập..."
+                value="{{ context.filters.keyword }}"
+            >
+        </div>
+
+        <button type="submit" class="btn-operate btn-green">
+            <i class="bi bi-search"></i>
+            Tìm kiếm
+        </button>
+
+        <a href="{{ url_for('schedules.create') }}" class="btn-operate btn-gray text-decoration-none">
+            <i class="bi bi-arrow-clockwise"></i>
+            Đặt lại
+        </a>
+
+        <div class="schedule-create-count-pill">
+            <i class="bi bi-person-check-fill"></i>
+            <span>Phân công:</span>
+            <strong>{{ context.total }}</strong>
+        </div>
+    </form>
+</section>
+
+<section class="schedule-create-table-section">
+    <div class="data-card schedule-create-table-card">
+        <div class="schedule-create-table-wrap">
+            <table class="table-operate schedule-create-table">
+                <thead>
+                    <tr>
+                        <th style="width: 90px;">Mã PC</th>
+                        <th style="width: 160px;">Hội viên</th>
+                        <th style="width: 160px;">PT phụ trách</th>
+                        <th style="width: 150px;">Gói PT</th>
+                        <th style="width: 150px;">Thời hạn gói</th>
+                        <th style="width: 90px;">Còn lại</th>
+                        <th style="width: 130px;">Trạng thái</th>
+                        <th style="width: 85px;">Thao tác</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for row in context.assignments %}
+                    <tr>
+                        <td>PC{{ "%06d"|format(row.ma_phan_cong) }}</td>
+
+                        <td>
+                            <a 
+                                href="{{ url_for('members.detail', member_id=row.ma_hoi_vien) }}"
+                                class="link-name"
+                            >
+                                {{ row.ten_hoi_vien }}
+                            </a>
+                            <div class="sub-text">{{ row.sdt_hoi_vien }}</div>
+                        </td>
+
+                        <td>
+                            <div>{{ row.ten_pt }}</div>
+                            <div class="sub-text">{{ row.sdt_pt }}</div>
+                        </td>
+
+                        <td>
+                            <div>{{ row.ten_goi_tap }}</div>
+                            <div class="sub-text">{{ row.loai_goi }}</div>
+                        </td>
+
+                        <td>
+                            {{ row.ngay_bat_dau }} - {{ row.ngay_ket_thuc_goi }}
+                        </td>
+
+                        <td>{{ row.remaining_text }}</td>
+
+                        <td>
+                            <span class="badge-status {{ row.service_class }}">
+                                {{ row.service_text }}
+                            </span>
+                        </td>
+
+                        <td>
+                            {% if row.service_text == "Đang hiệu lực" %}
+                            <a 
+                                href="{{ url_for('schedules.create_from_assignment',
+                                    assignment_id=row.ma_phan_cong,
+                                    next=url_for('schedules.index')) }}"
+                                class="btn btn-sm btn-outline-primary"
+                                title="Tạo lịch tập"
+                            >
+                                <i class="bi bi-calendar-plus"></i>
+                            </a>
+                            {% else %}
+                            <span class="text-muted small">Chưa dùng</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="8" class="text-center text-muted py-4">
+                            Không có phân công PT phù hợp để tạo lịch.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,212 @@
+{% extends "base.html" %}
+
+{% block title %}Chi tiết PT | ProGym{% endblock %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/modules/pts.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="page-topline">
+    <h1 class="page-title">Thông tin huấn luyện viên</h1>
+
+    <div class="page-actions">
+        <a href="{{ url_for('pts.index') }}" class="btn-operate btn-gray text-decoration-none">
+            <i class="bi bi-arrow-left"></i>
+            Quay lại
+        </a>
+    </div>
+</div>
+
+<section class="pt-detail-header">
+    <div class="pt-avatar-large">
+        <i class="bi bi-person-badge-fill"></i>
+    </div>
+
+    <div class="pt-profile-grid">
+        <div class="profile-item">
+            <div class="profile-label">Mã PT</div>
+            <div class="profile-value">{{ context.pt.ma_nhan_su }}</div>
+        </div>
+
+        <div class="profile-item">
+            <div class="profile-label">Họ tên</div>
+            <div class="profile-value">{{ context.pt.ho_ten }}</div>
+        </div>
+
+        <div class="profile-item">
+            <div class="profile-label">Số điện thoại</div>
+            <div class="profile-value">{{ context.pt.so_dien_thoai }}</div>
+        </div>
+
+        <div class="profile-item">
+            <div class="profile-label">Email</div>
+            <div class="profile-value">{{ context.pt.email }}</div>
+        </div>
+
+        <div class="profile-item">
+            <div class="profile-label">Chuyên môn</div>
+            <div class="profile-value">{{ context.pt.chuyen_mon }}</div>
+        </div>
+
+        <div class="profile-item">
+            <div class="profile-label">Kinh nghiệm</div>
+            <div class="profile-value">{{ context.pt.kinh_nghiem }}</div>
+        </div>
+
+        <div class="profile-item">
+            <div class="profile-label">Trạng thái</div>
+            <div class="profile-value">
+                <span class="badge-status {{ context.pt.status_class }}">
+                    {{ context.pt.status_text }}
+                </span>
+            </div>
+        </div>
+
+        <div class="profile-item profile-wide">
+            <div class="profile-label">Ghi chú</div>
+            <div class="profile-value">{{ context.pt.ghi_chu }}</div>
+        </div>
+    </div>
+</section>
+
+<div class="pt-detail-tabs">
+    <button class="pt-tab active" data-tab="assignments">
+        Hội viên phụ trách
+    </button>
+    <button class="pt-tab" data-tab="schedules">
+        Lịch tập
+    </button>
+</div>
+
+<section class="pt-tab-panel active" id="tab-assignments">
+    <div class="data-card pt-detail-table-card">
+        <div class="pt-detail-table-wrap">
+            <table class="table-operate pt-detail-table">
+                <thead>
+                    <tr>
+                        <th>Mã PC</th>
+                        <th>Hội viên</th>
+                        <th>Điện thoại</th>
+                        <th>Gói tập</th>
+                        <th>Ngày phân công</th>
+                        <th>Ngày kết thúc</th>
+                        <th>Còn lại</th>
+                        <th>Trạng thái phân công</th>
+                        <th>Trạng thái dịch vụ</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for row in context.assignments %}
+                    <tr>
+                        <td>PC{{ "%06d"|format(row.ma_phan_cong) }}</td>
+
+                        <td>
+                            <a href="{{ url_for('members.detail', member_id=row.ma_hoi_vien) }}" class="link-name">
+                                {{ row.ten_hoi_vien }}
+                            </a>
+                        </td>
+
+                        <td>{{ row.sdt_hoi_vien }}</td>
+                        <td>{{ row.ten_goi_tap }}</td>
+                        <td>{{ row.ngay_phan_cong }}</td>
+                        <td>{{ row.ngay_ket_thuc }}</td>
+                        <td>{{ row.remaining_text }}</td>
+
+                        <td>
+                            <span class="badge-status {{ row.assignment_class }}">
+                                {{ row.assignment_text }}
+                            </span>
+                        </td>
+
+                        <td>
+                            <span class="badge-status {{ row.service_class }}">
+                                {{ row.service_text }}
+                            </span>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="9" class="text-center text-muted py-4">
+                            PT chưa có phân công hội viên.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<section class="pt-tab-panel" id="tab-schedules">
+    <div class="data-card pt-detail-table-card">
+        <div class="pt-detail-table-wrap">
+            <table class="table-operate pt-detail-table">
+                <thead>
+                    <tr>
+                        <th>Mã lịch</th>
+                        <th>Ngày tập</th>
+                        <th>Thời gian</th>
+                        <th>Hội viên</th>
+                        <th>Điện thoại</th>
+                        <th>Gói tập</th>
+                        <th>Trạng thái</th>
+                        <th>Ghi chú</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for row in context.schedules %}
+                    <tr>
+                        <td>LT{{ "%06d"|format(row.ma_lich_tap) }}</td>
+                        <td>{{ row.ngay_tap }}</td>
+                        <td>{{ row.thoi_gian }}</td>
+
+                        <td>
+                            <a href="{{ url_for('members.detail', member_id=row.ma_hoi_vien) }}" class="link-name">
+                                {{ row.ten_hoi_vien }}
+                            </a>
+                        </td>
+
+                        <td>{{ row.sdt_hoi_vien }}</td>
+                        <td>{{ row.ten_goi_tap }}</td>
+
+                        <td>
+                            <span class="badge-status {{ row.status_class }}">
+                                {{ row.status_text }}
+                            </span>
+                        </td>
+
+                        <td>{{ row.ghi_chu }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="8" class="text-center text-muted py-4">
+                            PT chưa có lịch tập.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const tabs = document.querySelectorAll(".pt-tab");
+    const panels = document.querySelectorAll(".pt-tab-panel");
+
+    tabs.forEach(function (tab) {
+        tab.addEventListener("click", function () {
+            tabs.forEach(t => t.classList.remove("active"));
+            panels.forEach(p => p.classList.remove("active"));
+
+            tab.classList.add("active");
+            document.getElementById("tab-" + tab.dataset.tab).classList.add("active");
+        });
+    });
+});
+</script>
+{% endblock %}

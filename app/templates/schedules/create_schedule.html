@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+
+{% block title %}Tạo lịch tập PT | ProGym{% endblock %}
+
+{% block page_css %}
+<link 
+    rel="stylesheet" 
+    href="{{ url_for('static', filename='css/modules/schedules.css') }}"
+>
+{% endblock %}
+
+{% block content %}
+<div class="page-topline">
+    <h1 class="page-title">Tạo lịch tập PT</h1>
+
+    <div class="page-actions">
+        <a 
+            href="{{ next_url if next_url else url_for('members.detail', member_id=form_context.assignment.ma_hoi_vien) }}" 
+            class="btn-operate btn-gray text-decoration-none"
+        >
+            <i class="bi bi-arrow-left"></i>
+            Quay lại
+        </a>
+    </div>
+</div>
+
+<form method="POST" class="schedule-form-layout">
+    {% if next_url %}
+    <input type="hidden" name="next" value="{{ next_url }}">
+    {% endif %}
+    <aside class="schedule-form-card">
+        <div class="schedule-form-card-header">
+            Thông tin phân công
+        </div>
+
+        <div class="schedule-form-card-body">
+            <div class="schedule-info-line">
+                <span>Hội viên</span>
+                <strong>{{ form_context.assignment.ten_hoi_vien }}</strong>
+            </div>
+
+            <div class="schedule-info-line">
+                <span>SĐT hội viên</span>
+                <strong>{{ form_context.assignment.so_dien_thoai_hoi_vien }}</strong>
+            </div>
+
+            <div class="schedule-info-line">
+                <span>PT phụ trách</span>
+                <strong>{{ form_context.assignment.ten_pt }}</strong>
+            </div>
+
+            <div class="schedule-info-line">
+                <span>SĐT PT</span>
+                <strong>{{ form_context.assignment.so_dien_thoai_pt }}</strong>
+            </div>
+
+            <div class="schedule-info-line">
+                <span>Gói PT</span>
+                <strong>{{ form_context.assignment.ten_goi_tap }}</strong>
+            </div>
+
+            <div class="schedule-info-line">
+                <span>Thời hạn gói</span>
+                <strong>
+                    {{ form_context.assignment.ngay_bat_dau }} - {{ form_context.assignment.ngay_ket_thuc_goi }}
+                </strong>
+            </div>
+
+            <div class="schedule-info-line">
+                <span>Số buổi còn</span>
+                <strong>
+                    {{ form_context.assignment.so_buoi_pt_con_lai }}/{{ form_context.assignment.so_buoi_pt_ban_dau }} buổi
+                </strong>
+            </div>
+        </div>
+    </aside>
+
+    <section class="schedule-form-card">
+        <div class="schedule-form-card-header">
+            Thông tin lịch tập
+        </div>
+
+        <div class="schedule-form-card-body">
+            <div class="schedule-form-grid">
+                <div class="schedule-form-group">
+                    <label>Ngày tập <span class="required">*</span></label>
+                    <input 
+                        type="date" 
+                        name="ngay_tap" 
+                        class="schedule-input"
+                        value="{{ form_context.today }}"
+                        min="{{ form_context.today }}"
+                    >
+                </div>
+
+                <div class="schedule-form-group">
+                    <label>Trạng thái</label>
+                    <input 
+                        type="text" 
+                        class="schedule-input"
+                        value="Đã lên lịch"
+                        disabled
+                    >
+                </div>
+
+                <div class="schedule-form-group">
+                    <label>Giờ bắt đầu <span class="required">*</span></label>
+                    <input 
+                        type="time" 
+                        name="gio_bat_dau" 
+                        class="schedule-input"
+                        value="18:00"
+                    >
+                </div>
+
+                <div class="schedule-form-group">
+                    <label>Giờ kết thúc <span class="required">*</span></label>
+                    <input 
+                        type="time" 
+                        name="gio_ket_thuc" 
+                        class="schedule-input"
+                        value="19:00"
+                    >
+                </div>
+
+                
+
+                <div class="schedule-form-group full">
+                    <label>Ghi chú</label>
+                    <textarea 
+                        name="ghi_chu" 
+                        class="schedule-textarea"
+                        placeholder="Ví dụ: Buổi tập đầu tiên, ưu tiên tập ngực - tay..."
+                    ></textarea>
+                </div>
+            </div>
+
+            <div class="schedule-form-actions">
+                <a 
+                    href="{{ next_url if next_url else url_for('members.detail', member_id=form_context.assignment.ma_hoi_vien) }}" 
+                    class="btn-operate btn-gray text-decoration-none"
+                >
+                    Hủy
+                </a>
+
+                <button type="submit" class="btn-operate btn-green">
+                    <i class="bi bi-calendar-plus-fill"></i>
+                    Lưu lịch tập
+                </button>
+            </div>
+        </div>
+    </section>
+</form>
+{% endblock %}

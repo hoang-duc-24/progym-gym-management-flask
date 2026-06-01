@@ -1,0 +1,939 @@
+.registration-kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.registration-kpi-card {
+    background: #fff;
+    border: 1px solid var(--gray-line);
+    padding: 8px 10px;
+    min-height: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.kpi-label {
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-bottom: 0;
+    font-size: 12px;
+    line-height: 1.2;
+}
+
+.kpi-value {
+    color: var(--text-main);
+    font-size: 18px;
+    font-weight: 800;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.registrations-layout {
+    display: grid;
+    grid-template-columns: 330px minmax(0, 1fr);
+    gap: 14px;
+    align-items: start;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+.registrations-layout.filter-collapsed {
+    grid-template-columns: minmax(0, 1fr);
+}
+
+.registrations-layout.filter-collapsed .registrations-filter {
+    display: none;
+}
+
+.registrations-filter,
+.data-card,
+.registration-detail-header {
+    background: #fff;
+    border: 1px solid var(--gray-line);
+}
+
+.filter-title {
+    height: 38px;
+    padding: 9px 12px;
+    font-weight: 700;
+    color: #fff;
+    background: var(--blue-main);
+    border-bottom: 1px solid var(--gray-line);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.filter-toggle-btn {
+    border: none;
+    background: transparent;
+    color: #fff;
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+}
+
+.filter-body {
+    padding: 14px;
+}
+
+.filter-group {
+    margin-bottom: 14px;
+}
+
+.filter-group label {
+    display: block;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+.filter-input {
+    width: 100%;
+    height: 34px;
+    border: 1px solid var(--gray-line);
+    border-radius: 2px;
+    padding: 6px 9px;
+    font-size: 13px;
+    background: #fff;
+}
+
+.filter-input:focus {
+    outline: none;
+    border-color: var(--blue-main);
+}
+
+.filter-check {
+    margin-bottom: 14px;
+}
+
+.filter-check label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-height: 30px;
+    cursor: pointer;
+}
+
+.filter-check input {
+    width: 15px;
+    height: 15px;
+}
+
+.filter-actions {
+    display: grid;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.w-100 {
+    width: 100%;
+    justify-content: center;
+}
+
+.registrations-main {
+    min-width: 0;
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+.registrations-toolbar {
+    height: 38px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 6px;
+}
+
+.registrations-filter-inline-toggle {
+    border: 1px solid var(--gray-line);
+    background: var(--blue-main);
+    color: #fff;
+    height: 32px;
+    padding: 0 12px;
+    display: none;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    font-weight: 700;
+}
+
+.registrations-filter-inline-toggle.is-visible {
+    display: inline-flex;
+}
+
+.data-summary-line {
+    height: 32px;
+    display: flex;
+    align-items: center;
+}
+
+.data-summary-line strong {
+    margin-left: 3px;
+}
+
+.registration-table-wrap {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+.registrations-table {
+    min-width: 980px;
+}
+
+.registrations-table th,
+.registrations-table td {
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+.registrations-table td:nth-child(2) {
+    white-space: normal;
+    min-width: 190px;
+}
+
+.registrations-table td:nth-child(3) {
+    white-space: normal;
+    min-width: 180px;
+}
+
+.registrations-table td:nth-child(4) {
+    min-width: 130px;
+}
+
+.strong-text {
+    font-weight: 700;
+    color: var(--text-main);
+}
+
+.sub-text {
+    color: var(--text-muted);
+    font-size: 12px;
+    margin-top: 3px;
+    line-height: 1.35;
+}
+
+.link-name {
+    font-weight: 700;
+    color: var(--blue-main);
+    text-decoration: none;
+}
+
+.link-name:hover {
+    text-decoration: underline;
+}
+
+.mini-stats {
+    display: flex;
+    gap: 8px;
+    color: var(--text-muted);
+    font-size: 12px;
+}
+
+.table-actions {
+    display: flex;
+    gap: 6px;
+}
+
+.registration-detail-header {
+    display: grid;
+    grid-template-columns: 220px minmax(0, 1fr);
+    gap: 18px;
+    background: #fff;
+    border: 1px solid var(--gray-line);
+    padding: 16px 18px;
+    margin-bottom: 12px;
+}
+
+.registration-code-box {
+    border: 1px solid var(--gray-line);
+    background: #f8f9fa;
+    padding: 16px 18px;
+    min-height: 170px;
+}
+.registration-code-label {
+    color: var(--text-muted);
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.registration-code-value {
+    margin-top: 12px;
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: 3px;
+    color: var(--text-main);
+}
+
+.registration-status-stack {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+}
+
+.registration-profile-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px 28px;
+    align-content: start;
+}
+
+.profile-label {
+    color: var(--text-muted);
+    margin-bottom: 4px;
+    font-size: 13px;
+}
+
+.profile-value {
+    font-weight: 700;
+    color: var(--text-main);
+    line-height: 1.35;
+    word-break: break-word;
+}
+
+.profile-wide {
+    grid-column: span 3;
+}
+
+.registration-tabs {
+    display: flex;
+    background: #fff;
+    border: 1px solid var(--gray-line);
+    border-bottom: none;
+}
+
+.registration-tab {
+    border: none;
+    border-right: 1px solid var(--gray-line);
+    background: #fff;
+    padding: 10px 22px;
+    font-weight: 700;
+    color: var(--text-main);
+    cursor: pointer;
+}
+
+.registration-tab.active {
+    color: var(--blue-main);
+    border-bottom: 2px solid var(--blue-main);
+}
+
+.registration-tab-panel {
+    display: none;
+}
+
+.registration-tab-panel.active {
+    display: block;
+}
+
+.registration-tab-panel .data-card {
+    overflow-x: auto;
+}
+
+.registration-tab-panel .table-operate {
+    min-width: 900px;
+}
+
+body {
+    overflow-x: hidden;
+}
+
+@media (max-width: 1300px) {
+    .registration-kpi-grid {
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+
+    .registration-kpi-card {
+        padding: 7px 8px;
+    }
+
+    .kpi-label {
+        font-size: 11px;
+    }
+
+    .kpi-value {
+        font-size: 17px;
+    }
+
+    .registration-profile-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .profile-wide {
+        grid-column: span 2;
+    }
+}
+
+@media (max-width: 900px) {
+    .registrations-layout,
+    .registration-detail-header {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 760px) {
+    .registration-kpi-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .registration-profile-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-wide {
+        grid-column: span 1;
+    }
+}
+
+.member-select-layout {
+    display: grid;
+    grid-template-columns: 330px minmax(0, 1fr);
+    gap: 14px;
+    align-items: start;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+.member-select-filter,
+.member-select-main {
+    min-width: 0;
+}
+
+.member-select-filter {
+    background: #fff;
+    border: 1px solid var(--gray-line);
+}
+
+.member-select-table {
+    min-width: 1050px;
+}
+
+.member-select-table th,
+.member-select-table td {
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+.member-select-table td:nth-child(2),
+.member-select-table td:nth-child(3) {
+    white-space: normal;
+    min-width: 180px;
+}
+
+@media (max-width: 900px) {
+    .member-select-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* =========================
+   REGISTRATIONS INDEX POLISH
+========================= */
+
+/* KPI gọn hơn, bớt chiếm chiều cao */
+.registration-kpi-grid {
+    gap: 7px;
+    margin-bottom: 8px;
+}
+
+.registration-kpi-card {
+    min-height: 40px;
+    padding: 6px 9px;
+}
+
+.kpi-label {
+    font-size: 11.5px;
+    font-weight: 600;
+}
+
+.kpi-value {
+    font-size: 17px;
+    font-weight: 800;
+}
+
+/* Layout danh sách đăng ký */
+.registrations-layout {
+    gap: 12px;
+    align-items: stretch;
+}
+
+/* Bộ lọc trái gọn hơn */
+.registrations-filter {
+    min-height: 0;
+}
+
+.registrations-filter .filter-title {
+    height: 36px;
+    padding: 8px 11px;
+}
+
+.registrations-filter .filter-body {
+    padding: 12px;
+}
+
+.registrations-filter .filter-group {
+    margin-bottom: 12px;
+}
+
+.registrations-filter .filter-group label {
+    margin-bottom: 5px;
+    font-size: 12.5px;
+}
+
+.registrations-filter .filter-input {
+    height: 32px;
+    font-size: 13px;
+}
+
+.registrations-filter .filter-check {
+    margin-bottom: 12px;
+}
+
+/* Main area */
+.registrations-main {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+.registrations-toolbar {
+    height: 32px;
+    margin-bottom: 6px;
+}
+
+.data-summary-line {
+    height: 30px;
+    font-size: 13px;
+}
+
+/* Bảng đăng ký: cuộn riêng + sticky header */
+.registrations-main .data-card {
+    min-height: 0;
+    overflow: hidden;
+}
+
+.registration-table-wrap {
+    width: 100%;
+    max-width: 100%;
+    max-height: calc(100vh - 210px);
+    overflow: auto;
+    border-bottom: 1px solid var(--gray-line);
+}
+
+.registrations-table {
+    min-width: 1120px;
+    table-layout: fixed;
+}
+
+.registrations-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    background: #f8f9fa;
+}
+
+.registrations-table th,
+.registrations-table td {
+    vertical-align: middle;
+}
+
+.registrations-table td {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Cột hội viên và gói tập cho phép xuống dòng nhẹ */
+.registrations-table td:nth-child(2),
+.registrations-table td:nth-child(3) {
+    white-space: normal;
+    line-height: 1.35;
+}
+
+/* Các cột còn lại giữ gọn một dòng */
+.registrations-table td:nth-child(1),
+.registrations-table td:nth-child(4),
+.registrations-table td:nth-child(5),
+.registrations-table td:nth-child(6),
+.registrations-table td:nth-child(7),
+.registrations-table td:nth-child(8),
+.registrations-table td:nth-child(9) {
+    white-space: nowrap;
+}
+
+.registration-remaining-cell {
+    color: var(--text-main);
+    font-weight: 600;
+}
+
+/* Nút thao tác dạng icon */
+.registration-actions {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.registration-action-btn {
+    width: 26px;
+    height: 26px;
+    border: 1px solid var(--gray-line);
+    background: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.registration-action-btn.view {
+    color: var(--blue-main);
+}
+
+.registration-action-btn.pay {
+    color: var(--green-main);
+}
+
+.registration-action-btn:hover {
+    background: #eef7fc;
+    border-color: #bdd7ea;
+}
+
+/* Scrollbar mảnh cho bảng */
+.registration-table-wrap::-webkit-scrollbar {
+    height: 5px;
+    width: 5px;
+}
+
+.registration-table-wrap::-webkit-scrollbar-thumb {
+    background: #aeb8c2;
+    border-radius: 999px;
+}
+
+.registration-table-wrap::-webkit-scrollbar-track {
+    background: #f1f3f5;
+}
+
+/* =========================
+   REGISTRATIONS FILTER SCROLL FIX
+========================= */
+
+.registrations-layout {
+    grid-template-columns: 250px minmax(0, 1fr);
+    align-items: stretch;
+}
+
+.registrations-filter {
+    max-height: calc(100vh - 205px);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.registrations-filter .filter-title {
+    flex: 0 0 auto;
+}
+
+.registrations-filter .filter-body {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 12px;
+}
+
+.registrations-filter .filter-body::-webkit-scrollbar {
+    width: 4px;
+}
+
+.registrations-filter .filter-body::-webkit-scrollbar-thumb {
+    background: #aeb8c2;
+    border-radius: 999px;
+}
+
+.registrations-filter .filter-body::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+/* Cột thao tác gọn */
+.registrations-table th:nth-child(9),
+.registrations-table td:nth-child(9) {
+    width: 70px;
+    min-width: 70px;
+    max-width: 70px;
+    text-align: center;
+}
+
+.registration-actions {
+    justify-content: center;
+    gap: 6px;
+}
+
+.registration-action-btn {
+    width: 24px;
+    height: 24px;
+    font-size: 12px;
+}
+
+/* =========================
+   REGISTRATION CREATE - MEMBER SELECT TOP SEARCH
+========================= */
+
+.member-select-page {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.member-select-searchbar {
+    background: #fff;
+    border: 1px solid var(--gray-line);
+    padding: 12px;
+    display: grid;
+    grid-template-columns: minmax(320px, 1fr) auto;
+    gap: 12px;
+    align-items: end;
+}
+
+.member-select-search-field {
+    min-width: 0;
+}
+
+.member-select-search-field label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-main);
+}
+
+.member-select-input {
+    width: 100%;
+    height: 34px;
+    border: 1px solid var(--gray-line);
+    border-radius: 2px;
+    padding: 6px 9px;
+    font-size: 13px;
+    background: #fff;
+}
+
+.member-select-input:focus {
+    outline: none;
+    border-color: var(--blue-main);
+}
+
+.member-select-search-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+}
+
+.member-select-card {
+    overflow: hidden;
+}
+
+.member-select-table-wrap {
+    width: 100%;
+    max-height: calc(100vh - 210px);
+    overflow: auto;
+    border-bottom: 1px solid var(--gray-line);
+}
+
+.member-select-table {
+    min-width: 1310px;
+    table-layout: fixed;
+}
+
+.member-select-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    background: #f8f9fa;
+}
+
+.member-select-table th,
+.member-select-table td {
+    vertical-align: middle;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.member-select-table td:nth-child(2),
+.member-select-table td:nth-child(3),
+.member-select-table td:nth-child(4) {
+    white-space: normal;
+    line-height: 1.35;
+}
+
+.member-select-table td:nth-child(1),
+.member-select-table td:nth-child(5),
+.member-select-table td:nth-child(6),
+.member-select-table td:nth-child(7),
+.member-select-table td:nth-child(8) {
+    white-space: nowrap;
+}
+
+.member-select-table-wrap::-webkit-scrollbar {
+    height: 5px;
+    width: 5px;
+}
+
+.member-select-table-wrap::-webkit-scrollbar-thumb {
+    background: #aeb8c2;
+    border-radius: 999px;
+}
+
+.member-select-table-wrap::-webkit-scrollbar-track {
+    background: #f1f3f5;
+}
+
+@media (max-width: 900px) {
+    .member-select-searchbar {
+        grid-template-columns: 1fr;
+    }
+
+    .member-select-search-actions {
+        justify-content: flex-end;
+    }
+}
+
+/* =========================
+   REGISTRATION CREATE - COMPACT LAYOUT FIX
+========================= */
+
+.member-select-page {
+    gap: 6px;
+}
+
+/* Thanh tìm kiếm phía trên gọn hơn */
+.member-select-searchbar {
+    padding: 8px 10px;
+    grid-template-columns: minmax(320px, 1fr) auto;
+    gap: 10px;
+    align-items: center;
+}
+
+.member-select-search-field label {
+    display: none;
+}
+
+.member-select-input {
+    height: 32px;
+}
+
+/* Dòng tổng số hội viên không chiếm nhiều chiều cao */
+.member-select-page .registrations-toolbar {
+    height: 24px;
+    margin-bottom: 2px;
+}
+
+.member-select-page .data-summary-line {
+    height: 24px;
+    font-size: 13px;
+}
+
+/* Bảng chiếm phần còn lại, tự cuộn trong bảng */
+.member-select-table-wrap {
+    max-height: calc(100vh - 190px);
+    overflow: auto;
+}
+
+/* Header bảng sticky */
+.member-select-table thead th {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    background: #f8f9fa;
+}
+
+/* Giảm nhẹ chiều cao dòng */
+.member-select-table th,
+.member-select-table td {
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+
+/* Nếu không cần thanh cuộn ngang nhiều, giảm min-width */
+.member-select-table {
+    min-width: 1180px;
+}
+
+/* Scrollbar mảnh */
+.member-select-table-wrap::-webkit-scrollbar {
+    height: 5px;
+    width: 5px;
+}
+
+.member-select-table-wrap::-webkit-scrollbar-thumb {
+    background: #aeb8c2;
+    border-radius: 999px;
+}
+
+.member-select-table-wrap::-webkit-scrollbar-track {
+    background: #f1f3f5;
+}
+
+.member-select-count {
+    height: 32px;
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    font-size: 13px;
+    color: var(--text-main);
+}
+
+.member-select-count strong {
+    margin-left: 4px;
+}
+
+/* =========================
+   MEMBER SELECT COUNT PILL
+========================= */
+
+.member-select-searchbar {
+    grid-template-columns: minmax(360px, 1fr) auto;
+}
+
+.member-select-search-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    white-space: nowrap;
+}
+
+.member-select-count {
+    height: 32px;
+    min-width: 150px;
+    padding: 0 12px;
+    border: 1px solid var(--gray-line);
+    background: #fff;
+    color: var(--text-main);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.member-select-count i {
+    color: var(--blue-main);
+    font-size: 13px;
+}
+
+.member-select-count span {
+    color: var(--text-muted);
+    font-weight: 600;
+}
+
+.member-select-count strong {
+    color: var(--text-main);
+    font-weight: 800;
+}

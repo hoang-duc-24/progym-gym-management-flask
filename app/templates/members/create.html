@@ -1,0 +1,164 @@
+{% extends "base.html" %}
+
+{% block title %}Tạo mới và đăng ký | ProGym{% endblock %}
+
+{% block page_css %}
+<link 
+    rel="stylesheet" 
+    href="{{ url_for('static', filename='css/modules/members.css') }}"
+>
+{% endblock %}
+
+{% block content %}
+<div class="page-topline">
+    <h1 class="page-title">Tạo mới hội viên và đăng ký gói</h1>
+
+    <div class="page-actions">
+        <a href="{{ url_for('members.index') }}" class="btn-operate btn-gray text-decoration-none">
+            <i class="bi bi-arrow-left"></i>
+            Quay lại
+        </a>
+    </div>
+</div>
+
+<form method="POST" class="member-create-layout">
+    <section class="member-create-card">
+        <div class="member-create-card-header">
+            Thông tin hội viên
+        </div>
+
+        <div class="member-create-card-body">
+            <div class="member-form-grid">
+                <div class="member-form-group">
+                    <label>Họ tên <span class="required">*</span></label>
+                    <input type="text" name="ho_ten" class="member-input" placeholder="Nhập họ tên hội viên">
+                </div>
+
+                <div class="member-form-group">
+                    <label>Số điện thoại <span class="required">*</span></label>
+                    <input type="text" name="so_dien_thoai" class="member-input" placeholder="Nhập số điện thoại">
+                </div>
+
+                <div class="member-form-group">
+                    <label>Giới tính</label>
+                    <select name="gioi_tinh" class="member-input">
+                        <option value="NAM">Nam</option>
+                        <option value="NU">Nữ</option>
+                        <option value="KHAC">Khác</option>
+                    </select>
+                </div>
+
+                <div class="member-form-group">
+                    <label>Ngày sinh</label>
+                    <input type="date" name="ngay_sinh" class="member-input">
+                </div>
+
+                <div class="member-form-group">
+                    <label>Email</label>
+                    <input type="email" name="email" class="member-input" placeholder="email@example.com">
+                </div>
+
+                <div class="member-form-group">
+                    <label>Địa chỉ</label>
+                    <input type="text" name="dia_chi" class="member-input" placeholder="Nhập địa chỉ">
+                </div>
+
+                <div class="member-form-group full">
+                    <label>Ghi chú hội viên</label>
+                    <textarea name="ghi_chu_hoi_vien" class="member-textarea" placeholder="Nhập ghi chú nếu có"></textarea>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="member-create-card">
+        <div class="member-create-card-header">
+            Đăng ký gói tập
+        </div>
+
+        <div class="member-create-card-body">
+            <div class="member-form-grid">
+                <div class="member-form-group full">
+                    <label>Gói tập <span class="required">*</span></label>
+                    <select name="ma_goi_tap" class="member-input" id="packageSelect">
+                        <option value="">-- Chọn gói tập --</option>
+                        {% for package in form_context.packages %}
+                        <option 
+                            value="{{ package.ma_goi_tap }}"
+                            data-price="{{ package.gia_goi|int }}"
+                            data-duration="{{ package.thoi_han_ngay }}"
+                            data-sessions="{{ package.so_buoi_pt }}"
+                            data-type="{{ package.loai_goi }}"
+                        >
+                            {{ package.ten_goi_tap }} - {{ package.loai_goi }} - {{ package.gia_goi_text }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="member-form-group">
+                    <label>Ngày bắt đầu <span class="required">*</span></label>
+                    <input 
+                        type="date" 
+                        name="ngay_bat_dau" 
+                        class="member-input"
+                        id="startDateInput"
+                        value="{{ form_context.today }}"
+                    >
+                </div>
+
+                <div class="member-form-group">
+                    <label>Thời hạn theo gói</label>
+                    <input type="text" class="member-input" id="durationPreview" disabled>
+                </div>
+
+                <div class="member-form-group">
+                    <label>Số buổi PT</label>
+                    <input type="text" class="member-input" id="sessionPreview" disabled>
+                </div>
+
+                <div class="member-form-group">
+                    <label>Giá gói</label>
+                    <input type="text" class="member-input" id="pricePreview" disabled>
+                </div>
+
+                <div class="member-form-group">
+                    <label>Số tiền thanh toán</label>
+                    <input 
+                        type="number" 
+                        name="so_tien_thanh_toan" 
+                        class="member-input" 
+                        min="0"
+                        value="0"
+                        id="paymentAmountInput"
+                    >
+                </div>
+
+                <div class="member-form-group">
+                    <label>Hình thức thanh toán</label>
+                    <select name="hinh_thuc_thanh_toan" class="member-input">
+                        <option value="TIEN_MAT">Tiền mặt</option>
+                        <option value="CHUYEN_KHOAN">Chuyển khoản</option>
+                    </select>
+                </div>
+
+                <div class="member-form-group full">
+                    <label>Ghi chú đăng ký</label>
+                    <textarea name="ghi_chu_dang_ky" class="member-textarea" placeholder="Nhập ghi chú nếu có"></textarea>
+                </div>
+            </div>
+
+            <div class="member-form-actions">
+                <a href="{{ url_for('members.index') }}" class="btn-operate btn-gray text-decoration-none">
+                    Hủy
+                </a>
+
+                <button type="submit" class="btn-operate btn-green">
+                    <i class="bi bi-save-fill"></i>
+                    Lưu hội viên
+                </button>
+            </div>
+        </div>
+    </section>
+</form>
+{% endblock %}

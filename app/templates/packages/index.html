@@ -1,0 +1,464 @@
+{% extends "base.html" %}
+
+{% block title %}Gói tập | ProGym{% endblock %}
+
+{% block page_css %}
+<link 
+    rel="stylesheet" 
+    href="{{ url_for('static', filename='css/modules/packages.css') }}"
+>
+{% endblock %}
+
+{% block content %}
+<div class="page-topline">
+    <h1 class="page-title">
+        {% if session.get("role") == "ADMIN" %}
+            Quản lý gói tập
+        {% else %}
+            Danh sách gói tập
+        {% endif %}
+    </h1>
+
+    {% if session.get("role") == "ADMIN" %}
+    <div class="page-actions">
+        <a href="{{ url_for('packages.create') }}" class="btn-operate btn-green text-decoration-none">
+            <i class="bi bi-plus-circle-fill"></i>
+            Tạo gói tập
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<div class="packages-page">
+    <form method="GET" action="{{ url_for('packages.index') }}" class="packages-filter-bar">
+        <div class="packages-filter-field packages-filter-keyword">
+            <input 
+                type="text" 
+                name="keyword" 
+                class="package-filter-input"
+                placeholder="Tên gói tập..."
+                value="{{ context.filters.keyword }}"
+            >
+        </div>
+
+        <div class="packages-filter-field">
+            <select name="loai_goi" class="package-filter-input">
+                <option value="">Tất cả loại gói</option>
+                <option value="KHONG_PT" {% if context.filters.loai_goi == "KHONG_PT" %}selected{% endif %}>
+                    Không PT
+                </option>
+                <option value="CO_PT" {% if context.filters.loai_goi == "CO_PT" %}selected{% endif %}>
+                    Có PT
+                </option>
+            </select>
+        </div>
+
+        <div class="packages-filter-field">
+            <select name="trang_thai_ap_dung" class="package-filter-input">
+                <option value="">Tất cả trạng thái áp dụng</option>
+                <option value="DANG_AP_DUNG" {% if context.filters.trang_thai_ap_dung == "DANG_AP_DUNG" %}selected{% endif %}>
+                    Đang áp dụng
+                </option>
+                <option value="NGUNG_AP_DUNG" {% if context.filters.trang_thai_ap_dung == "NGUNG_AP_DUNG" %}selected{% endif %}>
+                    Ngừng áp dụng
+                </option>
+            </select>
+        </div>
+
+        <div class="packages-filter-actions">
+            <button type="submit" class="btn-operate btn-green">
+                <i class="bi bi-search"></i>
+                Tìm kiếm
+            </button>
+
+            <a href="{{ url_for('packages.index') }}" class="btn-operate btn-gray text-decoration-none">
+                <i class="bi bi-arrow-clockwise"></i>
+                Đặt lại
+            </a>
+        </div>
+    </form>
+
+    <div class="packages-toolbar">
+        <div class="data-summary-line">
+            Tổng số gói tập: <strong>{{ context.total }}</strong>
+        </div>
+    </div>
+
+    <div class="data-card package-table-card">
+        <div class="package-table-scroll">
+            <table class="table-operate packages-table">
+                <thead>
+                    <tr>
+                        <th style="width: 90px;">Mã gói</th>
+                        <th style="width: 240px;">Tên gói</th>
+                        <th style="width: 110px;">Loại gói</th>
+                        <th style="width: 120px;">Giá gói</th>
+                        <th style="width: 100px;">Thời hạn</th>
+                        <th style="width: 110px;">Số buổi PT</th>
+                        <th style="width: 110px;">Lượt đăng ký</th>
+                        <th style="width: 140px;">Trạng thái</th>
+                        {% if session.get("role") == "ADMIN" %}
+                        <th style="width: 100px;">Thao tác</th>
+                        {% endif %}
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for row in context.packages %}
+                    <tr>
+                        <td>GT{{ "%06d"|format(row.ma_goi_tap) }}</td>
+
+                        <td class="package-name-cell" title="{{ row.ten_goi_tap }}">
+                            <strong>{{ row.ten_goi_tap }}</strong>
+                        </td>
+
+                        <td>
+                            <span class="badge-status {{ row.type_class }}">
+                                {{ row.type_text }}
+                            </span>
+                        </td>
+
+                        <td>{{ row.gia_goi }}</td>
+
+                        <td>{{ row.thoi_han_ngay }} ngày</td>
+
+                        <td>
+                            {% if row.loai_goi == "CO_PT" %}
+                                {{ row.so_buoi_pt }} buổi
+                            {% else %}
+                                -
+                            {% endif %}
+                        </td>
+
+                        <td>{{ row.so_luot_dang_ky }}</td>
+
+                        <td>
+                            <span class="badge-status {{ row.status_class }}">
+                                {{ row.status_text }}
+                            </span>
+                        </td>
+
+
+                        {% if session.get("role") == "ADMIN" %}
+                        <td>
+                            <div class="table-actions">
+                                <button 
+                                    type="button"
+                                    class="btn btn-sm btn-outline-primary package-edit-trigger"
+                                    data-package-id="{{ row.ma_goi_tap }}"
+                                >
+                                    Sửa
+                                </button>
+
+                                {% if row.can_stop %}
+                                <form 
+                                    method="POST" 
+                                    action="{{ url_for('packages.stop', package_id=row.ma_goi_tap) }}"
+                                    class="d-inline"
+                                    onsubmit="return confirm('Bạn chắc chắn muốn ngừng áp dụng gói tập này?');"
+                                >
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                                        Ngừng
+                                    </button>
+                                </form>
+                                {% endif %}
+
+                                {% if row.can_activate %}
+                                <form 
+                                    method="POST" 
+                                    action="{{ url_for('packages.activate', package_id=row.ma_goi_tap) }}"
+                                    class="d-inline"
+                                    onsubmit="return confirm('Bạn chắc chắn muốn áp dụng lại gói tập này?');"
+                                >
+                                    <button type="submit" class="btn btn-sm btn-outline-success">
+                                        Áp dụng
+                                    </button>
+                                </form>
+                                {% endif %}
+                            </div>
+                        </td>
+                        {% endif %}
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="{% if session.get('role') == 'ADMIN' %}9{% else %}8{% endif %}" class="text-center text-muted py-4">
+                            Không có gói tập phù hợp.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% if session.get("role") == "ADMIN" %}
+<div class="package-edit-modal" id="packageEditModal" aria-hidden="true">
+    <div class="package-edit-modal-backdrop" data-close-package-modal></div>
+
+    <div class="package-edit-modal-dialog">
+        <div class="package-edit-modal-header">
+            <div>
+                <h2>Cập nhật gói tập</h2>
+                <p id="packageEditSubtitle">Đang tải thông tin...</p>
+            </div>
+
+            <button type="button" class="package-edit-modal-close" data-close-package-modal>
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+
+        <form method="post" id="packageEditForm" class="package-edit-modal-body">
+            <input type="hidden" name="next" id="packageEditNext">
+
+            <div class="package-edit-note d-none" id="packageEditLockedNote"></div>
+
+            <div class="package-edit-form-grid">
+                <div class="package-form-group full">
+                    <label>Tên gói tập <span class="required">*</span></label>
+                    <input 
+                        type="text" 
+                        name="ten_goi_tap" 
+                        id="edit_ten_goi_tap"
+                        class="package-input"
+                        maxlength="80"
+                        required
+                    >
+                </div>
+
+                <div class="package-form-group">
+                    <label>Loại gói <span class="required">*</span></label>
+                    <select 
+                        name="loai_goi" 
+                        id="edit_loai_goi"
+                        class="package-input"
+                    >
+                        <option value="KHONG_PT">Không PT</option>
+                        <option value="CO_PT">Có PT</option>
+                    </select>
+                </div>
+
+                <div class="package-form-group">
+                    <label>Giá gói <span class="required">*</span></label>
+                    <input 
+                        type="number" 
+                        name="gia_goi" 
+                        id="edit_gia_goi"
+                        class="package-input"
+                        min="0"
+                        step="1000"
+                    >
+                </div>
+
+                <div class="package-form-group">
+                    <label>Thời hạn <span class="required">*</span></label>
+                    <input 
+                        type="number" 
+                        name="thoi_han_ngay" 
+                        id="edit_thoi_han_ngay"
+                        class="package-input"
+                        min="1"
+                    >
+                </div>
+
+                <div class="package-form-group">
+                    <label>Số buổi PT</label>
+                    <input 
+                        type="number" 
+                        name="so_buoi_pt" 
+                        id="edit_so_buoi_pt"
+                        class="package-input"
+                        min="0"
+                    >
+                </div>
+
+                <div class="package-form-group full">
+                    <label>Mô tả</label>
+                    <textarea 
+                        name="mo_ta" 
+                        id="edit_mo_ta"
+                        class="package-textarea"
+                        maxlength="255"
+                        placeholder="Mô tả ngắn về phạm vi sử dụng gói"
+                    ></textarea>
+                </div>
+            </div>
+
+            <div class="package-edit-modal-actions">
+                <button type="button" class="btn-operate btn-gray" data-close-package-modal>
+                    Hủy
+                </button>
+
+                <button type="submit" class="btn-operate btn-green">
+                    <i class="bi bi-save-fill"></i>
+                    Lưu cập nhật
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const modal = document.getElementById("packageEditModal");
+    const form = document.getElementById("packageEditForm");
+    const subtitle = document.getElementById("packageEditSubtitle");
+    const nextInput = document.getElementById("packageEditNext");
+    const lockedNote = document.getElementById("packageEditLockedNote");
+
+    const editDataUrlTemplate = "{{ url_for('packages.edit_data', package_id=0) }}";
+    const editPostUrlTemplate = "{{ url_for('packages.edit', package_id=0) }}";
+
+    const fields = {
+        tenGoiTap: document.getElementById("edit_ten_goi_tap"),
+        loaiGoi: document.getElementById("edit_loai_goi"),
+        giaGoi: document.getElementById("edit_gia_goi"),
+        thoiHanNgay: document.getElementById("edit_thoi_han_ngay"),
+        soBuoiPt: document.getElementById("edit_so_buoi_pt"),
+        moTa: document.getElementById("edit_mo_ta")
+    };
+
+    let isLocked = false;
+
+    function buildUrl(template, packageId, suffix) {
+        return template.replace("/0/" + suffix, "/" + packageId + "/" + suffix);
+    }
+
+    function openModal() {
+        modal.classList.add("show");
+        modal.setAttribute("aria-hidden", "false");
+    }
+
+    function closeModal() {
+        modal.classList.remove("show");
+        modal.setAttribute("aria-hidden", "true");
+    }
+
+    function setLoadingState() {
+        subtitle.textContent = "Đang tải thông tin...";
+        isLocked = false;
+
+        fields.tenGoiTap.value = "";
+        fields.loaiGoi.value = "KHONG_PT";
+        fields.giaGoi.value = "";
+        fields.thoiHanNgay.value = "";
+        fields.soBuoiPt.value = 0;
+        fields.moTa.value = "";
+
+        lockedNote.classList.add("d-none");
+        lockedNote.textContent = "";
+
+        unlockCoreFields();
+        syncPackageType();
+    }
+
+    function lockCoreFields(packageData) {
+        isLocked = true;
+
+        fields.loaiGoi.setAttribute("disabled", "disabled");
+        fields.giaGoi.setAttribute("readonly", "readonly");
+        fields.thoiHanNgay.setAttribute("readonly", "readonly");
+        fields.soBuoiPt.setAttribute("readonly", "readonly");
+
+        lockedNote.classList.remove("d-none");
+        lockedNote.textContent = "Gói này đã có " + packageData.registration_count + 
+            " lượt đăng ký. Chỉ được cập nhật tên gói và mô tả; loại gói, giá, thời hạn và số buổi PT đã được khóa.";
+    }
+
+    function unlockCoreFields() {
+        isLocked = false;
+
+        fields.loaiGoi.removeAttribute("disabled");
+        fields.giaGoi.removeAttribute("readonly");
+        fields.thoiHanNgay.removeAttribute("readonly");
+        fields.soBuoiPt.removeAttribute("readonly");
+    }
+
+    function syncPackageType() {
+        if (isLocked) {
+            return;
+        }
+
+        if (fields.loaiGoi.value === "KHONG_PT") {
+            fields.soBuoiPt.value = 0;
+            fields.soBuoiPt.setAttribute("readonly", "readonly");
+        } else {
+            fields.soBuoiPt.removeAttribute("readonly");
+
+            if (parseInt(fields.soBuoiPt.value || "0") <= 0) {
+                fields.soBuoiPt.value = "";
+            }
+        }
+    }
+
+    function fillForm(packageData) {
+        subtitle.textContent = packageData.ma_goi_hien_thi + " - " + packageData.ten_goi_tap;
+
+        fields.tenGoiTap.value = packageData.ten_goi_tap || "";
+        fields.loaiGoi.value = packageData.loai_goi || "KHONG_PT";
+        fields.giaGoi.value = packageData.gia_goi || 0;
+        fields.thoiHanNgay.value = packageData.thoi_han_ngay || "";
+        fields.soBuoiPt.value = packageData.so_buoi_pt || 0;
+        fields.moTa.value = packageData.mo_ta || "";
+
+        if (packageData.has_registrations) {
+            lockCoreFields(packageData);
+        } else {
+            unlockCoreFields();
+        }
+
+        syncPackageType();
+    }
+
+    if (fields.loaiGoi) {
+        fields.loaiGoi.addEventListener("change", syncPackageType);
+    }
+
+    document.querySelectorAll(".package-edit-trigger").forEach(function (button) {
+        button.addEventListener("click", async function () {
+            const packageId = button.dataset.packageId;
+
+            setLoadingState();
+            openModal();
+
+            const editDataUrl = buildUrl(editDataUrlTemplate, packageId, "edit-data");
+            const editPostUrl = buildUrl(editPostUrlTemplate, packageId, "edit");
+
+            form.action = editPostUrl;
+            nextInput.value = window.location.pathname + window.location.search;
+
+            try {
+                const response = await fetch(editDataUrl, {
+                    headers: {
+                        "X-Requested-With": "XMLHttpRequest"
+                    }
+                });
+
+                const data = await response.json();
+
+                if (!response.ok || !data.success) {
+                    subtitle.textContent = data.message || "Không thể tải thông tin gói tập.";
+                    return;
+                }
+
+                fillForm(data.package);
+            } catch (error) {
+                subtitle.textContent = "Có lỗi khi tải thông tin gói tập.";
+            }
+        });
+    });
+
+    document.querySelectorAll("[data-close-package-modal]").forEach(function (element) {
+        element.addEventListener("click", closeModal);
+    });
+
+    document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape" && modal.classList.contains("show")) {
+            closeModal();
+        }
+    });
+});
+</script>
+{% endif %}
+
+{% endblock %}

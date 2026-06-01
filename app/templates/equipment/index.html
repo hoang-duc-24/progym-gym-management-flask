@@ -1,0 +1,325 @@
+{% extends "base.html" %}
+
+{% block title %}Thiết bị | ProGym{% endblock %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/modules/equipment.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="page-topline">
+    <h1 class="page-title">
+        {% if session.get("role") == "ADMIN" %}
+            Quản lý thiết bị
+        {% else %}
+            Danh sách thiết bị
+        {% endif %}
+    </h1>
+
+    {% if session.get("role") == "ADMIN" %}
+    <div class="page-actions">
+        <button type="button" class="btn-operate btn-green" id="openCreateEquipmentModal">
+            <i class="bi bi-plus-circle-fill"></i>
+            Thêm thiết bị
+        </button>
+    </div>
+    {% endif %}
+</div>
+
+<section class="equipment-filter-bar">
+    <form method="GET" action="{{ url_for('equipment.index') }}" class="equipment-filter-form">
+        <div class="equipment-filter-status">
+            <select name="tinh_trang" class="filter-input">
+                <option value="">Tất cả tình trạng</option>
+                {% for status in context.status_options %}
+                <option
+                    value="{{ status.value }}"
+                    {% if context.filters.tinh_trang == status.value %}selected{% endif %}
+                >
+                    {{ status.label }}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+
+
+        <div class="equipment-filter-keyword">
+            <input
+                type="text"
+                name="keyword"
+                class="filter-input"
+                placeholder="Tên thiết bị, loại, vị trí..."
+                value="{{ context.filters.keyword }}"
+            >
+        </div>
+
+        <button type="submit" class="btn-operate btn-green">
+            <i class="bi bi-search"></i>
+            Tìm kiếm
+        </button>
+
+        <a href="{{ url_for('equipment.index') }}" class="btn-operate btn-gray text-decoration-none">
+            <i class="bi bi-arrow-clockwise"></i>
+            Đặt lại
+        </a>
+
+        <div class="equipment-count-pill">
+            <i class="bi bi-tools"></i>
+            <span>Tổng số thiết bị:</span>
+            <strong>{{ context.total }}</strong>
+        </div>
+    </form>
+</section>
+
+<section class="equipment-table-section">
+    <div class="data-card equipment-table-card">
+        <div class="equipment-table-wrap">
+            <table class="table-operate equipment-table">
+                <thead>
+                    <tr>
+                        <th style="width: 105px;">Mã TB</th>
+                        <th style="width: 78px;">Ảnh</th>
+                        <th style="width: 260px;">Thiết bị</th>
+                        <th style="width: 150px;">Loại</th>
+                        <th style="width: 180px;">Vị trí</th>
+                        <th style="width: 110px;">Ngày mua</th>
+                        <th style="width: 135px;">Tình trạng</th>
+                        <th style="width: 115px;">Bảo trì</th>
+                        <th style="width: 90px;">Thao tác</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for row in context["items"] %}
+                    <tr>
+                        <td>{{ row.ma_hien_thi }}</td>
+
+                        <td>
+                            {% if row.hinh_anh %}
+                            <img
+                                src="{{ url_for('static', filename=row.hinh_anh) }}"
+                                alt="{{ row.ten_thiet_bi }}"
+                                class="equipment-thumb"
+                            >
+                            {% else %}
+                            <div class="equipment-thumb-placeholder">
+                                <i class="bi bi-image"></i>
+                            </div>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            <a href="{{ url_for('equipment.detail', equipment_id=row.ma_thiet_bi) }}" class="link-name">
+                                {{ row.ten_thiet_bi }}
+                            </a>
+                            {% if row.ghi_chu and row.ghi_chu != '-' %}
+                            <div class="sub-text">{{ row.ghi_chu }}</div>
+                            {% endif %}
+                        </td>
+
+                        <td>{{ row.loai_thiet_bi }}</td>
+                        <td>{{ row.vi_tri }}</td>
+                        <td>{{ row.ngay_mua }}</td>
+
+                        <td>
+                            <span class="badge-status {{ row.status_class }}">
+                                {{ row.status_text }}
+                            </span>
+                        </td>
+
+                        <td>
+                            <div>{{ row.so_lan_bao_tri }} lần</div>
+                            {% if row.so_bao_tri_dang_mo > 0 %}
+                            <div class="sub-text text-warning">{{ row.so_bao_tri_dang_mo }} đang xử lý</div>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            <div class="table-actions compact">
+                                <a 
+                                    href="{{ url_for('equipment.detail', equipment_id=row.ma_thiet_bi) }}" 
+                                    class="btn btn-sm btn-outline-primary"
+                                    title="Xem chi tiết"
+                                >
+                                    <i class="bi bi-eye"></i>
+                                </a>
+
+                                {% if session.get("role") == "ADMIN" %}
+                                <a 
+                                    href="{{ url_for('equipment.edit', equipment_id=row.ma_thiet_bi) }}" 
+                                    class="btn btn-sm btn-outline-secondary"
+                                    title="Cập nhật thiết bị"
+                                >
+                                    <i class="bi bi-pencil-square"></i>
+                                </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="9" class="text-center text-muted py-4">
+                            Không có thiết bị phù hợp.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+<div class="equipment-modal-backdrop" id="createEquipmentModal">
+    <div class="equipment-modal">
+        <div class="equipment-modal-header">
+            <h2>Thêm thiết bị</h2>
+
+            <button type="button" class="equipment-modal-close" id="closeCreateEquipmentModal">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
+
+        <form 
+            method="POST" 
+            action="{{ url_for('equipment.create') }}" 
+            enctype="multipart/form-data"
+            class="equipment-modal-form"
+        >
+            <div class="equipment-modal-body">
+                <div class="equipment-form-grid equipment-create-form-grid">
+                    <div class="equipment-form-group">
+                        <label>Tên thiết bị <span class="required">*</span></label>
+                        <input
+                            type="text"
+                            name="ten_thiet_bi"
+                            class="equipment-input"
+                            placeholder="Ví dụ: Máy chạy bộ 02"
+                            required
+                        >
+                    </div>
+
+                    <div class="equipment-form-group">
+                        <label>Loại thiết bị <span class="required">*</span></label>
+                        <input
+                            type="text"
+                            name="loai_thiet_bi"
+                            class="equipment-input"
+                            placeholder="Ví dụ: Cardio, Strength, Tạ Dumbbell"
+                            required
+                        >
+                    </div>
+
+                    <div class="equipment-form-group">
+                        <label>Vị trí</label>
+                        <input
+                            type="text"
+                            name="vi_tri"
+                            class="equipment-input"
+                            placeholder="Ví dụ: Khu cardio tầng 1"
+                        >
+                    </div>
+
+                    <div class="equipment-form-group">
+                        <label>Ngày mua</label>
+                        <input
+                            type="date"
+                            name="ngay_mua"
+                            class="equipment-input"
+                        >
+                    </div>
+
+                    <div class="equipment-form-group">
+                        <label>Tình trạng</label>
+                        <select name="tinh_trang" class="equipment-input">
+                            {% for status in context.form_status_options %}
+                            <option 
+                                value="{{ status.value }}"
+                                {% if status.value == "TOT" %}selected{% endif %}
+                            >
+                                {{ status.label }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="equipment-form-group">
+                        <label>Ảnh thiết bị</label>
+                        <input
+                            type="file"
+                            name="hinh_anh"
+                            class="equipment-input file-input"
+                            accept=".jpg,.jpeg,.png,.webp"
+                        >
+                    </div>
+
+                    <div class="equipment-form-group full">
+                        <label>Ghi chú</label>
+                        <textarea
+                            name="ghi_chu"
+                            class="equipment-textarea equipment-note-textarea"
+                            placeholder="Ví dụ: Hoạt động bình thường, đặt tại khu tập ngực..."
+                        ></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="equipment-modal-actions">
+                <button type="button" class="btn-operate btn-gray" id="cancelCreateEquipmentModal">
+                    Hủy
+                </button>
+
+                <button type="submit" class="btn-operate btn-green">
+                    <i class="bi bi-save-fill"></i>
+                    Lưu thiết bị
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const modal = document.getElementById("createEquipmentModal");
+    const openBtn = document.getElementById("openCreateEquipmentModal");
+    const closeBtn = document.getElementById("closeCreateEquipmentModal");
+    const cancelBtn = document.getElementById("cancelCreateEquipmentModal");
+
+    function openModal() {
+        if (!modal) return;
+        modal.classList.add("is-open");
+        document.body.classList.add("modal-open");
+    }
+
+    function closeModal() {
+        if (!modal) return;
+        modal.classList.remove("is-open");
+        document.body.classList.remove("modal-open");
+    }
+
+    if (openBtn) {
+        openBtn.addEventListener("click", openModal);
+    }
+
+    if (closeBtn) {
+        closeBtn.addEventListener("click", closeModal);
+    }
+
+    if (cancelBtn) {
+        cancelBtn.addEventListener("click", closeModal);
+    }
+
+    if (modal) {
+        modal.addEventListener("click", function (event) {
+            if (event.target === modal) {
+                closeModal();
+            }
+        });
+    }
+
+    document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape") {
+            closeModal();
+        }
+    });
+});
+</script>
+{% endblock %}

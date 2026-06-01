@@ -1,0 +1,197 @@
+{% extends "base.html" %}
+
+{% block title %}Check-in hội viên | ProGym{% endblock %}
+
+{% block page_css %}
+<link 
+    rel="stylesheet" 
+    href="{{ url_for('static', filename='css/modules/checkin.css') }}"
+>
+{% endblock %}
+
+{% block content %}
+<div class="page-topline">
+    <h1 class="page-title">Check-in / Check-out hội viên</h1>
+</div>
+
+<section class="checkin-searchbar-card">
+    <form method="GET" action="{{ url_for('checkin.index') }}" class="checkin-searchbar">
+        <div class="checkin-search-field">
+            <input 
+                type="text" 
+                name="keyword" 
+                class="checkin-input"
+                placeholder="Nhập tên hoặc số điện thoại hội viên..."
+                value="{{ context.keyword }}"
+                autofocus
+            >
+        </div>
+
+        <button type="submit" class="btn-operate btn-green">
+            <i class="bi bi-search"></i>
+            Tìm kiếm
+        </button>
+
+        <a href="{{ url_for('checkin.index') }}" class="btn-operate btn-gray text-decoration-none">
+            <i class="bi bi-arrow-clockwise"></i>
+            Xóa tìm kiếm
+        </a>
+
+        <div class="checkin-count-pill">
+            <i class="bi bi-activity"></i>
+            <span>Đang tập:</span>
+            <strong>{{ context.current_members|length }}</strong>
+        </div>
+    </form>
+</section>
+
+<section class="checkin-card checkin-result-card">
+    <div class="checkin-card-header">
+        Kết quả tìm kiếm
+    </div>
+
+    <div class="checkin-table-wrap">
+        <table class="table-operate checkin-table">
+            <thead>
+                <tr>
+                    <th style="width: 110px;">Mã HV</th>
+                    <th style="width: 220px;">Hội viên</th>
+                    <th style="width: 130px;">Điện thoại</th>
+                    <th style="width: 220px;">Email</th>
+                    <th style="width: 130px;">Trạng thái</th>
+                    <th style="width: 160px;">Tình trạng</th>
+                    <th style="width: 120px;">Thao tác</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for member in context.members %}
+                <tr>
+                    <td>{{ member.ma_khach_hang }}</td>
+
+                    <td>
+                        <a 
+                            href="{{ url_for('members.detail', member_id=member.ma_hoi_vien) }}"
+                            class="link-name"
+                        >
+                            {{ member.ho_ten }}
+                        </a>
+                    </td>
+
+                    <td>{{ member.so_dien_thoai }}</td>
+                    <td>{{ member.email }}</td>
+
+                    <td>
+                        <span class="badge-status {{ member.status_class }}">
+                            {{ member.status_text }}
+                        </span>
+                    </td>
+
+                    <td>
+                        {% if member.is_currently_training %}
+                        <span class="badge-status badge-green">Đang tập</span>
+                        {% else %}
+                        <span class="badge-status badge-gray">Chưa vào phòng</span>
+                        {% endif %}
+                    </td>
+
+                    <td>
+                        {% if member.is_currently_training %}
+                        <form 
+                            method="POST" 
+                            action="{{ url_for('checkin.checkout', check_id=member.open_check_id) }}"
+                            class="d-inline"
+                        >
+                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                Check-out
+                            </button>
+                        </form>
+                        {% elif member.can_checkin %}
+                        <a 
+                            href="{{ url_for('checkin.member_checkin', member_id=member.ma_hoi_vien) }}"
+                            class="btn btn-sm btn-outline-primary"
+                        >
+                            Check-in
+                        </a>
+                        {% else %}
+                        <span class="text-muted">Không đủ điều kiện</span>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="7" class="text-center text-muted py-4">
+                        {% if context.keyword %}
+                        Không tìm thấy hội viên phù hợp.
+                        {% else %}
+                        Nhập tên hoặc số điện thoại để tìm hội viên.
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+
+<section class="checkin-card checkin-current-card">
+    <div class="checkin-card-header">
+        Hội viên đang tập trong phòng
+    </div>
+
+    <div class="checkin-table-wrap current-training-wrap">
+        <table class="table-operate checkin-table current-training-table">
+            <thead>
+                <tr>
+                    <th style="width: 110px;">Mã HV</th>
+                    <th style="width: 220px;">Hội viên</th>
+                    <th style="width: 130px;">Điện thoại</th>
+                    <th style="width: 240px;">Gói sử dụng</th>
+                    <th style="width: 150px;">Giờ vào</th>
+                    <th style="width: 130px;">Loại check-in</th>
+                    <th style="width: 110px;">Thao tác</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for row in context.current_members %}
+                <tr>
+                    <td>{{ row.ma_khach_hang }}</td>
+
+                    <td>
+                        <a 
+                            href="{{ url_for('members.detail', member_id=row.ma_hoi_vien) }}"
+                            class="link-name"
+                        >
+                            {{ row.ho_ten }}
+                        </a>
+                    </td>
+
+                    <td>{{ row.so_dien_thoai }}</td>
+                    <td>{{ row.ten_goi_tap }}</td>
+                    <td>{{ row.thoi_gian_check_in }}</td>
+                    <td>{{ row.loai_checkin }}</td>
+
+                    <td>
+                        <form 
+                            method="POST" 
+                            action="{{ url_for('checkin.checkout', check_id=row.ma_check) }}"
+                        >
+                            <button type="submit" class="btn btn-sm btn-outline-danger">
+                                Check-out
+                            </button>
+                        </form>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="7" class="text-center text-muted py-4">
+                        Hiện không có hội viên nào đang tập.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</section>
+{% endblock %}

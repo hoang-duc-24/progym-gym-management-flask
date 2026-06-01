@@ -1,0 +1,204 @@
+{% extends "base.html" %}
+
+{% block title %}Ghi kết quả buổi tập | ProGym{% endblock %}
+
+{% block page_css %}
+<link 
+    rel="stylesheet" 
+    href="{{ url_for('static', filename='css/modules/schedules.css') }}"
+>
+{% endblock %}
+
+{% block content %}
+{% set schedule = form_context.schedule %}
+{% set workout_log = form_context.workout_log %}
+
+<div class="page-topline">
+    <div>
+        <h1 class="page-title">Ghi kết quả buổi tập</h1>
+    </div>
+
+    <div class="page-actions">
+        <a 
+            href="{{ next_url or url_for('members.detail', member_id=schedule.ma_hoi_vien) }}" 
+            class="btn-operate btn-gray text-decoration-none"
+        >
+            <i class="bi bi-arrow-left"></i>
+            Quay lại
+        </a>
+    </div>
+</div>
+
+<form method="POST" class="schedule-result-form">
+    {% if next_url %}
+    <input type="hidden" name="next" value="{{ next_url }}">
+    {% endif %}
+
+    <div class="schedule-result-grid">
+        <section class="workout-card workout-info-card">
+            <div class="workout-card-header">
+                <h2 class="workout-card-title">Thông tin buổi tập</h2>
+            </div>
+
+            <div class="workout-card-body">
+                <div class="info-list">
+                    <div class="info-item">
+                        <span class="info-label">Mã lịch</span>
+                        <span class="info-value">LT{{ "%06d"|format(schedule.ma_lich_tap) }}</span>
+                    </div>
+
+                    <div class="info-item">
+                        <span class="info-label">Hội viên</span>
+                        <span class="info-value">{{ schedule.ten_hoi_vien }}</span>
+                    </div>
+
+                    <div class="info-item">
+                        <span class="info-label">Số điện thoại</span>
+                        <span class="info-value">{{ schedule.so_dien_thoai_hoi_vien or '-' }}</span>
+                    </div>
+
+                    <div class="info-item">
+                        <span class="info-label">PT phụ trách</span>
+                        <span class="info-value">{{ schedule.ten_pt }}</span>
+                    </div>
+
+                    <div class="info-item">
+                        <span class="info-label">Gói tập</span>
+                        <span class="info-value">{{ schedule.ten_goi_tap }}</span>
+                    </div>
+
+                    <div class="info-item">
+                        <span class="info-label">Ngày tập</span>
+                        <span class="info-value">{{ schedule.ngay_tap }}</span>
+                    </div>
+
+                    <div class="info-item">
+                        <span class="info-label">Thời gian</span>
+                        <span class="info-value">{{ schedule.gio_bat_dau }} - {{ schedule.gio_ket_thuc }}</span>
+                    </div>
+
+                    <div class="info-item">
+                        <span class="info-label">Số buổi còn</span>
+                        <span class="info-value">
+                            {% if schedule.so_buoi_pt_con_lai is not none and schedule.so_buoi_pt_ban_dau %}
+                                {{ schedule.so_buoi_pt_con_lai }}/{{ schedule.so_buoi_pt_ban_dau }} buổi
+                            {% else %}
+                                -
+                            {% endif %}
+                        </span>
+                    </div>
+
+                    <div class="info-item">
+                        <span class="info-label">Trạng thái hiện tại</span>
+                        <span class="info-value">
+                            <span class="badge-status {{ schedule.status_class }}">
+                                {{ schedule.status_text }}
+                            </span>
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="workout-card workout-summary-card">
+            <div class="workout-card-header">
+                <h2 class="workout-card-title">Kết quả tổng quan</h2>
+            </div>
+
+            <div class="workout-card-body">
+                {% if workout_log %}
+                <div class="member-payment-note mb-3">
+                    Buổi tập này đã có nhật ký. Hệ thống chỉ hiển thị lại kết quả, không cho ghi trùng để tránh thay đổi lịch sử sử dụng buổi PT.
+                </div>
+                {% endif %}
+
+                <div class="workout-summary-grid">
+                    <div class="workout-form-group">
+                        <label>Trạng thái buổi tập <span class="required">*</span></label>
+                        <select 
+                            name="trang_thai_buoi_tap" 
+                            class="member-input"
+                            id="scheduleStatusSelect"
+                            {% if workout_log %}disabled{% endif %}
+                            required
+                        >
+                            {% for option in form_context.status_options %}
+                            <option 
+                                value="{{ option.value }}"
+                                {% if option.value == schedule.trang_thai_buoi_tap %}selected{% endif %}
+                            >
+                                {{ option.label }}
+                            </option>
+                            {% endfor %}
+                        </select>
+
+                        {% if workout_log %}
+                        <input type="hidden" name="trang_thai_buoi_tap" value="{{ schedule.trang_thai_buoi_tap }}">
+                        {% endif %}
+                    </div>
+
+                    <div class="workout-form-group completion-only">
+                        <label>Thời lượng thực tế (phút)</label>
+                        <input 
+                            type="number" 
+                            min="1" 
+                            name="thoi_luong_phut"
+                            class="member-input"
+                            value="{{ request.form.get('thoi_luong_phut', workout_log.thoi_luong_phut if workout_log else '') }}"
+                            placeholder="Ví dụ: 60"
+                            {% if workout_log %}readonly{% endif %}
+                        >
+                    </div>
+
+                    
+
+                    <div class="workout-form-group full">
+                        <label>Nhận xét / lý do</label>
+                        <textarea 
+                            name="nhan_xet_pt" 
+                            class="member-textarea"
+                            placeholder="Nhập nhận xét nếu hoàn thành, hoặc lý do nếu buổi tập không diễn ra..."
+                            {% if workout_log %}readonly{% endif %}
+                        >{{ request.form.get('nhan_xet_pt', workout_log.nhan_xet_pt if workout_log else '') }}</textarea>
+                    </div>
+
+                    <div class="workout-form-group full completion-only">
+                        <label>Kế hoạch buổi sau</label>
+                        <textarea 
+                            name="ke_hoach_buoi_sau" 
+                            class="member-textarea"
+                            placeholder="Ví dụ: Buổi sau tập trung sửa kỹ thuật squat, tăng kiểm soát nhịp thở..."
+                            {% if workout_log %}readonly{% endif %}
+                        >{{ request.form.get('ke_hoach_buoi_sau', workout_log.ke_hoach_buoi_sau if workout_log else '') }}</textarea>
+                    </div>
+
+                    <div class="workout-form-group full">
+                        <!-- <div class="member-payment-note">
+                            Nếu chọn <strong>Hoàn thành</strong>, hệ thống sẽ tự động trừ 1 buổi PT còn lại.
+                            Buổi hoàn thành nên có nhận xét hoặc ít nhất một bài tập đã thực hiện.
+                            Nếu <strong>Hoãn / Hủy / Vắng mặt</strong>, cần nhập lý do trong phần nhận xét.
+                        </div> -->
+                    </div>
+                </div>
+            </div>
+            <div class="schedule-result-actions">
+                <a 
+                    href="{{ next_url or url_for('members.detail', member_id=schedule.ma_hoi_vien) }}" 
+                    class="btn-operate btn-gray text-decoration-none"
+                >
+                    Hủy
+                </a>
+
+                {% if not workout_log %}
+                <button type="submit" class="btn-operate btn-green">
+                    <i class="bi bi-save-fill"></i>
+                    Lưu kết quả
+                </button>
+                {% endif %}
+            </div>
+        </section>
+
+        
+    </div>
+</form>
+{% endblock %}

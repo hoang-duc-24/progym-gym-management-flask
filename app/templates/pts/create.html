@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}Thêm PT | ProGym{% endblock %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/modules/pts.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="page-topline">
+    <h1 class="page-title">Thêm huấn luyện viên</h1>
+
+    <div class="page-actions">
+        <a href="{{ url_for('pts.index') }}" class="btn-operate btn-gray text-decoration-none">
+            <i class="bi bi-arrow-left"></i>
+            Quay lại
+        </a>
+    </div>
+</div>
+
+<form method="POST" class="pt-form-card">
+    <div class="pt-form-header">Thông tin huấn luyện viên</div>
+
+    <div class="pt-form-body">
+        <div class="pt-form-grid">
+            <div class="pt-form-group">
+                <label>Họ tên <span class="required">*</span></label>
+                <input type="text" name="ho_ten" class="pt-input" required>
+            </div>
+
+            <div class="pt-form-group">
+                <label>Số điện thoại <span class="required">*</span></label>
+                <input type="text" name="so_dien_thoai" class="pt-input" required>
+            </div>
+
+            <div class="pt-form-group">
+                <label>Email</label>
+                <input type="email" name="email" class="pt-input">
+            </div>
+
+            <input type="hidden" name="trang_thai_lam_viec" value="DANG_LAM_VIEC">
+
+            <div class="pt-form-group">
+                <label>Trạng thái làm việc</label>
+                <input type="text" class="pt-input" value="Đang làm việc" disabled>
+            </div>
+
+            <div class="pt-form-group">
+                <label>Chuyên môn</label>
+                <input type="text" name="chuyen_mon" class="pt-input" placeholder="Ví dụ: Tăng cơ - giảm mỡ">
+            </div>
+
+            <div class="pt-form-group">
+                <label>Kinh nghiệm</label>
+                <input type="text" name="kinh_nghiem" class="pt-input" placeholder="Ví dụ: 3 năm">
+            </div>
+
+            <div class="pt-form-group full">
+                <label>Ghi chú</label>
+                <textarea name="ghi_chu" class="pt-textarea"></textarea>
+            </div>
+        </div>
+
+        <div class="pt-form-actions">
+            <a href="{{ url_for('pts.index') }}" class="btn-operate btn-gray text-decoration-none">
+                Hủy
+            </a>
+
+            <button type="submit" class="btn-operate btn-green">
+                <i class="bi bi-save-fill"></i>
+                Lưu PT
+            </button>
+        </div>
+    </div>
+</form>
+{% endblock %}

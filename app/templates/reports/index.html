@@ -1,0 +1,266 @@
+{% extends "base.html" %}
+
+{% block title %}Báo cáo | ProGym{% endblock %}
+
+{% block page_css %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/modules/reports.css') }}">
+{% endblock %}
+
+{% block content %}
+<div class="report-page">
+    <div class="report-control-card">
+        <div class="report-control-head">
+            <div class="report-title-block">
+                <h1 class="page-title">{{ context.report.title }}</h1>
+            </div>
+        </div>
+
+        <form method="GET" action="{{ url_for('reports.index') }}" class="report-top-filter">
+            <div class="report-filter-item report-filter-type">
+                <label>Loại báo cáo</label>
+                <select name="data_type" class="filter-input">
+                    {% for item in context.data_types %}
+                    <option
+                        value="{{ item.value }}"
+                        {% if context.filters.data_type == item.value %}selected{% endif %}
+                    >
+                        {{ item.label }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="report-filter-item">
+                <label>Từ ngày</label>
+                <input
+                    type="date"
+                    name="start_date"
+                    class="filter-input"
+                    value="{{ context.filters.start_date }}"
+                    max="{{ context.today }}"
+                    id="reportStartDate"
+                >
+            </div>
+
+            <div class="report-filter-item">
+                <label>Đến ngày</label>
+                <input
+                    type="date"
+                    name="end_date"
+                    class="filter-input"
+                    value="{{ context.filters.end_date }}"
+                    max="{{ context.today }}"
+                    id="reportEndDate"
+                >
+            </div>
+
+            <div class="report-inline-kpi">
+                <span>{{ context.report.total_label }}</span>
+                <strong>{{ context.report.total_value }}</strong>
+            </div>
+
+            <div class="report-filter-actions">
+                <button type="submit" class="btn-operate btn-green">
+                    <i class="bi bi-search"></i>
+                    Xem báo cáo
+                </button>
+
+                <a
+                    href="{{ url_for('reports.export', data_type=context.filters.data_type, start_date=context.filters.start_date, end_date=context.filters.end_date) }}"
+                    class="btn-operate btn-gray text-decoration-none"
+                >
+                    <i class="bi bi-box-arrow-up-right"></i>
+                    Xuất file
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <main class="report-main">
+        <section class="report-tabs">
+            <button type="button" class="report-tab-btn active" data-tab="overview">
+                <i class="bi bi-bar-chart-line"></i>
+                Tổng quan
+            </button>
+
+            <button type="button" class="report-tab-btn" data-tab="details">
+                <i class="bi bi-table"></i>
+                Chi tiết dữ liệu
+            </button>
+        </section>
+
+        <section class="report-tab-panel active" id="report-tab-overview">
+            <div class="report-overview-grid">
+                <div class="report-chart-card">
+                    <div class="panel-title">Biểu đồ thống kê</div>
+
+                    <div class="chart-wrap">
+                        <canvas id="reportChart"></canvas>
+                    </div>
+                </div>
+
+                <div class="report-table-card">
+                    <div class="panel-title">Tổng hợp theo nhóm</div>
+
+                    <div class="summary-table-wrap">
+                        <table class="table-operate report-table">
+                            <thead>
+                                <tr>
+                                    {% for header in context.report.summary_headers %}
+                                    <th>{{ header }}</th>
+                                    {% endfor %}
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                {% for row in context.report.summary_rows %}
+                                <tr>
+                                    {% for value in row.values() %}
+                                    <td>{{ value }}</td>
+                                    {% endfor %}
+                                </tr>
+                                {% else %}
+                                <tr>
+                                    <td colspan="{{ context.report.summary_headers|length }}" class="text-center text-muted py-4">
+                                        Không có dữ liệu.
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="report-tab-panel" id="report-tab-details">
+            <div class="report-detail-card">
+                <div class="panel-title">Dữ liệu chi tiết</div>
+
+                <div class="detail-table-wrap">
+                    <table class="table-operate report-table">
+                        <thead>
+                            <tr>
+                                {% for header in context.report.detail_headers %}
+                                <th>{{ header }}</th>
+                                {% endfor %}
+                            </tr>
+                        </thead>
+
+                        <tbody>
+                            {% for row in context.report.detail_rows %}
+                            <tr>
+                                {% for value in row.values() %}
+                                <td>{{ value }}</td>
+                                {% endfor %}
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="{{ context.report.detail_headers|length }}" class="text-center text-muted py-4">
+                                    Không có dữ liệu chi tiết.
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+
+<script id="reportChartLabels" type="application/json">
+    {{ context.report.chart_labels | tojson }}
+</script>
+
+<script id="reportChartValues" type="application/json">
+    {{ context.report.chart_values | tojson }}
+</script>
+
+<script id="reportChartDatasetLabel" type="application/json">
+    {{ context.report.chart_label | tojson }}
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const tabButtons = document.querySelectorAll(".report-tab-btn");
+    const tabPanels = document.querySelectorAll(".report-tab-panel");
+
+    tabButtons.forEach(function (button) {
+        button.addEventListener("click", function () {
+            const target = button.dataset.tab;
+
+            tabButtons.forEach(function (item) {
+                item.classList.remove("active");
+            });
+
+            tabPanels.forEach(function (panel) {
+                panel.classList.remove("active");
+            });
+
+            button.classList.add("active");
+
+            const activePanel = document.getElementById("report-tab-" + target);
+            if (activePanel) {
+                activePanel.classList.add("active");
+            }
+        });
+    });
+
+    const startDateInput = document.getElementById("reportStartDate");
+    const endDateInput = document.getElementById("reportEndDate");
+
+    function syncDateRange() {
+        if (!startDateInput || !endDateInput) return;
+        endDateInput.min = startDateInput.value || "";
+    }
+
+    if (startDateInput && endDateInput) {
+        startDateInput.addEventListener("change", syncDateRange);
+        syncDateRange();
+    }
+
+    const ctx = document.getElementById("reportChart");
+
+    if (!ctx) return;
+
+    const labelsElement = document.getElementById("reportChartLabels");
+    const valuesElement = document.getElementById("reportChartValues");
+    const datasetLabelElement = document.getElementById("reportChartDatasetLabel");
+
+    const labels = JSON.parse(labelsElement.textContent);
+    const values = JSON.parse(valuesElement.textContent);
+    const datasetLabel = JSON.parse(datasetLabelElement.textContent);
+
+    new Chart(ctx, {
+        type: "bar",
+        data: {
+            labels: labels,
+            datasets: [{
+                label: datasetLabel,
+                data: values,
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: true
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        precision: 0
+                    }
+                }
+            }
+        }
+    });
+});
+</script>
+{% endblock %}
