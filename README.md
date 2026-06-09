@@ -448,8 +448,6 @@ Một số hướng có thể tiếp tục phát triển:
 
 ## Tác giả
 
-Dự án được thực hiện phục vụ mục đích học tập và demo chuyên đề tốt nghiệp.
-
 Sinh viên thực hiện: **Hoàng Minh Đức**
 Mã sinh viên: **A44844**
 Ngành: **Khoa học máy tính**
