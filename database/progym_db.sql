@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Máy chủ: 127.0.0.1:3307
--- Thời gian đã tạo: Th6 01, 2026 lúc 10:57 AM
+-- Thời gian đã tạo: Th6 05, 2026 lúc 05:05 PM
 -- Phiên bản máy phục vụ: 10.4.32-MariaDB
 -- Phiên bản PHP: 8.0.30
 
@@ -16,10 +16,14 @@ SET time_zone = "+00:00";
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
 /*!40101 SET NAMES utf8mb4 */;
+SET FOREIGN_KEY_CHECKS=0;
+
 
 --
 -- Cơ sở dữ liệu: `progym_final`
 --
+-- ! CREATE DATABASE IF NOT EXISTS `progym_final` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+-- ! USE `progym_final`;
 
 -- --------------------------------------------------------
 
@@ -52,8 +56,9 @@ INSERT INTO `baotrithietbi` (`ma_bao_tri`, `ma_thiet_bi`, `ngay_ghi_nhan`, `noi_
 (7, 3, '2026-05-24', 'Tra dầu bảo dưỡng định kỳ cho máy kéo xô.', 'DA_HOAN_THANH', '2026-05-24', 'Đã tra dầu định kỳ, máy hoạt động ổn định.'),
 (8, 5, '2026-05-15', 'Kiểm tra và bổ sung ốc vít cho máy tập chân.', 'DA_HOAN_THANH', '2026-05-24', 'Đã bổ sung ốc vít, thiết bị vận hành an toàn.'),
 (9, 14, '2026-05-31', 'Tay cầm bị lỏng.', 'DA_HOAN_THANH', '2026-05-31', 'Đã siết lại tay cầm, thiết bị hoạt động ổn định.'),
-(10, 6, '2026-06-01', 'Hỏng bàn đạp', 'CHO_XU_LY', NULL, NULL),
-(11, 13, '2026-06-01', 'Thanh đòn bị han rỉ', 'CHO_XU_LY', NULL, NULL);
+(10, 6, '2026-06-01', 'Hỏng bàn đạp', 'DA_HOAN_THANH', '2026-06-05', NULL),
+(11, 13, '2026-06-01', 'Thanh đòn bị han rỉ', 'DA_HOAN_THANH', '2026-06-05', NULL),
+(12, 1, '2026-06-04', 'Máy hỏng', 'DA_HOAN_THANH', '2026-06-05', 'Đã sửa xong');
 
 -- --------------------------------------------------------
 
@@ -82,7 +87,6 @@ INSERT INTO `checkinout` (`ma_check`, `ma_hoi_vien`, `ma_dang_ky`, `ma_lich_tap`
 (1, 2, 3, NULL, '2026-05-07 17:30:00', '2026-05-07 19:00:00', 'TU_DO', 'DA_CHECKOUT', 'Check-in tập tự do'),
 (2, 1, 2, 1, '2026-03-05 17:50:00', '2026-03-05 18:35:00', 'THEO_LICH_PT', 'DA_CHECKOUT', 'Check-in theo lịch PT, đã hoàn tất buổi tập.'),
 (3, 2, 3, NULL, '2026-05-14 11:46:26', '2026-05-14 12:50:26', 'TU_DO', 'DA_CHECKOUT', 'Hội viên hoàn tất buổi tập và check-out tại quầy.'),
-(4, 2, 3, NULL, '2026-05-14 11:47:34', '2026-05-14 12:50:34', 'TU_DO', 'DA_CHECKOUT', 'Hội viên hoàn tất buổi tập và check-out tại quầy.'),
 (5, 13, 16, NULL, '2026-03-10 15:35:57', '2026-03-10 17:20:57', 'TU_DO', 'DA_CHECKOUT', 'Hội viên hoàn tất buổi tập buổi chiều.'),
 (6, 16, 17, NULL, '2026-04-12 15:43:50', '2026-04-12 16:45:30', 'THEO_LICH_PT', 'DA_CHECKOUT', 'Check-in theo lịch PT, đã hoàn tất buổi tập.'),
 (7, 16, 17, 8, '2026-04-14 07:15:13', '2026-04-14 08:20:13', 'THEO_LICH_PT', 'DA_CHECKOUT', 'Check-in theo lịch PT, đã hoàn tất buổi tập.'),
@@ -93,7 +97,6 @@ INSERT INTO `checkinout` (`ma_check`, `ma_hoi_vien`, `ma_dang_ky`, `ma_lich_tap`
 (12, 17, 18, 11, '2026-04-16 13:54:32', '2026-04-16 15:30:32', 'THEO_LICH_PT', 'DA_CHECKOUT', 'Check-in theo lịch PT, đã hoàn tất buổi tập.'),
 (13, 21, 22, NULL, '2026-03-20 20:39:40', '2026-03-20 21:40:40', 'TU_DO', 'DA_CHECKOUT', 'Hội viên tập buổi tối và check-out trước giờ đóng cửa.'),
 (14, 17, 18, 13, '2026-04-17 18:25:11', '2026-04-17 19:35:11', 'THEO_LICH_PT', 'DA_CHECKOUT', 'Check-in theo lịch PT, đã hoàn tất buổi tập.'),
-(15, 23, 26, NULL, '2026-05-03 07:17:50', '2026-05-03 08:17:39', 'TU_DO', 'DA_CHECKOUT', ''),
 (16, 23, 26, NULL, '2026-05-03 08:20:05', '2026-05-03 09:45:05', 'TU_DO', 'DA_CHECKOUT', 'Hội viên hoàn tất buổi tập và check-out tại quầy.'),
 (17, 26, 30, NULL, '2026-05-08 18:47:06', '2026-05-08 20:05:06', 'TU_DO', 'DA_CHECKOUT', 'Hội viên hoàn tất buổi tập buổi tối.'),
 (18, 27, 31, NULL, '2026-04-10 20:53:53', '2026-04-10 21:40:53', 'TU_DO', 'DA_CHECKOUT', 'Hội viên tập buổi tối và check-out trước giờ đóng cửa.'),
@@ -156,7 +159,35 @@ INSERT INTO `checkinout` (`ma_check`, `ma_hoi_vien`, `ma_dang_ky`, `ma_lich_tap`
 (75, 3, 4, NULL, '2026-04-12 18:30:00', '2026-04-12 19:45:00', 'TU_DO', 'DA_CHECKOUT', 'Hội viên hoàn tất buổi tập buổi tối.'),
 (76, 3, 4, NULL, '2026-05-10 18:10:00', '2026-05-10 19:25:00', 'TU_DO', 'DA_CHECKOUT', 'Hội viên hoàn tất buổi tập và check-out tại quầy.'),
 (77, 29, 41, NULL, '2026-05-31 13:45:24', '2026-05-31 15:00:24', 'TU_DO', 'DA_CHECKOUT', 'Hội viên hoàn tất buổi tập và check-out tại quầy.'),
-(78, 3, 4, NULL, '2026-05-31 20:07:14', '2026-05-31 22:00:00', 'TU_DO', 'DA_CHECKOUT', 'Tự động đóng do hội viên quên check-out.');
+(78, 3, 4, NULL, '2026-05-31 20:07:14', '2026-05-31 22:00:00', 'TU_DO', 'DA_CHECKOUT', 'Tự động đóng do hội viên quên check-out.'),
+(79, 28, 32, NULL, '2026-06-02 19:03:33', '2026-06-02 22:00:00', 'TU_DO', 'DA_CHECKOUT', 'Tự động đóng do hội viên quên check-out.'),
+(80, 35, 43, NULL, '2026-06-04 15:08:47', '2026-06-04 16:19:52', 'TU_DO', 'DA_CHECKOUT', ''),
+(81, 28, 33, 32, '2026-06-04 15:16:52', '2026-06-04 22:00:00', 'THEO_LICH_PT', 'DA_CHECKOUT', 'Tự động đóng do hội viên quên check-out.'),
+(82, 36, 45, NULL, '2026-06-04 16:19:36', '2026-06-04 22:00:00', 'TU_DO', 'DA_CHECKOUT', 'Tự động đóng do hội viên quên check-out.'),
+(83, 1, 1, NULL, '2026-03-22 18:10:00', '2026-03-22 19:25:00', 'TU_DO', 'DA_CHECKOUT', 'Tập tự do'),
+(84, 1, 1, NULL, '2026-04-05 18:20:00', '2026-04-05 19:35:00', 'TU_DO', 'DA_CHECKOUT', 'Tập tự do'),
+(85, 1, 1, NULL, '2026-04-19 07:30:00', '2026-04-19 08:45:00', 'TU_DO', 'DA_CHECKOUT', 'Tập tự do'),
+(86, 1, 1, NULL, '2026-05-03 18:15:00', '2026-05-03 19:30:00', 'TU_DO', 'DA_CHECKOUT', 'Tập tự do'),
+(87, 1, 1, NULL, '2026-05-24 18:40:00', '2026-05-24 19:50:00', 'TU_DO', 'DA_CHECKOUT', 'Tập tự do'),
+(88, 20, 21, NULL, '2026-03-27 18:00:00', '2026-03-27 19:15:00', 'TU_DO', 'DA_CHECKOUT', 'Tập tự do'),
+(89, 20, 21, NULL, '2026-04-10 07:20:00', '2026-04-10 08:35:00', 'TU_DO', 'DA_CHECKOUT', 'Tập tự do'),
+(90, 20, 21, NULL, '2026-04-28 18:30:00', '2026-04-28 19:45:00', 'TU_DO', 'DA_CHECKOUT', 'Tập tự do'),
+(91, 20, 21, NULL, '2026-05-16 18:15:00', '2026-05-16 19:25:00', 'TU_DO', 'DA_CHECKOUT', 'Tập tự do'),
+(92, 20, 21, NULL, '2026-06-02 07:35:00', '2026-06-02 08:50:00', 'TU_DO', 'DA_CHECKOUT', 'Tập tự do'),
+(93, 4, 5, NULL, '2026-04-08 18:20:00', '2026-04-08 19:35:00', 'TU_DO', 'DA_CHECKOUT', 'Tập tự do'),
+(94, 4, 5, NULL, '2026-04-22 07:30:00', '2026-04-22 08:40:00', 'TU_DO', 'DA_CHECKOUT', 'Tập tự do'),
+(95, 4, 5, NULL, '2026-05-06 18:10:00', '2026-05-06 19:20:00', 'TU_DO', 'DA_CHECKOUT', 'Tập tự do'),
+(96, 4, 5, NULL, '2026-05-27 18:30:00', '2026-05-27 19:45:00', 'TU_DO', 'DA_CHECKOUT', 'Tập tự do'),
+(97, 4, 5, NULL, '2026-06-10 07:25:00', '2026-06-10 08:35:00', 'TU_DO', 'DA_CHECKOUT', 'Tập tự do'),
+(98, 33, 40, NULL, '2026-04-03 18:00:00', '2026-04-03 19:15:00', 'TU_DO', 'DA_CHECKOUT', 'Tập tự do'),
+(99, 33, 40, NULL, '2026-04-17 18:25:00', '2026-04-17 19:40:00', 'TU_DO', 'DA_CHECKOUT', 'Tập tự do'),
+(100, 33, 40, NULL, '2026-05-01 07:40:00', '2026-05-01 08:50:00', 'TU_DO', 'DA_CHECKOUT', 'Tập tự do'),
+(101, 33, 40, NULL, '2026-05-22 18:15:00', '2026-05-22 19:30:00', 'TU_DO', 'DA_CHECKOUT', 'Tập tự do'),
+(102, 33, 40, NULL, '2026-06-05 18:35:00', '2026-06-05 19:45:00', 'TU_DO', 'DA_CHECKOUT', 'Tập tự do'),
+(103, 22, 24, NULL, '2026-04-12 18:10:00', '2026-04-12 19:25:00', 'TU_DO', 'DA_CHECKOUT', 'Tập tự do'),
+(104, 22, 24, NULL, '2026-04-26 07:35:00', '2026-04-26 08:45:00', 'TU_DO', 'DA_CHECKOUT', 'Tập tự do'),
+(105, 22, 24, NULL, '2026-05-17 18:30:00', '2026-05-17 19:40:00', 'TU_DO', 'DA_CHECKOUT', 'Tập tự do'),
+(106, 22, 24, NULL, '2026-06-01 18:20:00', '2026-06-01 19:30:00', 'TU_DO', 'DA_CHECKOUT', 'Tập tự do');
 
 -- --------------------------------------------------------
 
@@ -217,45 +248,50 @@ CREATE TABLE `dangkygoitap` (
 INSERT INTO `dangkygoitap` (`ma_dang_ky`, `ma_hoi_vien`, `ma_goi_tap`, `ngay_dang_ky`, `ngay_bat_dau`, `ngay_ket_thuc`, `so_buoi_pt_ban_dau`, `so_buoi_pt_con_lai`, `tong_tien_phai_tra`, `trang_thai_thanh_toan`, `trang_thai_hieu_luc`, `ghi_chu`, `created_at`) VALUES
 (1, 1, 2, '2026-03-15', '2026-03-15', '2026-06-12', 0, 0, 1350000.00, 'DA_THANH_TOAN', 'DANG_HIEU_LUC', 'Gói tập tự do 3 tháng', '2026-05-10 22:25:38'),
 (2, 1, 4, '2026-03-01', '2026-03-01', '2026-08-27', 24, 21, 5500000.00, 'DA_THANH_TOAN', 'DANG_HIEU_LUC', 'Gói PT 24 buổi dùng kèm gói tập tự do', '2026-05-10 22:25:38'),
-(3, 2, 1, '2026-05-05', '2026-05-05', '2026-06-03', 0, 0, 500000.00, 'DA_THANH_TOAN', 'DANG_HIEU_LUC', 'Gói tập tự do 1 tháng', '2026-05-10 22:25:38'),
+(3, 2, 1, '2026-05-05', '2026-05-05', '2026-06-03', 0, 0, 500000.00, 'DA_THANH_TOAN', 'HET_HAN', 'Gói tập tự do 1 tháng', '2026-05-10 22:25:38'),
 (4, 3, 2, '2026-03-03', '2026-03-03', '2026-05-31', 0, 0, 1350000.00, 'DA_THANH_TOAN', 'HET_HAN', 'Gói tập tự do 3 tháng.', '2026-05-10 22:25:38'),
 (5, 4, 2, '2026-03-25', '2026-03-25', '2026-06-22', 0, 0, 1350000.00, 'DA_THANH_TOAN', 'DANG_HIEU_LUC', '', '2026-05-11 08:03:53'),
-(6, 4, 3, '2026-04-02', '2026-04-02', '2026-06-30', 12, 12, 3000000.00, 'DA_THANH_TOAN', 'DANG_HIEU_LUC', '', '2026-05-11 08:15:27'),
+(6, 4, 3, '2026-04-02', '2026-04-02', '2026-06-30', 12, 8, 3000000.00, 'DA_THANH_TOAN', 'DANG_HIEU_LUC', '', '2026-05-11 08:15:27'),
 (7, 5, 3, '2026-04-01', '2026-04-01', '2026-06-29', 12, 11, 3000000.00, 'DA_THANH_TOAN', 'DANG_HIEU_LUC', '', '2026-05-11 10:07:10'),
 (8, 6, 2, '2026-03-15', '2026-03-15', '2026-06-12', 0, 0, 1350000.00, 'DA_THANH_TOAN', 'DANG_HIEU_LUC', '', '2026-05-11 10:54:28'),
-(9, 7, 2, '2026-03-20', '2026-03-20', '2026-06-17', 0, 0, 1350000.00, 'DA_THANH_TOAN', 'DANG_HIEU_LUC', '', '2026-05-11 10:56:59'),
+(9, 7, 2, '2026-03-20', '2026-03-20', '2026-06-15', 0, 0, 1350000.00, 'DA_THANH_TOAN', 'DANG_HIEU_LUC', '', '2026-05-11 10:56:59'),
 (10, 8, 2, '2026-03-25', '2026-03-25', '2026-06-22', 0, 0, 1350000.00, 'DA_THANH_TOAN', 'DANG_HIEU_LUC', '', '2026-05-11 10:58:32'),
 (11, 9, 2, '2026-05-11', '2026-05-11', '2026-08-08', 0, 0, 1350000.00, 'DA_THANH_TOAN', 'DANG_HIEU_LUC', '', '2026-05-11 10:59:35'),
-(12, 10, 3, '2026-04-05', '2026-04-05', '2026-07-03', 12, 12, 3000000.00, 'DA_THANH_TOAN', 'DANG_HIEU_LUC', '', '2026-05-11 11:03:59'),
+(12, 10, 3, '2026-06-04', '2026-06-04', '2026-09-01', 12, 12, 3000000.00, 'DA_THANH_TOAN', 'DANG_HIEU_LUC', 'Chờ phân công PT', '2026-06-04 08:40:00'),
 (13, 11, 3, '2026-04-10', '2026-04-10', '2026-07-08', 12, 10, 3000000.00, 'DA_THANH_TOAN', 'DANG_HIEU_LUC', '', '2026-05-11 11:05:19'),
-(14, 12, 3, '2026-04-10', '2026-04-10', '2026-07-08', 12, 12, 3000000.00, 'DA_THANH_TOAN', 'DANG_HIEU_LUC', '', '2026-05-11 11:06:16'),
-(15, 6, 3, '2026-04-12', '2026-04-12', '2026-07-10', 12, 12, 3000000.00, 'DA_THANH_TOAN', 'DANG_HIEU_LUC', '', '2026-05-11 11:08:44'),
+(14, 12, 3, '2026-06-14', '2026-06-14', '2026-09-11', 12, 12, 3000000.00, 'DA_THANH_TOAN', 'CHUA_KICH_HOAT', 'Chờ phân công PT', '2026-06-14 09:10:00'),
+(15, 6, 3, '2026-06-16', '2026-06-16', '2026-09-13', 12, 12, 3000000.00, 'DA_THANH_TOAN', 'CHUA_KICH_HOAT', 'Chờ phân công PT', '2026-06-16 18:20:00'),
 (16, 13, 2, '2026-03-10', '2026-03-10', '2026-06-07', 0, 0, 1350000.00, 'DA_THANH_TOAN', 'DANG_HIEU_LUC', '', '2026-05-11 15:20:43'),
 (17, 16, 3, '2026-04-12', '2026-04-12', '2026-07-10', 12, 9, 3000000.00, 'DA_THANH_TOAN', 'DANG_HIEU_LUC', '', '2026-05-11 15:42:22'),
 (18, 17, 3, '2026-04-15', '2026-04-15', '2026-07-13', 12, 9, 3000000.00, 'DA_THANH_TOAN', 'DANG_HIEU_LUC', '', '2026-05-12 22:44:41'),
 (19, 18, 1, '2026-05-10', '2026-05-10', '2026-06-08', 0, 0, 500000.00, 'DA_THANH_TOAN', 'DANG_HIEU_LUC', '', '2026-05-13 08:18:42'),
 (20, 19, 1, '2026-04-13', '2026-04-13', '2026-05-12', 0, 0, 500000.00, 'DA_THANH_TOAN', 'HET_HAN', '', '2026-05-13 08:22:27'),
 (21, 20, 2, '2026-03-15', '2026-03-15', '2026-06-12', 0, 0, 1350000.00, 'DA_THANH_TOAN', 'DANG_HIEU_LUC', '', '2026-05-13 08:23:35'),
-(22, 21, 2, '2026-03-20', '2026-03-20', '2026-06-17', 0, 0, 1350000.00, 'DA_THANH_TOAN', 'DANG_HIEU_LUC', '', '2026-05-14 20:38:34'),
+(22, 21, 2, '2026-03-20', '2026-03-20', '2026-06-15', 0, 0, 1350000.00, 'DA_THANH_TOAN', 'DANG_HIEU_LUC', '', '2026-05-14 20:38:34'),
 (23, 21, 3, '2026-03-14', '2026-03-14', '2026-06-11', 12, 12, 3000000.00, 'DA_THANH_TOAN', 'DANG_HIEU_LUC', 'Gói PT đã thanh toán, chưa phát sinh buổi tập hoàn thành.', '2026-05-14 21:49:38'),
 (24, 22, 2, '2026-04-01', '2026-04-01', '2026-06-29', 0, 0, 1350000.00, 'DA_THANH_TOAN', 'DANG_HIEU_LUC', '', '2026-05-14 22:00:01'),
 (25, 22, 3, '2026-04-20', '2026-04-20', '2026-07-18', 12, 11, 3000000.00, 'DA_THANH_TOAN', 'DANG_HIEU_LUC', '', '2026-05-14 22:00:41'),
-(26, 23, 1, '2026-05-03', '2026-05-03', '2026-06-01', 0, 0, 500000.00, 'DA_THANH_TOAN', 'DANG_HIEU_LUC', '', '2026-05-14 22:03:27'),
+(26, 23, 1, '2026-05-03', '2026-05-03', '2026-06-01', 0, 0, 500000.00, 'DA_THANH_TOAN', 'HET_HAN', '', '2026-05-14 22:03:27'),
 (27, 24, 2, '2026-03-08', '2026-03-08', '2026-06-05', 0, 0, 1350000.00, 'DA_THANH_TOAN', 'DANG_HIEU_LUC', '', '2026-05-15 08:43:00'),
-(28, 25, 4, '2026-03-01', '2026-03-01', '2026-08-27', 24, 21, 5500000.00, 'DA_THANH_TOAN', 'DANG_HIEU_LUC', 'Gói PT đang sử dụng, đã hoàn thành một số buổi tập.', '2026-05-16 22:08:42'),
+(28, 25, 4, '2026-03-01', '2026-03-01', '2026-08-27', 24, 20, 5500000.00, 'DA_THANH_TOAN', 'DANG_HIEU_LUC', 'Gói PT đang sử dụng, đã hoàn thành một số buổi tập.', '2026-05-16 22:08:42'),
 (29, 26, 1, '2026-05-01', '2026-05-01', '2026-05-30', 0, 0, 500000.00, 'DA_THANH_TOAN', 'HET_HAN', '', '2026-05-16 22:11:32'),
 (30, 26, 3, '2026-05-08', '2026-05-08', '2026-08-05', 12, 10, 3000000.00, 'DA_THANH_TOAN', 'DANG_HIEU_LUC', 'Thêm gói PT', '2026-05-16 22:17:30'),
 (31, 27, 7, '2026-04-10', '2026-04-10', '2026-04-16', 0, 0, 100000.00, 'DA_THANH_TOAN', 'HET_HAN', 'Gói trải nghiệm sinh viên 7 ngày.', '2026-05-18 20:53:30'),
-(32, 28, 1, '2026-05-05', '2026-05-05', '2026-06-03', 0, 0, 500000.00, 'DA_THANH_TOAN', 'DANG_HIEU_LUC', '', '2026-05-19 09:22:03'),
-(33, 28, 3, '2026-05-10', '2026-05-10', '2026-08-07', 12, 10, 3000000.00, 'DA_THANH_TOAN', 'DANG_HIEU_LUC', '', '2026-05-19 09:25:21'),
-(34, 29, 3, '2026-05-01', '2026-05-01', '2026-07-29', 12, 12, 3000000.00, 'DA_THANH_TOAN', 'DANG_HIEU_LUC', '', '2026-05-24 09:45:55'),
+(32, 28, 1, '2026-05-05', '2026-05-05', '2026-06-03', 0, 0, 500000.00, 'DA_THANH_TOAN', 'HET_HAN', '', '2026-05-19 09:22:03'),
+(33, 28, 3, '2026-05-10', '2026-05-10', '2026-08-07', 12, 9, 3000000.00, 'DA_THANH_TOAN', 'DANG_HIEU_LUC', '', '2026-05-19 09:25:21'),
+(34, 29, 3, '2026-05-01', '2026-05-01', '2026-07-29', 12, 9, 3000000.00, 'DA_THANH_TOAN', 'DANG_HIEU_LUC', '', '2026-05-24 09:45:55'),
 (35, 30, 4, '2026-05-12', '2026-05-12', '2026-11-07', 24, 22, 5500000.00, 'DA_THANH_TOAN', 'DANG_HIEU_LUC', '', '2026-05-24 09:51:43'),
-(36, 31, 1, '2026-05-05', '2026-05-05', '2026-06-03', 0, 0, 500000.00, 'DA_THANH_TOAN', 'DANG_HIEU_LUC', '', '2026-05-26 00:06:24'),
-(37, 31, 3, '2026-05-16', '2026-05-16', '2026-08-13', 12, 11, 3000000.00, 'DA_THANH_TOAN', 'DANG_HIEU_LUC', '', '2026-05-26 00:06:50'),
-(38, 30, 1, '2026-05-06', '2026-05-06', '2026-06-04', 0, 0, 500000.00, 'DA_THANH_TOAN', 'DANG_HIEU_LUC', '', '2026-05-26 00:12:03'),
+(36, 31, 1, '2026-05-05', '2026-05-05', '2026-06-03', 0, 0, 500000.00, 'DA_THANH_TOAN', 'HET_HAN', '', '2026-05-26 00:06:24'),
+(37, 31, 3, '2026-05-16', '2026-05-16', '2026-08-13', 12, 10, 3000000.00, 'DA_THANH_TOAN', 'DANG_HIEU_LUC', '', '2026-05-26 00:06:50'),
+(38, 30, 1, '2026-05-06', '2026-05-06', '2026-06-04', 0, 0, 500000.00, 'DA_THANH_TOAN', 'HET_HAN', '', '2026-05-26 00:12:03'),
 (39, 32, 1, '2026-05-07', '2026-05-07', '2026-06-05', 0, 0, 500000.00, 'DA_THANH_TOAN', 'DANG_HIEU_LUC', '', '2026-05-26 00:14:06'),
 (40, 33, 2, '2026-03-25', '2026-03-25', '2026-06-22', 0, 0, 1350000.00, 'DA_THANH_TOAN', 'DANG_HIEU_LUC', '', '2026-05-29 07:27:26'),
-(41, 29, 1, '2026-05-31', '2026-05-31', '2026-06-29', 0, 0, 500000.00, 'DA_THANH_TOAN', 'DANG_HIEU_LUC', '', '2026-05-31 13:36:24');
+(41, 29, 1, '2026-05-31', '2026-05-31', '2026-06-29', 0, 0, 500000.00, 'DA_THANH_TOAN', 'DANG_HIEU_LUC', '', '2026-05-31 13:36:24'),
+(42, 34, 1, '2026-06-04', '2026-06-04', '2026-07-03', 0, 0, 500000.00, 'DA_THANH_TOAN', 'DANG_HIEU_LUC', '', '2026-06-04 13:52:59'),
+(43, 35, 1, '2026-06-04', '2026-06-04', '2026-07-03', 0, 0, 500000.00, 'DA_THANH_TOAN', 'DANG_HIEU_LUC', '', '2026-06-04 14:51:33'),
+(44, 35, 3, '2026-06-04', '2026-06-04', '2026-09-01', 12, 12, 3000000.00, 'DA_THANH_TOAN', 'DANG_HIEU_LUC', '', '2026-06-04 15:22:44'),
+(45, 36, 2, '2026-06-04', '2026-06-04', '2026-09-01', 0, 0, 1350000.00, 'DA_THANH_TOAN', 'DANG_HIEU_LUC', '', '2026-06-04 16:18:09'),
+(46, 36, 3, '2026-06-04', '2026-06-04', '2026-09-01', 12, 12, 3000000.00, 'DA_THANH_TOAN', 'DANG_HIEU_LUC', '', '2026-06-04 16:20:59');
 
 -- --------------------------------------------------------
 
@@ -343,7 +379,10 @@ INSERT INTO `hoivien` (`ma_hoi_vien`, `ho_ten`, `ngay_sinh`, `gioi_tinh`, `so_di
 (30, 'Ngô Đức Anh', '1990-01-21', 'NAM', '0927192719', 'ducanh@gmail.com', 'Hà Nội', '2026-05-06', 'HOAT_DONG', ''),
 (31, 'Trịnh Thu Huyền', '2001-02-21', 'NU', '0937182810', 'huyenthu12@gmail.com', 'Hà Nội', '2026-05-05', 'HOAT_DONG', ''),
 (32, 'Ngô Mạnh Hà', '2004-02-21', 'NAM', '0381921093', 'hamanh12@gmail.com', 'Kim Giang, Định Công, Hà Nội', '2026-05-07', 'HOAT_DONG', ''),
-(33, 'Đỗ Trung Hiếu', '2001-02-21', 'NAM', '0391918190', 'hieutrung@gmail.com', 'Hà Nội', '2026-03-25', 'HOAT_DONG', '');
+(33, 'Đỗ Trung Hiếu', '2001-02-21', 'NAM', '0391918190', 'hieutrung@gmail.com', 'Hà Nội', '2026-03-25', 'HOAT_DONG', ''),
+(34, 'Bùi Đức Nam', '2001-02-12', 'NAM', '0338191820', 'ducnam02@gmail.com', 'Hà Nội', '2026-06-04', 'HOAT_DONG', ''),
+(35, 'Lê Minh Quân', '1999-09-18', 'NAM', '0389182010', 'quanle1809@gmail.com', 'Hà Nội', '2026-06-04', 'HOAT_DONG', ''),
+(36, 'Hoàng Duy Khánh', '2003-02-21', 'NAM', '0938192010', 'khanhhoang@gmail.com', 'Hà Nội', '2026-06-04', 'HOAT_DONG', '');
 
 -- --------------------------------------------------------
 
@@ -396,8 +435,18 @@ INSERT INTO `lichtap` (`ma_lich_tap`, `ma_phan_cong`, `ngay_tap`, `gio_bat_dau`,
 (27, 21, '2026-03-06', '18:00:00', '19:30:00', 'HOAN_THANH', 'Đã hoàn thành buổi PT đầu tiên.', '2026-05-31 09:38:42'),
 (28, 21, '2026-03-13', '18:00:00', '19:30:00', 'HOAN_THANH', 'Đã hoàn thành buổi PT thứ hai.', '2026-05-31 09:38:42'),
 (29, 21, '2026-03-20', '18:00:00', '19:30:00', 'HOAN_THANH', 'Đã hoàn thành buổi PT thứ ba.', '2026-05-31 09:38:42'),
-(30, 21, '2026-05-31', '15:00:00', '17:00:00', 'DA_LEN_LICH', '', '2026-05-31 13:57:34'),
-(31, 20, '2026-05-31', '15:00:00', '17:00:00', 'DA_LEN_LICH', '', '2026-05-31 13:58:48');
+(30, 21, '2026-05-31', '15:00:00', '17:00:00', 'HOAN_THANH', 'Hoàn thành tốt.', '2026-05-31 13:57:34'),
+(31, 20, '2026-05-31', '15:00:00', '17:00:00', 'HOAN_THANH', 'Hoàn thành tốt.', '2026-05-31 13:58:48'),
+(32, 17, '2026-06-04', '15:30:00', '17:00:00', 'HOAN_THANH', 'Buổi tập đã hoàn thành', '2026-06-04 15:16:40'),
+(33, 23, '2026-06-04', '16:30:00', '18:00:00', 'DA_LEN_LICH', '', '2026-06-04 16:22:50'),
+(34, 3, '2026-04-09', '19:00:00', '20:00:00', 'HOAN_THANH', 'Buổi tập thân trên', '2026-04-03 09:15:00'),
+(35, 3, '2026-04-16', '19:00:00', '20:00:00', 'HOAN_THANH', 'Buổi tập thân dưới', '2026-04-03 09:16:00'),
+(36, 3, '2026-04-23', '19:00:00', '20:00:00', 'HOAN_THANH', 'Tập kỹ thuật cơ bản', '2026-04-03 09:17:00'),
+(37, 3, '2026-05-07', '18:30:00', '19:30:00', 'HOAN_THANH', 'Tăng cường sức bền', '2026-05-01 10:05:00'),
+(38, 18, '2026-05-09', '18:00:00', '19:00:00', 'HOAN_THANH', 'Đánh giá thể lực', '2026-05-02 08:45:00'),
+(39, 18, '2026-05-16', '18:00:00', '19:00:00', 'HOAN_THANH', 'Tập nhóm cơ lưng vai', '2026-05-02 08:46:00'),
+(40, 18, '2026-06-06', '18:00:00', '19:00:00', 'HOAN_THANH', 'Điều chỉnh kỹ thuật', '2026-06-01 09:10:00'),
+(41, 18, '2026-06-20', '18:00:00', '19:00:00', 'DA_LEN_LICH', 'Lịch tập sắp tới', '2026-06-10 09:20:00');
 
 -- --------------------------------------------------------
 
@@ -434,7 +483,10 @@ INSERT INTO `nhatkybuoitap` (`ma_nhat_ky`, `ma_lich_tap`, `muc_tieu_buoi_tap`, `
 (7, 23, NULL, NULL, NULL, NULL, NULL, 'Hội viên báo không đảm bảo sức khỏe nên hủy buổi tập.', 'Sắp xếp lại buổi tập khi hội viên ổn định sức khỏe.', 1, '2026-05-24 16:11:16', '2026-05-29 17:12:54'),
 (8, 22, NULL, NULL, NULL, NULL, NULL, 'Hội viên báo ốm trước giờ tập, buổi tập được hủy theo yêu cầu.', 'Liên hệ hội viên để sắp xếp lại lịch trong tuần tới.', 1, '2026-05-24 16:18:56', '2026-05-29 17:12:54'),
 (9, 20, NULL, NULL, 95, NULL, NULL, 'Hoàn thành buổi tập, thể lực tốt và kiểm soát động tác khá.', 'Buổi sau tiếp tục nhóm cơ thân trên, chú ý kiểm soát nhịp thở.', 6, '2026-05-25 15:41:24', '2026-05-29 17:12:54'),
-(10, 17, NULL, NULL, NULL, NULL, NULL, 'Hội viên bận đột xuất, đã báo hủy trước giờ tập.', 'Chủ động đặt lại lịch phù hợp với thời gian của hội viên.', 6, '2026-05-25 15:41:58', '2026-05-29 17:12:54');
+(10, 17, NULL, NULL, NULL, NULL, NULL, 'Hội viên bận đột xuất, đã báo hủy trước giờ tập.', 'Chủ động đặt lại lịch phù hợp với thời gian của hội viên.', 6, '2026-05-25 15:41:58', '2026-05-29 17:12:54'),
+(11, 31, NULL, NULL, NULL, NULL, NULL, 'Hoàn thành tốt.', NULL, 1, '2026-06-04 15:16:03', NULL),
+(12, 30, NULL, NULL, NULL, NULL, NULL, 'Hoàn thành tốt.', NULL, 1, '2026-06-04 15:16:09', NULL),
+(13, 32, NULL, NULL, NULL, NULL, NULL, 'Buổi tập đã hoàn thành', NULL, 6, '2026-06-04 16:24:16', NULL);
 
 -- --------------------------------------------------------
 
@@ -478,7 +530,9 @@ INSERT INTO `phancongpt` (`ma_phan_cong`, `ma_dang_ky`, `ma_pt`, `ngay_phan_cong
 (18, 34, 1, '2026-05-02', NULL, 'DANG_PHU_TRACH', ''),
 (19, 35, 6, '2026-05-12', NULL, 'DANG_PHU_TRACH', ''),
 (20, 37, 7, '2026-05-16', NULL, 'DANG_PHU_TRACH', ''),
-(21, 28, 6, '2026-03-02', NULL, 'DANG_PHU_TRACH', 'Phân công PT Hà Thế Anh cho gói PT 24 buổi của Trần Quốc Đạt.');
+(21, 28, 6, '2026-03-02', NULL, 'DANG_PHU_TRACH', 'Phân công PT Hà Thế Anh cho gói PT 24 buổi của Trần Quốc Đạt.'),
+(22, 44, 6, '2026-06-04', NULL, 'DANG_PHU_TRACH', ''),
+(23, 46, 6, '2026-06-04', NULL, 'DANG_PHU_TRACH', '');
 
 -- --------------------------------------------------------
 
@@ -505,10 +559,10 @@ CREATE TABLE `pt` (
 
 INSERT INTO `pt` (`ma_pt`, `ma_tai_khoan`, `ho_ten`, `so_dien_thoai`, `email`, `chuyen_mon`, `kinh_nghiem`, `trang_thai_lam_viec`, `ghi_chu`) VALUES
 (1, 3, 'Nguyễn Văn Minh', '0906247185', 'minh.nv@progym.vn', 'Tăng cơ - giảm mỡ', '3 năm', 'DANG_LAM_VIEC', 'PT phụ trách nhóm hội viên nam'),
-(2, 4, 'Trần Thị Lan', '0971385264', 'lan.tt@progym.vn', 'Giảm mỡ - body shaping', '4', 'NGUNG_LAM_VIEC', 'PT phụ trách nhóm hội viên nữ'),
-(5, 6, 'Nguyễn Mạnh Hà', '0962718453', 'ha.nm@progym.vn', 'Kick boxing, Muay Thai', '5', 'DANG_LAM_VIEC', NULL),
-(6, 7, 'Hà Thế Anh', '0982178100', 'theanh.ha@progym.vn', 'Tăng cơ - giảm mỡ', '5', 'DANG_LAM_VIEC', NULL),
-(7, 8, 'Nguyễn Văn Huy', '0381919301', 'nvanhuy@gmail.com', 'Tăng cơ - giảm mỡ', '5', 'DANG_LAM_VIEC', NULL),
+(2, 4, 'Trần Thị Lan', '0971385264', 'lan.tt@progym.vn', 'Giảm mỡ - body shaping', '4 năm', 'NGUNG_LAM_VIEC', 'PT phụ trách nhóm hội viên nữ'),
+(5, 6, 'Nguyễn Mạnh Hà', '0962718453', 'ha.nm@progym.vn', 'Kick boxing, Muay Thai', '5 năm', 'DANG_LAM_VIEC', NULL),
+(6, 7, 'Hà Thế Anh', '0982178100', 'theanh.ha@progym.vn', 'Tăng cơ - giảm mỡ', '5 năm', 'DANG_LAM_VIEC', NULL),
+(7, 8, 'Nguyễn Văn Huy', '0381919301', 'nvanhuy@gmail.com', 'Tăng cơ - giảm mỡ', '5 năm', 'DANG_LAM_VIEC', NULL),
 (8, NULL, 'Vũ Minh Hoàng', '0381929103', 'minhoang01@gmail.com', 'Tăng cơ giảm mỡ', '4 năm', 'TAM_NGHI', NULL);
 
 -- --------------------------------------------------------
@@ -536,14 +590,14 @@ CREATE TABLE `taikhoan` (
 --
 
 INSERT INTO `taikhoan` (`ma_tai_khoan`, `ten_dang_nhap`, `mat_khau`, `ho_ten`, `so_dien_thoai`, `email`, `trang_thai`, `ma_vai_tro`, `created_at`, `lan_dang_nhap_cuoi`) VALUES
-(1, 'admin', 'Admin@2026', 'Hoàng Minh Đức', '0914862375', 'duc.hm@progym.vn', 'HOAT_DONG', 1, '2026-05-10 22:25:38', '2026-06-01 15:36:50'),
-(2, 'letan', 'Letan@2026', 'Đỗ Thi Hồng', '0983517426', 'hong.dt@progym.vn', 'HOAT_DONG', 2, '2026-05-10 22:25:38', '2026-05-31 20:05:29'),
-(3, 'ptminh', '123456', 'Nguyễn Văn Minh', '0906247185', 'minh.nv@progym.vn', 'HOAT_DONG', 3, '2026-05-10 22:25:38', NULL),
+(1, 'admin', 'Admin@2026', 'Hoàng Minh Đức', '0914862375', 'duc.hm@progym.vn', 'HOAT_DONG', 1, '2026-05-10 22:25:38', '2026-06-05 20:19:17'),
+(2, 'letan', 'Letan@2026', 'Đỗ Thi Hồng', '0983517426', 'hong.dt@progym.vn', 'HOAT_DONG', 2, '2026-05-10 22:25:38', '2026-06-05 20:18:05'),
+(3, 'ptminh', '123456', 'Nguyễn Văn Minh', '0906247185', 'minh.nv@progym.vn', 'HOAT_DONG', 3, '2026-05-10 22:25:38', '2026-06-05 16:49:11'),
 (4, 'ptlan', '123456', 'Trần Thị Lan', '0971385264', 'lan.tt@progym.vn', 'TAM_KHOA', 3, '2026-05-10 22:25:38', NULL),
 (5, 'letan02', '654321', 'Trịnh Thi Tâm', '0928312890', 'tam.tt@progym.vn', 'HOAT_DONG', 2, '2026-05-15 09:54:22', NULL),
-(6, 'ptha', '123456', 'Nguyễn Mạnh Hà', '0962718453', 'ha.nm@progym.vn', 'HOAT_DONG', 3, '2026-05-15 09:57:33', '2026-05-31 20:54:02'),
-(7, 'pttheanh', '123456', 'Hà Thế Anh', '0982178100', 'theanh.ha@progym.vn', 'HOAT_DONG', 3, '2026-05-25 15:11:32', NULL),
-(8, 'pthuy', '123456', 'Nguyễn Văn Huy', '0381919301', 'pthuy@progym.vn', 'HOAT_DONG', 3, '2026-05-25 15:17:58', NULL),
+(6, 'ptha', '123456', 'Nguyễn Mạnh Hà', '0962718453', 'ha.nm@progym.vn', 'HOAT_DONG', 3, '2026-05-15 09:57:33', '2026-06-05 16:49:24'),
+(7, 'pttheanh', '123456', 'Hà Thế Anh', '0982178100', 'theanh.ha@progym.vn', 'HOAT_DONG', 3, '2026-05-25 15:11:32', '2026-06-05 16:47:23'),
+(8, 'pthuy', '123456', 'Nguyễn Văn Huy', '0381919301', 'pthuy@progym.vn', 'HOAT_DONG', 3, '2026-05-25 15:17:58', '2026-06-05 16:47:33'),
 (9, 'lequynh', '123456', 'Lê Phương Quỳnh', '0894621375', 'quynh.lp@progym.vn', 'TAM_KHOA', 2, '2026-05-25 15:23:09', NULL),
 (10, 'letan03', '123456', 'Nguyễn Thị Thu', '0391012190', 'letan03@progym.vn', 'TAM_KHOA', 2, '2026-05-25 17:55:11', NULL);
 
@@ -581,9 +635,9 @@ INSERT INTO `thanhtoan` (`ma_thanh_toan`, `ma_dang_ky`, `ma_tai_khoan_tao`, `nga
 (9, 9, 1, '2026-03-20 08:39:00', 1350000.00, 'CHUYEN_KHOAN', 'DA_THANH_TOAN', 'Thanh toán khi tạo mới hội viên và đăng ký gói'),
 (10, 11, 1, '2026-05-11 10:00:00', 1000000.00, 'TIEN_MAT', 'DA_THANH_TOAN', 'Thanh toán khi tạo mới hội viên và đăng ký gói'),
 (11, 11, 1, '2026-05-11 10:25:00', 350000.00, 'TIEN_MAT', 'DA_THANH_TOAN', ''),
-(12, 12, 1, '2026-04-05 08:42:00', 3000000.00, 'CHUYEN_KHOAN', 'DA_THANH_TOAN', 'Thanh toán khi tạo mới hội viên và đăng ký gói'),
-(13, 14, 1, '2026-04-10 08:43:00', 3000000.00, 'CHUYEN_KHOAN', 'DA_THANH_TOAN', 'Thanh toán khi tạo mới hội viên và đăng ký gói'),
-(14, 15, 1, '2026-04-12 08:44:00', 3000000.00, 'TIEN_MAT', 'DA_THANH_TOAN', 'Thanh toán khi đăng ký thêm gói cho hội viên cũ'),
+(12, 12, 1, '2026-06-04 08:42:00', 3000000.00, 'CHUYEN_KHOAN', 'DA_THANH_TOAN', 'Thanh toán gói PT'),
+(13, 14, 1, '2026-06-14 09:12:00', 3000000.00, 'CHUYEN_KHOAN', 'DA_THANH_TOAN', 'Thanh toán gói PT 12 buổi'),
+(14, 15, 1, '2026-06-16 18:22:00', 3000000.00, 'TIEN_MAT', 'DA_THANH_TOAN', 'Thanh toán gói PT 12 buổi'),
 (15, 10, 1, '2026-03-25 08:45:00', 1350000.00, 'TIEN_MAT', 'DA_THANH_TOAN', ''),
 (16, 13, 1, '2026-04-10 08:46:00', 3000000.00, 'TIEN_MAT', 'DA_THANH_TOAN', ''),
 (17, 16, 1, '2026-03-10 08:47:00', 1350000.00, 'TIEN_MAT', 'DA_THANH_TOAN', 'Bổ sung giao dịch thanh toán do lỗi khi tạo hội viên'),
@@ -616,7 +670,12 @@ INSERT INTO `thanhtoan` (`ma_thanh_toan`, `ma_dang_ky`, `ma_tai_khoan_tao`, `nga
 (46, 39, 2, '2026-05-07 09:16:00', 500000.00, 'CHUYEN_KHOAN', 'DA_THANH_TOAN', 'Thanh toán khi tạo mới hội viên và đăng ký gói'),
 (48, 40, 1, '2026-03-25 09:18:00', 1000000.00, 'CHUYEN_KHOAN', 'DA_THANH_TOAN', 'Thanh toán khi tạo mới hội viên và đăng ký gói'),
 (49, 40, 1, '2026-03-25 09:19:00', 350000.00, 'TIEN_MAT', 'DA_THANH_TOAN', ''),
-(50, 41, 1, '2026-05-31 13:36:24', 500000.00, 'CHUYEN_KHOAN', 'DA_THANH_TOAN', 'Thanh toán khi đăng ký thêm gói cho hội viên cũ');
+(50, 41, 1, '2026-05-31 13:36:24', 500000.00, 'CHUYEN_KHOAN', 'DA_THANH_TOAN', 'Thanh toán khi đăng ký thêm gói cho hội viên cũ'),
+(51, 42, 1, '2026-06-04 13:52:59', 500000.00, 'TIEN_MAT', 'DA_THANH_TOAN', 'Thanh toán khi tạo mới hội viên và đăng ký gói'),
+(52, 43, 1, '2026-06-04 14:51:33', 500000.00, 'CHUYEN_KHOAN', 'DA_THANH_TOAN', 'Thanh toán khi tạo mới hội viên và đăng ký gói'),
+(53, 44, 1, '2026-06-04 15:22:44', 3000000.00, 'TIEN_MAT', 'DA_THANH_TOAN', 'Thanh toán khi đăng ký thêm gói cho hội viên cũ'),
+(54, 45, 1, '2026-06-04 16:18:09', 1350000.00, 'CHUYEN_KHOAN', 'DA_THANH_TOAN', 'Thanh toán khi tạo mới hội viên và đăng ký gói'),
+(55, 46, 1, '2026-06-04 16:20:59', 3000000.00, 'CHUYEN_KHOAN', 'DA_THANH_TOAN', 'Thanh toán khi đăng ký thêm gói cho hội viên cũ');
 
 -- --------------------------------------------------------
 
@@ -641,20 +700,20 @@ CREATE TABLE `trangthietbi` (
 --
 
 INSERT INTO `trangthietbi` (`ma_thiet_bi`, `ten_thiet_bi`, `loai_thiet_bi`, `vi_tri`, `ngay_mua`, `tinh_trang`, `ghi_chu`, `hinh_anh`) VALUES
-(1, 'Máy chạy bộ 01', 'Cardio', 'Khu cardio tầng 1', '2025-01-10', 'TOT', 'Hoạt động ổn định, kiểm tra định kỳ hàng tháng.', 'uploads/equipment/4f5944e4d0d5415599e4aecb245afc50.webp'),
-(2, 'Ghế đẩy ngực 01', 'Máy tập sức mạnh', 'Khu tập ngực', '2025-02-15', 'NGUNG_SU_DUNG', 'Bỏ ghế tập kiểu này', 'uploads/equipment/a4c0121455104f8a9e33cf09eb4e3521.webp'),
-(3, 'Máy kéo xô 01', 'Máy tập sức mạnh', 'Khu tập lưng', '2025-03-20', 'TOT', 'Đã tra dầu và kiểm tra cáp kéo, vận hành ổn định.', 'uploads/equipment/657c66d52cf6493690cc16b4b65eca2b.webp'),
-(4, 'Bộ tạ tay 5kg - 30kg', 'Tạ tự do', 'Khu tạ tự do', '2026-05-13', 'TOT', 'Bộ tạ đầy đủ, sắp xếp tại khu tạ tự do.', 'uploads/equipment/733bb76f2a854e729600ad358a17d024.jpg'),
-(5, 'Leg Extension Machine', 'Máy tập sức mạnh', 'Khu tập chân', '2026-05-24', 'TOT', 'Thiết bị mới, hoạt động ổn định.', 'uploads/equipment/a6379484a96945578f18b5037862ac0d.png'),
-(6, 'Máy đạp xe cardio 01', 'Cardio', 'Khu cardio tầng 1', '2025-01-18', 'DANG_BAO_TRI', 'Hoạt động ổn định, dùng cho bài tập tim mạch cường độ vừa.', NULL),
-(7, 'Smith Machine 01', 'Máy tập sức mạnh', 'Khu tạ tự do', '2025-02-05', 'TOT', 'Khung máy ổn định, dùng cho squat và đẩy ngực có hỗ trợ ray dẫn.', NULL),
-(8, 'Squat Rack 01', 'Máy tập sức mạnh', 'Khu tạ tự do', '2025-02-20', 'TOT', 'Khung squat chắc chắn, đã kiểm tra chốt an toàn.', NULL),
-(9, 'Chest Press Machine 01', 'Máy tập sức mạnh', 'Khu tập ngực', '2025-03-05', 'TOT', 'Máy ép ngực hoạt động ổn định, tay cầm và đệm ghế còn tốt.', NULL),
-(10, 'Cable Crossover 01', 'Máy tập sức mạnh', 'Khu tập lưng - vai', '2025-03-18', 'TOT', 'Cáp kéo vận hành ổn định, phù hợp nhiều bài tập thân trên.', NULL),
-(11, 'Leg Press Machine 01', 'Máy tập sức mạnh', 'Khu tập chân', '2025-04-02', 'TOT', 'Máy đạp đùi hoạt động ổn định, ray trượt đã được kiểm tra.', NULL),
-(12, 'Ghế tập điều chỉnh 01', 'Ghế tập', 'Khu tạ tự do', '2025-04-16', 'TOT', 'Ghế điều chỉnh được nhiều góc, bọc ghế còn tốt.', NULL),
-(13, 'Thanh đòn Olympic và bánh tạ', 'Tạ tự do', 'Khu tạ tự do', '2025-05-05', 'DANG_BAO_TRI', NULL, NULL),
-(14, 'Pec Fly Rear Delt', 'Strength', 'Khu tập ngực', '2026-05-31', 'TOT', NULL, 'uploads/equipment/695fcbe360e44afb98b1e3d726df713c.png');
+(1, 'Máy chạy bộ', 'Máy cardio', 'Khu cardio', '2025-01-10', 'TOT', NULL, 'img/maychaybo.webp'),
+(2, 'Ghế đẩy ngực', 'Ghế và giá đỡ', 'Khu tạ tự do', '2025-02-15', 'TOT', NULL, 'img/flat bench.png'),
+(3, 'Máy kéo xô', 'Máy kháng lực', 'Khu tập lưng', '2025-03-20', 'TOT', NULL, 'img/maykeoxo.png'),
+(4, 'Bộ tạ tay 5kg - 30kg', 'Tạ tự do', 'Khu tạ tự do', '2026-05-13', 'TOT', NULL, 'img/5-30KG-HEX-Dumbbell.jpg'),
+(5, 'Máy đã đùi trước', 'Máy kháng lực', 'Khu tập chân', '2026-05-24', 'TOT', NULL, 'img/leg-extension-machine.png'),
+(6, 'Máy đạp đùi', 'Máy kháng lực', 'Khu tập chân', '2025-01-18', 'TOT', NULL, 'img/legpress.png'),
+(7, 'Máy Smith', 'Máy kháng lực', 'Khu tập chân', '2025-02-05', 'TOT', NULL, 'img/smith.png'),
+(8, 'Máy kéo cable', 'Máy kháng lực', 'Khu tập lưng', '2025-02-20', 'TOT', NULL, 'img/maykeocap.png'),
+(9, 'Máy đẩy ngực', 'Máy kháng lực', 'Khu tập ngực', '2025-03-05', 'TOT', NULL, 'img/maydaynguc.png'),
+(10, 'Máy đẩy vai', 'Máy kháng lực', 'Khu tập vai', '2025-03-18', 'TOT', NULL, 'img/maydayvai.jpg'),
+(11, 'Máy kéo lưng', 'Máy kháng lực', 'Khu tập lưng', '2025-04-02', 'TOT', NULL, 'img/maykeolung.png'),
+(12, 'Máy dip', 'Máy kháng lực', 'Khu tập ngực', '2025-04-16', 'TOT', NULL, 'img/maydip.png'),
+(13, 'Máy gập bụng', 'Máy kháng lực', 'Khu tập bụng', '2025-05-05', 'TOT', NULL, 'img/maygapbung.png'),
+(14, 'Máy ép ngực', 'Máy kháng lực', 'Khu tập ngực', '2026-05-31', 'TOT', NULL, 'img/mayepnguc.png');
 
 -- --------------------------------------------------------
 
@@ -946,6 +1005,7 @@ ALTER TABLE `taikhoan`
 ALTER TABLE `thanhtoan`
   ADD CONSTRAINT `fk_thanhtoan_dangky` FOREIGN KEY (`ma_dang_ky`) REFERENCES `dangkygoitap` (`ma_dang_ky`) ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_thanhtoan_taikhoan` FOREIGN KEY (`ma_tai_khoan_tao`) REFERENCES `taikhoan` (`ma_tai_khoan`) ON DELETE SET NULL ON UPDATE CASCADE;
+  SET FOREIGN_KEY_CHECKS=1;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

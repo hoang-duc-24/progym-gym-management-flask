@@ -648,7 +648,7 @@ body {
     overflow: hidden;
     background:
         linear-gradient(rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.68)),
-        url("../uploads/emerson-college-fitness-center-students-exercising-equipment-facilities.jpg");
+        url("../img/background.jpg");
     background-size: cover;
     background-position: center;
 }
