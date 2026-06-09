@@ -428,21 +428,6 @@ Cách xử lý:
 * Kiểm tra đường dẫn ảnh đang được lưu trong database.
 * Tải lại trang bằng `Ctrl + F5`.
 
----
-
-## Hướng phát triển
-
-Một số hướng có thể tiếp tục phát triển:
-
-* Mã hóa mật khẩu người dùng.
-* Phân quyền chi tiết hơn theo từng thao tác.
-* Ghi log hệ thống.
-* Xuất báo cáo ra Excel/PDF.
-* Triển khai hệ thống lên cloud.
-* Tối ưu giao diện cho nhiều kích thước màn hình.
-* Bổ sung kiểm thử tự động.
-* Tích hợp thanh toán trực tuyến.
-* Bổ sung cổng thông tin hoặc ứng dụng dành cho hội viên.
 
 ---
 
